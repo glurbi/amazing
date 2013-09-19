@@ -88,6 +88,7 @@ public:
     }
 };
 
+/*
 int main(int argc, char** argv) {
 	int w = 55;
 	int h = 55;
@@ -106,3 +107,4 @@ int main(int argc, char** argv) {
 	std::cin.ignore();
 	return 0;
 }
+*/
