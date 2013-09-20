@@ -44,5 +44,8 @@
     <ClInclude Include="texture.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="model.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

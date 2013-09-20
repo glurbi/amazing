@@ -2,6 +2,28 @@
 #include <SFML/Graphics.hpp>
 #include <GL/glew.h>
 
+#include "model.hpp"
+
+
+int main(int argc, char** argv) {
+	int w = 55;
+	int h = 55;
+	Model m(w,h);
+	m.createMaze();
+	for (int j = 0; j < h; j++) {
+		for (int i = 0; i < w; i++) {
+			if (m.getCell(i, j).wall) {
+				std::cout << "0";
+			} else {
+				std::cout << " ";
+			}
+		}
+		std::cout << std::endl;
+	}
+	std::cin.ignore();
+	return 0;
+}
+/*
 int main()
 {
 	const int POSITION_ATTRIBUTE_INDEX = 0;
@@ -194,3 +216,4 @@ int main()
 
     return 0;
 }
+*/
