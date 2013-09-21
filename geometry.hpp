@@ -9,16 +9,20 @@ extern const int TEXCOORD_ATTRIBUTE_INDEX;
 class Geometry {
 
 public:
-	Geometry();
+	Geometry(GLsizei count_);
 	~Geometry();
+
 	void SetVertexPositions(void* data, long size);
 	void SetVertexTexCoords(void* data, long size);
-    GLuint getPositionsId() const;
-    GLuint getTexCoordsId() const;
+
+    GLuint GetPositionsId() const;
+    GLuint GetTexCoordsId() const;
+    GLsizei GetCount() const;
 
 private:
 	GLuint positionsId;
 	GLuint texCoordsId;
+    GLsizei count;
 
 };
 

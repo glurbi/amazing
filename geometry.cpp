@@ -1,9 +1,10 @@
 #include "geometry.hpp"
+#include "misc.hpp"
 
 const int POSITION_ATTRIBUTE_INDEX = 12;
 const int TEXCOORD_ATTRIBUTE_INDEX = 7;
 
-Geometry::Geometry() : positionsId(0), texCoordsId(0) {}
+Geometry::Geometry(GLsizei count_) : count(count_), positionsId(0), texCoordsId(0) {}
 
 Geometry::~Geometry() {
     glDeleteBuffers(1, &positionsId);
@@ -22,10 +23,14 @@ void Geometry::SetVertexTexCoords(void* data, long size) {
     glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 }
 
-GLuint Geometry::getPositionsId() const {
+GLuint Geometry::GetPositionsId() const {
     return positionsId;
 }
 
-GLuint Geometry::getTexCoordsId() const {
+GLuint Geometry::GetTexCoordsId() const {
     return texCoordsId;
+}
+
+GLsizei Geometry::GetCount() const {
+    return count;
 }

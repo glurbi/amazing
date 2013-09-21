@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{a606c1a0-980c-45f8-9356-96cd06f59732}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="model.cpp">
@@ -30,22 +33,42 @@
     <ClCompile Include="texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="misc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="geometry.hpp">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="model.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="program.hpp">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="geometry.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="matrix.hpp">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="misc.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="texture.hpp">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="model.hpp">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="program.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="monochrome.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="monochrome.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="texture.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="texture.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

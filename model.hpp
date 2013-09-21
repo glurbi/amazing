@@ -21,14 +21,16 @@ class Model {
 public:
 
     Model(int width_, int height_);
-    inline Cell& getCell(int x, int y) { return cells[x+y*width]; }
     void createMaze();
+    inline Cell& getCell(int x, int y) { return cells[x+y*width]; }
+    inline std::vector<Cell>& getCells() { return cells; }
 	inline bool contains(Cell& c, std::set<Cell, Cell::Comp>& visited) { return visited.find(c) != visited.end(); }
-    void visit(Cell& c, std::set<Cell, Cell::Comp>& visited);
 
 private:
 
-	int width;
+    void visit(Cell& c, std::set<Cell, Cell::Comp>& visited);
+
+    int width;
 	int height;
 	std::vector<Cell> cells;
 	unsigned seed;
