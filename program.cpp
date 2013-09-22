@@ -79,12 +79,12 @@ Program::~Program() {
     glDeleteProgram(id);
 }
 
-void MonochromeProgram::Render(const Geometry& geometry, const Matrix44<float>& mat) {
+void MonochromeProgram::Render(const Geometry& geometry, const Matrix44<float>& mat, const Color& color) {
     glUseProgram(id);
     GLuint matrixUniform = glGetUniformLocation(id, "mvpMatrix");
     glUniformMatrix4fv(matrixUniform, 1, false, mat.m);
-    GLuint color = glGetUniformLocation(id, "color");
-    glUniform4f(color, 1.0f, 1.0f, 0.0f, 0.7f);
+    GLuint colorUniform = glGetUniformLocation(id, "color");
+    glUniform4f(colorUniform, color.r(), color.g(), color.b(), color.a());
     glEnableVertexAttribArray(POSITION_ATTRIBUTE_INDEX);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
     glVertexAttribPointer(POSITION_ATTRIBUTE_INDEX, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -112,10 +112,10 @@ void TextureProgram::Render(const Geometry& geometry, const Texture& texture, co
     GLuint textureUniform = glGetUniformLocation(id, "texture");
     glUniform1i(textureUniform, 0); // we pass the texture unit
     glEnableVertexAttribArray(POSITION_ATTRIBUTE_INDEX);
-            glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
+    glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
     glVertexAttribPointer(POSITION_ATTRIBUTE_INDEX, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(TEXCOORD_ATTRIBUTE_INDEX);
-            glBindBuffer(GL_ARRAY_BUFFER, geometry.GetTexCoordsId());
+    glBindBuffer(GL_ARRAY_BUFFER, geometry.GetTexCoordsId());
     glVertexAttribPointer(TEXCOORD_ATTRIBUTE_INDEX, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_QUADS, 0, 4);
     glDisableVertexAttribArray(POSITION_ATTRIBUTE_INDEX);

@@ -44,7 +44,7 @@ private:
 class MonochromeProgram : public Program {
 
 public:
-    void Render(const Geometry& geometry, const Matrix44<float>& mat);
+    void Render(const Geometry& geometry, const Matrix44<float>& mat, const Color& color);
     static std::shared_ptr<MonochromeProgram> Create();
 
 private:

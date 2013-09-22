@@ -10,13 +10,13 @@
 
 int main()
 {
-    const int mazeWidth = 55;
-    const int mazeHeight = 55;
+    const int mazeWidth = 39;
+    const int mazeHeight = 39;
     Model model(mazeWidth, mazeHeight);
 	model.createMaze();
 
-	const int width = 800;
-	const int height = 600;
+    const int width = mazeWidth * 20;
+    const int height = mazeHeight * 20;
     const float aspectRatio = 1.0f * width / height;
 
 	sf::RenderWindow window(sf::VideoMode(width, height), "Amazing!");
@@ -35,7 +35,7 @@ int main()
     Geometry mazeGeom(v.size()/3);
     mazeGeom.SetVertexPositions(&v[0], v.size() * sizeof(float));
 
-	Matrix44<float> mat = Ortho<float>(width, 0, height, 0, 1.0f, -1.0f);
+	Matrix44<float> mat = Ortho<float>(mazeWidth-0.5f, 0-0.5f, mazeHeight-0.5f, 0-0.5f, 1.0f, -1.0f);
     std::shared_ptr<MonochromeProgram> monochromeProgram = MonochromeProgram::Create();
 
 	bool running = true;
@@ -49,7 +49,7 @@ int main()
 				running = false;
         }
         glClear(GL_COLOR_BUFFER_BIT);
-        monochromeProgram->Render(mazeGeom, mat);
+        monochromeProgram->Render(mazeGeom, mat, Color(1.0f, 0.0f, 0.0f));
 		window.display();
     }
 

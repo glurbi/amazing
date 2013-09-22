@@ -1,6 +1,16 @@
 #ifndef _matrix_hpp_
 #define _matrix_hpp_
 
+struct Color {
+    Color(float r, float g, float b, float a = 1.0f)
+        { c[0] = r; c[1] = g; c[2] = b; c[3] = a; }
+    float c[4];
+    inline float r() const { return c[0]; }
+    inline float g() const { return c[1]; }
+    inline float b() const { return c[2]; }
+    inline float a() const { return c[3]; }
+};
+
 template <class T>
 struct Matrix44
 {
