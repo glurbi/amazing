@@ -4,6 +4,8 @@
 #include <vector>
 #include <set>
 
+#include "geometry.hpp"
+
 struct Cell {
 
 	int x;
@@ -16,12 +18,12 @@ struct Cell {
 
 };
 
-class Model {
+class MazeModel {
 
 public:
 
-    Model(int width_, int height_);
-    void createMaze();
+    MazeModel(int width_, int height_);
+    void create();
     inline Cell& getCell(int x, int y) { return cells[x+y*width]; }
     inline std::vector<Cell>& getCells() { return cells; }
 	inline bool contains(Cell& c, std::set<Cell, Cell::Comp>& visited) { return visited.find(c) != visited.end(); }
@@ -35,6 +37,13 @@ private:
 	std::vector<Cell> cells;
 	unsigned seed;
 
+};
+
+class MazeGeometry2D : public Geometry {
+public:
+    MazeGeometry2D(const MazeModel& model_) : Geometry(), model(model_) {}
+private:
+    const MazeModel& model;
 };
 
 #endif

@@ -12,8 +12,8 @@ int main()
 {
     const int mazeWidth = 39;
     const int mazeHeight = 39;
-    Model model(mazeWidth, mazeHeight);
-	model.createMaze();
+    MazeModel model(mazeWidth, mazeHeight);
+	model.create();
 
     const int width = mazeWidth * 20;
     const int height = mazeHeight * 20;

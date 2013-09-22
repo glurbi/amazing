@@ -10,6 +10,7 @@ class Geometry {
 
 public:
 	Geometry(GLsizei count_);
+	Geometry();
 	~Geometry();
 
 	void SetVertexPositions(void* data, long size);

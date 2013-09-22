@@ -17,7 +17,7 @@ bool Cell::Comp::operator() (const Cell& c1, const Cell& c2) const {
 	}
 }
 
-Model::Model(int width_, int height_) :
+MazeModel::MazeModel(int width_, int height_) :
     width(width_), height(height_), cells(width*height, Cell())
 {
 	seed = std::chrono::system_clock::now().time_since_epoch().count();
@@ -30,12 +30,12 @@ Model::Model(int width_, int height_) :
 	}
 }
 
-void Model::createMaze() {
+void MazeModel::create() {
     std::set<Cell, Cell::Comp> visited;
     visit(getCell(1,1), visited);
 }
 
-void Model::visit(Cell& c, std::set<Cell, Cell::Comp>& visited) {
+void MazeModel::visit(Cell& c, std::set<Cell, Cell::Comp>& visited) {
 	c.wall = false;
     visited.insert(c);
     std::vector<Cell*> neighbors;
@@ -55,23 +55,3 @@ void Model::visit(Cell& c, std::set<Cell, Cell::Comp>& visited) {
     }
 }
 
-/*
-int main(int argc, char** argv) {
-	int w = 55;
-	int h = 55;
-	Model m(w,h);
-	m.createMaze();
-	for (int j = 0; j < h; j++) {
-		for (int i = 0; i < w; i++) {
-			if (m.getCell(i, j).wall) {
-				std::cout << "0";
-			} else {
-				std::cout << " ";
-			}
-		}
-		std::cout << std::endl;
-	}
-	std::cin.ignore();
-	return 0;
-}
-*/
