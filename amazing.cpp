@@ -12,8 +12,6 @@ int main()
 {
     const int mazeWidth = 39;
     const int mazeHeight = 39;
-    MazeModel model(mazeWidth, mazeHeight);
-	model.create();
 
     const int width = mazeWidth * 20;
     const int height = mazeHeight * 20;
@@ -23,17 +21,11 @@ int main()
 	glewInit();
 	glViewport(0, 0, width, height);
 
-    std::vector<float> v;
-    for (auto& cell : model.getCells()) {
-        if (cell.wall) {
-            v.push_back(cell.x-0.5f); v.push_back(cell.y-0.5f); v.push_back(0.0f);
-            v.push_back(cell.x+0.5f); v.push_back(cell.y-0.5f); v.push_back(0.0f);
-            v.push_back(cell.x+0.5f); v.push_back(cell.y+0.5f); v.push_back(0.0f);
-            v.push_back(cell.x-0.5f); v.push_back(cell.y+0.5f); v.push_back(0.0f);
-        }
-    }
-    Geometry mazeGeom(v.size()/3);
-    mazeGeom.SetVertexPositions(&v[0], v.size() * sizeof(float));
+    MazeModel model(mazeWidth, mazeHeight);
+	model.create();
+
+    MazeGeometryBuilder2D builder(model);
+    std::shared_ptr<Geometry> mazeGeom = builder.build();
 
 	Matrix44<float> mat = Ortho<float>(mazeWidth-0.5f, 0-0.5f, mazeHeight-0.5f, 0-0.5f, 1.0f, -1.0f);
     std::shared_ptr<MonochromeProgram> monochromeProgram = MonochromeProgram::Create();
@@ -49,7 +41,7 @@ int main()
 				running = false;
         }
         glClear(GL_COLOR_BUFFER_BIT);
-        monochromeProgram->Render(mazeGeom, mat, Color(1.0f, 0.0f, 0.0f));
+        monochromeProgram->Render(*mazeGeom, mat, Color(1.0f, 0.0f, 0.0f));
 		window.display();
     }
 

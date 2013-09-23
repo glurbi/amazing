@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <set>
+#include <memory>
 
 #include "geometry.hpp"
 
@@ -39,11 +40,12 @@ private:
 
 };
 
-class MazeGeometry2D : public Geometry {
+class MazeGeometryBuilder2D {
 public:
-    MazeGeometry2D(const MazeModel& model_) : Geometry(), model(model_) {}
+    MazeGeometryBuilder2D(MazeModel& model_);
+    std::shared_ptr<Geometry> build();
 private:
-    const MazeModel& model;
+    MazeModel& model;
 };
 
 #endif
