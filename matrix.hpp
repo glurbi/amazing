@@ -39,4 +39,4 @@ Matrix44<T> Ortho(T right, T left, T top, T bottom, T nearp, T farp) {
     return mat;
 }
 
-#endif _matrix_hpp_
+#endif

@@ -44,7 +44,7 @@ private:
 class MonochromeProgram : public Program {
 
 public:
-    void Render(const Geometry& geometry, const Matrix44<float>& mat, const Color& color);
+    void Render(const Geometry2D& geometry, const Matrix44<float>& mat, const Color& color);
     static std::shared_ptr<MonochromeProgram> Create();
 
 private:
@@ -55,7 +55,7 @@ private:
 class TextureProgram : public Program {
 
 public:
-    void Render(const Geometry& geometry, const Texture& texture, const Matrix44<float>& mat);
+    void Render(const Geometry3D& geometry, const Texture& texture, const Matrix44<float>& mat);
     static std::shared_ptr<TextureProgram> Create();
 
 private:

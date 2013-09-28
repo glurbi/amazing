@@ -23,8 +23,8 @@ int main()
     MazeModel model(mazeWidth, mazeHeight);
 	model.create();
 
-    MazeGeometryBuilder3D builder(model);
-    std::shared_ptr<Geometry> mazeGeom = builder.build();
+    MazeGeometryBuilder2D builder(model);
+    std::shared_ptr<Geometry2D> mazeGeom = builder.build();
 
 	Matrix44<float> mat = Ortho<float>(mazeWidth-0.5f, 0-0.5f, mazeHeight-0.5f, 0-0.5f, 1.0f, -1.0f);
     std::shared_ptr<MonochromeProgram> monochromeProgram = MonochromeProgram::Create();

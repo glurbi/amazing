@@ -80,7 +80,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="amazing.cpp" />
-    <ClCompile Include="geometry.cpp" />
     <ClCompile Include="misc.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="program.cpp" />

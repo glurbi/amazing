@@ -79,7 +79,7 @@ Program::~Program() {
     glDeleteProgram(id);
 }
 
-void MonochromeProgram::Render(const Geometry& geometry, const Matrix44<float>& mat, const Color& color) {
+void MonochromeProgram::Render(const Geometry2D& geometry, const Matrix44<float>& mat, const Color& color) {
     glUseProgram(id);
     GLuint matrixUniform = glGetUniformLocation(id, "mvpMatrix");
     glUniformMatrix4fv(matrixUniform, 1, false, mat.m);
@@ -87,7 +87,7 @@ void MonochromeProgram::Render(const Geometry& geometry, const Matrix44<float>& 
     glUniform4f(colorUniform, color.r(), color.g(), color.b(), color.a());
     glEnableVertexAttribArray(VertexAttribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
-    glVertexAttribPointer(VertexAttribute::POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(VertexAttribute::POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_QUADS, 0, geometry.GetCount());
     glDisableVertexAttribArray(VertexAttribute::POSITION);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -103,7 +103,7 @@ std::shared_ptr<MonochromeProgram> MonochromeProgram::Create() {
 MonochromeProgram::MonochromeProgram(const std::map<int, std::string>& attributeIndices) :
     Program(readTextFile("monochrome.vert"), readTextFile("monochrome.frag"), attributeIndices) {}
 
-void TextureProgram::Render(const Geometry& geometry, const Texture& texture, const Matrix44<float>& mat) {
+void TextureProgram::Render(const Geometry3D& geometry, const Texture& texture, const Matrix44<float>& mat) {
     glUseProgram(id);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture.getId());

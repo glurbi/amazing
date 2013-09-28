@@ -10,22 +10,51 @@ enum VertexAttribute {
     TEXCOORD
 };
 
+template<int posVecSize>
 class Geometry {
 
 public:
-	Geometry(GLsizei count_);
-	Geometry();
-	~Geometry();
+	Geometry(GLsizei count_) :
+        count(count_), positionsId(0), texCoordsId(0) {}
+	
+    Geometry();
 
-	void SetVertexPositions(GLuint positionsId_);
-	void SetVertexTexCoords(GLuint texCoordsId);
+	~Geometry() {
+        glDeleteBuffers(1, &positionsId);
+        glDeleteBuffers(1, &texCoordsId);
+    }
 
-    void SetVertexPositions(void* data, long size);
-	void SetVertexTexCoords(void* data, long size);
+	void SetVertexPositions(GLuint positionsId_) {
+        positionsId = positionsId_;
+    }
 
-    GLuint GetPositionsId() const;
-    GLuint GetTexCoordsId() const;
-    GLsizei GetCount() const;
+    void SetVertexTexCoords(GLuint texCoordsId) {
+        texCoordsId = texCoordsId_;
+    }
+
+    void SetVertexPositions(void* data, long size) {
+        glGenBuffers(1, &positionsId);
+        glBindBuffer(GL_ARRAY_BUFFER, positionsId);
+        glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+    }
+
+	void SetVertexTexCoords(void* data, long size) {
+        glGenBuffers(1, &texCoordsId);
+        glBindBuffer(GL_ARRAY_BUFFER, texCoordsId);
+        glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+    }
+
+    GLuint GetPositionsId() const {
+        return positionsId;
+    }
+
+    GLuint GetTexCoordsId() const {
+        return texCoordsId;
+    }
+
+    GLsizei GetCount() const {
+        return count;
+    }
 
 private:
 	GLuint positionsId;
@@ -33,6 +62,9 @@ private:
     GLsizei count;
 
 };
+
+typedef Geometry<2> Geometry2D;
+typedef Geometry<3> Geometry3D;
 
 template <class T>
 class BufferObjectBuilder {
