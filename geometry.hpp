@@ -17,8 +17,6 @@ public:
 	Geometry(GLsizei count_) :
         count(count_), positionsId(0), texCoordsId(0) {}
 	
-    Geometry();
-
 	~Geometry() {
         glDeleteBuffers(1, &positionsId);
         glDeleteBuffers(1, &texCoordsId);
