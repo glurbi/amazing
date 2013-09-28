@@ -48,4 +48,12 @@ private:
     MazeModel& model;
 };
 
+class MazeGeometryBuilder3D {
+public:
+    MazeGeometryBuilder3D(MazeModel& model_);
+    std::shared_ptr<Geometry> build();
+private:
+    MazeModel& model;
+};
+
 #endif

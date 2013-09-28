@@ -71,3 +71,20 @@ std::shared_ptr<Geometry> MazeGeometryBuilder2D ::build() {
     mazeGeom->SetVertexPositions(&v[0], v.size() * sizeof(float));
     return mazeGeom;
 }
+
+MazeGeometryBuilder3D ::MazeGeometryBuilder3D(MazeModel& model_) : model(model_) {}
+
+std::shared_ptr<Geometry> MazeGeometryBuilder3D::build() {
+    BufferObjectBuilder<float> builder;
+    for (auto& cell : model.getCells()) {
+        if (cell.wall) {
+            builder << cell.x-0.5f << cell.y-0.5f << 0.0f;
+            builder << cell.x+0.5f << cell.y-0.5f << 0.0f;
+            builder << cell.x+0.5f << cell.y+0.5f << 0.0f;
+            builder << cell.x-0.5f << cell.y+0.5f << 0.0f;
+        }
+    }
+    auto mazeGeom = std::make_shared<Geometry>(Geometry(builder.GetSize()/3));
+    mazeGeom->SetVertexPositions(builder.Build());
+    return mazeGeom;
+}

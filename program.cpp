@@ -85,18 +85,18 @@ void MonochromeProgram::Render(const Geometry& geometry, const Matrix44<float>& 
     glUniformMatrix4fv(matrixUniform, 1, false, mat.m);
     GLuint colorUniform = glGetUniformLocation(id, "color");
     glUniform4f(colorUniform, color.r(), color.g(), color.b(), color.a());
-    glEnableVertexAttribArray(POSITION_ATTRIBUTE_INDEX);
+    glEnableVertexAttribArray(VertexAttribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
-    glVertexAttribPointer(POSITION_ATTRIBUTE_INDEX, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(VertexAttribute::POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_QUADS, 0, geometry.GetCount());
-    glDisableVertexAttribArray(POSITION_ATTRIBUTE_INDEX);
+    glDisableVertexAttribArray(VertexAttribute::POSITION);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     glUseProgram(id);
 }
 
 std::shared_ptr<MonochromeProgram> MonochromeProgram::Create() {
     std::map<int, std::string> monochromeAttributeIndices;
-    monochromeAttributeIndices[POSITION_ATTRIBUTE_INDEX] = "vpos";
+    monochromeAttributeIndices[VertexAttribute::POSITION] = "vpos";
     return std::shared_ptr<MonochromeProgram>(new MonochromeProgram(monochromeAttributeIndices));
 }
 
@@ -111,22 +111,22 @@ void TextureProgram::Render(const Geometry& geometry, const Texture& texture, co
     glUniformMatrix4fv(matrixUniform, 1, false, mat.m);
     GLuint textureUniform = glGetUniformLocation(id, "texture");
     glUniform1i(textureUniform, 0); // we pass the texture unit
-    glEnableVertexAttribArray(POSITION_ATTRIBUTE_INDEX);
+    glEnableVertexAttribArray(VertexAttribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
-    glVertexAttribPointer(POSITION_ATTRIBUTE_INDEX, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(TEXCOORD_ATTRIBUTE_INDEX);
+    glVertexAttribPointer(VertexAttribute::POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(VertexAttribute::TEXCOORD);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.GetTexCoordsId());
-    glVertexAttribPointer(TEXCOORD_ATTRIBUTE_INDEX, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(VertexAttribute::TEXCOORD, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_QUADS, 0, 4);
-    glDisableVertexAttribArray(POSITION_ATTRIBUTE_INDEX);
-    glDisableVertexAttribArray(TEXCOORD_ATTRIBUTE_INDEX);
+    glDisableVertexAttribArray(VertexAttribute::POSITION);
+    glDisableVertexAttribArray(VertexAttribute::TEXCOORD);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 std::shared_ptr<TextureProgram> TextureProgram::Create() {
     std::map<int, std::string> textureAttributeIndices;
-    textureAttributeIndices[POSITION_ATTRIBUTE_INDEX] = "pos";
-    textureAttributeIndices[TEXCOORD_ATTRIBUTE_INDEX] = "texCoord";
+    textureAttributeIndices[VertexAttribute::POSITION] = "pos";
+    textureAttributeIndices[VertexAttribute::TEXCOORD] = "texCoord";
     return std::shared_ptr<TextureProgram>(new TextureProgram(textureAttributeIndices));
 }
 

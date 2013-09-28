@@ -15,7 +15,6 @@ int main()
 
     const int width = mazeWidth * 20;
     const int height = mazeHeight * 20;
-    const float aspectRatio = 1.0f * width / height;
 
 	sf::RenderWindow window(sf::VideoMode(width, height), "Amazing!");
 	glewInit();
@@ -24,7 +23,7 @@ int main()
     MazeModel model(mazeWidth, mazeHeight);
 	model.create();
 
-    MazeGeometryBuilder2D builder(model);
+    MazeGeometryBuilder3D builder(model);
     std::shared_ptr<Geometry> mazeGeom = builder.build();
 
 	Matrix44<float> mat = Ortho<float>(mazeWidth-0.5f, 0-0.5f, mazeHeight-0.5f, 0-0.5f, 1.0f, -1.0f);
