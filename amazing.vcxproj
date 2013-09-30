@@ -94,6 +94,8 @@
     <ClInclude Include="texture.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="flat.frag" />
+    <None Include="flat.vert" />
     <None Include="monochrome.frag" />
     <None Include="monochrome.vert" />
     <None Include="texture.frag" />

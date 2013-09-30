@@ -51,4 +51,12 @@ private:
     TextureProgram(std::map<int, std::string>& attributeIndices);
 };
 
+class FlatProgram : public Program {
+public:
+    void Render(const Geometry3D& geometry, const Matrix44<float>& mat, const Vector4<float> dir, const Color& color);
+    static std::shared_ptr<FlatProgram> Create();
+private:
+    FlatProgram(const std::map<int, std::string>& attributeIndices);
+};
+
 #endif

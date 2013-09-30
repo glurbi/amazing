@@ -15,19 +15,24 @@ class Geometry {
 
 public:
 	Geometry(GLsizei count_) :
-        count(count_), positionsId(0), texCoordsId(0) {}
+        count(count_), positionsId(0), texCoordsId(0), normalsId(0) {}
 	
 	~Geometry() {
         glDeleteBuffers(1, &positionsId);
         glDeleteBuffers(1, &texCoordsId);
+        glDeleteBuffers(1, &normalsId);
     }
 
 	void SetVertexPositions(GLuint positionsId_) {
         positionsId = positionsId_;
     }
 
-    void SetVertexTexCoords(GLuint texCoordsId) {
+    void SetVertexTexCoords(GLuint texCoordsId_) {
         texCoordsId = texCoordsId_;
+    }
+
+    void SetVertexNormals(GLuint normalsId_) {
+        normalsId = normalsId_;
     }
 
     void SetVertexPositions(void* data, long size) {
@@ -42,12 +47,22 @@ public:
         glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
     }
 
+    void SetVertexNormals(void* data, long size) {
+        glGenBuffers(1, &normalsId);
+        glBindBuffer(GL_ARRAY_BUFFER, normalsId);
+        glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+    }
+
     GLuint GetPositionsId() const {
         return positionsId;
     }
 
     GLuint GetTexCoordsId() const {
         return texCoordsId;
+    }
+
+    GLuint GetNormalsId() const {
+        return normalsId;
     }
 
     GLsizei GetCount() const {
@@ -57,6 +72,7 @@ public:
 private:
 	GLuint positionsId;
 	GLuint texCoordsId;
+	GLuint normalsId;
     GLsizei count;
 
 };
@@ -95,5 +111,7 @@ private:
     std::vector<T> data;
 
 };
+
+#define TIMES(N,FOO) for (int i = 0; i < N; i++) { FOO; }
 
 #endif

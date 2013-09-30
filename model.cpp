@@ -75,16 +75,32 @@ std::shared_ptr<Geometry2D> MazeGeometryBuilder2D::build() {
 MazeGeometryBuilder3D ::MazeGeometryBuilder3D(MazeModel& model_) : model(model_) {}
 
 std::shared_ptr<Geometry3D> MazeGeometryBuilder3D::build() {
-    BufferObjectBuilder<float> builder;
+    BufferObjectBuilder<float> posb;
+    BufferObjectBuilder<float> norb;
     for (auto& cell : model.getCells()) {
         if (cell.wall) {
-            builder << cell.x-0.5f << cell.y-0.5f << 0.0f;
-            builder << cell.x+0.5f << cell.y-0.5f << 0.0f;
-            builder << cell.x+0.5f << cell.y+0.5f << 0.0f;
-            builder << cell.x-0.5f << cell.y+0.5f << 0.0f;
+            // top
+            posb << cell.x-0.5f << cell.y-0.5f << 1.0f;
+            posb << cell.x+0.5f << cell.y-0.5f << 1.0f;
+            posb << cell.x+0.5f << cell.y+0.5f << 1.0f;
+            posb << cell.x-0.5f << cell.y+0.5f << 1.0f;
+            TIMES(4, norb << 0.0f << 0.0f << 1.0f);
+            // right
+            posb << cell.x+0.5f << cell.y-0.5f << 1.0f;
+            posb << cell.x+0.5f << cell.y-0.5f << 0.0f;
+            posb << cell.x+0.5f << cell.y+0.5f << 0.0f;
+            posb << cell.x+0.5f << cell.y+0.5f << 1.0f;
+            TIMES(4, norb << 1.0f << 0.0f << 0.0f);
+            // front
+            posb << cell.x-0.5f << cell.y-0.5f << 1.0f;
+            posb << cell.x+0.5f << cell.y-0.5f << 1.0f;
+            posb << cell.x+0.5f << cell.y-0.5f << 0.0f;
+            posb << cell.x-0.5f << cell.y-0.5f << 0.0f;
+            TIMES(4, norb << 0.0f << -1.0f << 0.0f);
         }
     }
-    auto mazeGeom = std::make_shared<Geometry3D>(Geometry3D(builder.GetSize()/3));
-    mazeGeom->SetVertexPositions(builder.Build());
+    auto mazeGeom = std::make_shared<Geometry3D>(Geometry3D(posb.GetSize()/3));
+    mazeGeom->SetVertexPositions(posb.Build());
+    mazeGeom->SetVertexNormals(norb.Build());
     return mazeGeom;
 }

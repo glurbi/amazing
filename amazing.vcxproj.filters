@@ -67,5 +67,11 @@
     <None Include="texture.vert">
       <Filter>shaders</Filter>
     </None>
+    <None Include="flat.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="flat.frag">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
