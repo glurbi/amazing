@@ -51,12 +51,12 @@ private:
     TextureProgram(std::map<int, std::string>& attributeIndices);
 };
 
-class FlatProgram : public Program {
+class FlatShadingProgram : public Program {
 public:
-    void Render(const Geometry3D& geometry, const Matrix44<float>& mat, const Vector4<float> dir, const Color& color);
-    static std::shared_ptr<FlatProgram> Create();
+    void Render(const Geometry3D& geometry, const Matrix44<float>& mvp, const Matrix44<float>& mv, const Vector3<float> dir, const Color& color);
+    static std::shared_ptr<FlatShadingProgram> Create();
 private:
-    FlatProgram(const std::map<int, std::string>& attributeIndices);
+    FlatShadingProgram(const std::map<int, std::string>& attributeIndices);
 };
 
 #endif

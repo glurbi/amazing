@@ -7,7 +7,8 @@
 
 enum VertexAttribute {
     POSITION,
-    TEXCOORD
+    TEXCOORD,
+    NORMAL
 };
 
 template<int posVecSize>

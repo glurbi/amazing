@@ -133,3 +133,39 @@ std::shared_ptr<TextureProgram> TextureProgram::Create() {
 TextureProgram::TextureProgram(std::map<int, std::string>& attributeIndices) :
     Program(readTextFile("texture.vert"), readTextFile("texture.frag"), attributeIndices) {}
 
+void FlatShadingProgram::Render(const Geometry3D& geometry, const Matrix44<float>& mvp, const Matrix44<float>& mv, const Vector3<float> dir, const Color& color) {
+    glUseProgram(id);
+
+    GLuint mvpUniform = glGetUniformLocation(id, "mvpMatrix");
+    glUniformMatrix4fv(mvpUniform, 1, false, mvp.m);
+
+    GLuint mvUniform = glGetUniformLocation(id, "mvMatrix");
+    glUniformMatrix4fv(mvUniform, 1, false, mv.m);
+
+    GLuint lightDirUniform = glGetUniformLocation(id, "lightDir");
+    glUniform3f(lightDirUniform, dir.v[0], dir.v[1], dir.v[2]);
+
+    GLuint colorUniform = glGetUniformLocation(id, "color");
+    glUniform3f(colorUniform, color.r(), color.g(), color.b());
+
+    glEnableVertexAttribArray(VertexAttribute::POSITION);
+    glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
+    glVertexAttribPointer(VertexAttribute::POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(VertexAttribute::NORMAL);
+    glBindBuffer(GL_ARRAY_BUFFER, geometry.GetNormalsId());
+    glVertexAttribPointer(VertexAttribute::NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glDrawArrays(GL_QUADS, 0, geometry.GetCount());
+    glDisableVertexAttribArray(VertexAttribute::POSITION);
+    glDisableVertexAttribArray(VertexAttribute::NORMAL);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+std::shared_ptr<FlatShadingProgram> FlatShadingProgram::Create() {
+    std::map<int, std::string> attributeIndices;
+    attributeIndices[VertexAttribute::POSITION] = "vPosition";
+    attributeIndices[VertexAttribute::NORMAL] = "vNormal";
+    return std::shared_ptr<FlatShadingProgram>(new FlatShadingProgram(attributeIndices));
+}
+
+FlatShadingProgram::FlatShadingProgram(const std::map<int, std::string>& attributeIndices) :
+    Program(readTextFile("flatShading.vert"), readTextFile("flatShading.frag"), attributeIndices) {}

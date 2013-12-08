@@ -2,13 +2,20 @@
 #define _matrix_hpp_
 
 template <class T>
+struct Vector3 {
+    Vector3(T x, T y, T z) { v[0] = x; v[1] = y; v[2] = z; }
+    T v[3];
+};
+
+template <class T>
 struct Vector4 {
-   T v[4];
+    Vector4(T x, T y, T z, T w) { v[0] = x; v[1] = y; v[2] = z; v[3] = w; }
+    Vector4(const Vector3<T> vec3, T w) { v[0] = vec3.v[0]; v[1] = vec3.v[1]; v[2] = vec3.v[3]; v[3] = w; }
+    T v[4];
 };
 
 struct Color : Vector4<float> {
-    Color(float r, float g, float b, float a = 1.0f)
-        { v[0] = r; v[1] = g; v[2] = b; v[3] = a; }
+    Color(float r, float g, float b, float a = 1.0f) : Vector4(r, g, b, a) {};
     inline float r() const { return v[0]; }
     inline float g() const { return v[1]; }
     inline float b() const { return v[2]; }
@@ -63,6 +70,11 @@ Matrix44<T> Translation(T x, T y, T z) {
     mat.m[14] = z;
     mat.m[15] = 1.0f;
     return mat;
+}
+
+template<class T>
+T toRadians(T a) {
+    return a * 3.141592653589793 / 180.0;
 }
 
 template <class T>
