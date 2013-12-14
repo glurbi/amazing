@@ -10,11 +10,11 @@
 
 int main()
 {
-    const int mazeWidth = 25;
-    const int mazeHeight = 25;
+    const int mazeWidth = 35;
+    const int mazeHeight = 35;
 
-    const int width = mazeWidth * 30;
-    const int height = mazeHeight * 30;
+    const int width = mazeWidth * 20;
+    const int height = mazeHeight * 20;
 
 	sf::RenderWindow window(sf::VideoMode(width, height), "Amazing!");
 	glewInit();
@@ -29,13 +29,13 @@ int main()
     MazeGeometryBuilder3D builder3d(model);
     std::shared_ptr<Geometry3D> mazeGeom3d = builder3d.build();
 
-    float mf = 0.6f; // margin factor, i.e. how much blank space around the maze
+    float mf = 0.7f; // margin factor, i.e. how much blank space around the maze
     Matrix44<float> mat = Ortho<float>(mazeWidth * mf, -mazeWidth * mf, mazeHeight * mf, -mazeHeight * mf,
         (mazeWidth + mazeHeight), -(mazeWidth + mazeHeight));
 
-    Matrix44<float> tr = Translation<float>(-mazeWidth/2.0f, -mazeHeight/2.0f, 0.0f);
+    Matrix44<float> tr = Translation<float>(-mazeWidth/2.0f+0.5f, -mazeHeight/2.0f+0.5f, 0.0f);
     Matrix44<float> rot1 = Rotation<float>(-20, 0.0f, 1.0f, 0.0f);
-    Matrix44<float> rot2 = Rotation<float>(-10.0f, 1.0f, 0.0f, 0.0f);
+    Matrix44<float> rot2 = Rotation<float>(-20.0f, 1.0f, 0.0f, 0.0f);
     Matrix44<float> rot = Multm(rot1, rot2);
     Matrix44<float> mv = Multm(tr, rot);
     Matrix44<float> mvp = Multm(mat, mv);
