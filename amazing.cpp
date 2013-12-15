@@ -39,7 +39,8 @@ int main()
     Matrix44<float> rot2 = Rotation<float>(-12.0f, 1.0f, 0.0f, 0.0f);
     Matrix44<float> rot = Multm(rot1, rot2);
     Matrix44<float> mv = Multm(tr, rot);
-    Matrix44<float> mvp = Multm(mat, mv);
+    //Matrix44<float> mvp = Multm(mat, mv);
+    Matrix44<float> mvp = Multm(mat, tr, rot1, rot2);
     Vector3<float> dir = Vector3<float>(-0.5f, -0.5f, -1.0f);
     Color color = Color(0.0f, 1.0f, 0.0f);
     
@@ -51,13 +52,17 @@ int main()
     {
         CheckForOpenGLErrors();
 		sf::Event event;
-        while (window.pollEvent(event))
-        {
+        while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 running = false;
             }
             if (event.type == sf::Event::Resized) {
                 glViewport(0, 0, event.size.width, event.size.height);
+            }
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Escape) {
+                    running = false;
+                }
             }
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

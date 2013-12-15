@@ -116,4 +116,9 @@ Matrix44<T> Multm(Matrix44<T>& m1, Matrix44<T>& m2) {
     return m;
 }
 
+template <class T, class... N>
+Matrix44<T> Multm(Matrix44<T>& m1, Matrix44<T>& m2, N... n) {
+    return Multm(m1, Multm(m2, n...));
+};
+
 #endif
