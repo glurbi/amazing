@@ -74,7 +74,7 @@ Matrix44<T> Translation(T x, T y, T z) {
 
 template<class T>
 T toRadians(T a) {
-    return a * 3.141592653589793 / 180.0;
+    return a * (T)3.141592653589793 / (T)180.0;
 }
 
 template <class T>
