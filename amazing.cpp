@@ -10,6 +10,8 @@
 
 int main()
 {
+    srand(time(0));
+
     const int mazeWidth = 35;
     const int mazeHeight = 35;
 
@@ -35,11 +37,9 @@ int main()
         (mazeWidth + mazeHeight), -(mazeWidth + mazeHeight));
 
     Matrix44<float> tr = Translation<float>(-mazeWidth/2.0f+0.5f, -mazeHeight/2.0f+0.5f, 0.0f);
-    Matrix44<float> rot1 = Rotation<float>(-12.0, 0.0f, 1.0f, 0.0f);
-    Matrix44<float> rot2 = Rotation<float>(-12.0f, 1.0f, 0.0f, 0.0f);
-    Matrix44<float> rot = Multm(rot1, rot2);
-    Matrix44<float> mv = Multm(tr, rot);
-    //Matrix44<float> mvp = Multm(mat, mv);
+    Matrix44<float> rot1 = Rotation<float>(-20.0, 0.0f, 1.0f, 0.0f);
+    Matrix44<float> rot2 = Rotation<float>(-20.0f, 1.0f, 0.0f, 0.0f);
+    Matrix44<float> mv = Multm(tr, tr, rot1, rot2);
     Matrix44<float> mvp = Multm(mat, tr, rot1, rot2);
     Vector3<float> dir = Vector3<float>(-0.5f, -0.5f, -1.0f);
     Color color = Color(0.0f, 1.0f, 0.0f);

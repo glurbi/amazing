@@ -113,6 +113,4 @@ private:
 
 };
 
-#define TIMES(N,FOO) for (int i = 0; i < N; i++) { FOO; }
-
 #endif

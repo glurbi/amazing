@@ -84,19 +84,19 @@ std::shared_ptr<Geometry3D> MazeGeometryBuilder3D::build() {
             posb << cell.x+0.5f << cell.y-0.5f << 1.0f;
             posb << cell.x+0.5f << cell.y+0.5f << 1.0f;
             posb << cell.x-0.5f << cell.y+0.5f << 1.0f;
-            TIMES(4, norb << 0.0f << 0.0f << 1.0f);
+            for (int i = 0; i < 4; i++) norb << 0.0f << 0.0f << 1.0f;
             // right
             posb << cell.x+0.5f << cell.y-0.5f << 1.0f;
             posb << cell.x+0.5f << cell.y-0.5f << 0.0f;
             posb << cell.x+0.5f << cell.y+0.5f << 0.0f;
             posb << cell.x+0.5f << cell.y+0.5f << 1.0f;
-            TIMES(4, norb << 1.0f << 0.0f << 0.0f);
+            for (int i = 0; i < 4; i++) norb << 1.0f << 0.0f << 0.0f;
             // front
             posb << cell.x-0.5f << cell.y-0.5f << 1.0f;
             posb << cell.x+0.5f << cell.y-0.5f << 1.0f;
             posb << cell.x+0.5f << cell.y-0.5f << 0.0f;
             posb << cell.x-0.5f << cell.y-0.5f << 0.0f;
-            TIMES(4, norb << 0.0f << 1.0f << 0.0f);
+            for (int i = 0; i < 4; i++) norb << 0.0f << 1.0f << 0.0f;
         }
     }
     auto mazeGeom = std::make_shared<Geometry3D>(Geometry3D(posb.GetSize()/3));
