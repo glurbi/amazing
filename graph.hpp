@@ -7,18 +7,17 @@
 
 #include "matrix.hpp"
 
-template<class T>
 struct RenderingContext {
-    std::vector<Matrix44<T>> mvpStack;
-    std::vector<Matrix44<T>> mvStack;
+    std::vector<Matrix44> mvpStack;
+    std::vector<Matrix44> mvStack;
     RenderingContext() {
-        mvpStack.push_back(Identity<T>());
-        mvStack.push_back(Identity<T>());
+        mvpStack.push_back(Identity());
+        mvStack.push_back(Identity());
     }
-    void projection(const Matrix44<T>& mat) {
+    void projection(const Matrix44& mat) {
         mvpStack.push_back(mat);
     }
-    void push(Matrix44<T>& mat) {
+    void push(Matrix44& mat) {
         mvpStack.push_back(Multm(mvpStack.back(), mat));
         mvStack.push_back(Multm(mvStack.back(), mat));
     }
@@ -26,125 +25,113 @@ struct RenderingContext {
         mvpStack.pop_back();
         mvStack.pop_back();
     }
-    Matrix44<T> mvp() {
+    Matrix44 mvp() {
         return mvpStack.back();
     }
-    Matrix44<T> mv() {
+    Matrix44 mv() {
         return mvStack.back();
     }
 };
 
-template<class T>
 class Node {
 public:
-    void preRender(RenderingContext<T>& ctx) {}
-    void Render(RenderingContext<T>& ctx) {}
-    void postRender(RenderingContext<T>& ctx) {}
+    void preRender(RenderingContext& ctx) {}
+    void Render(RenderingContext& ctx) {}
+    void postRender(RenderingContext& ctx) {}
 };
 
-enum class NodeType {
-    Group,
-    Geometry
-};
-
-template<class T>
 struct ClippingVolume {
-    T left;
-    T right;
-    T bottom;
-    T top;
-    T nearp;
-    T farp;
+    float left;
+    float right;
+    float bottom;
+    float top;
+    float nearp;
+    float farp;
 };
 
 // cf http://www.codecolony.de/opengl.htm#camera2
-template<class T>
 class Camera {
 public:
-    Camera(const ClippingVolume<T>& clippingVolume) : clippingVolume(clippingVolume), positionV(Vector3<T>(0, 0, 0)),
-        directionV(Vector3<T>(0, 0, -1)), rightV(Vector3<T>(1, 0, 0)), upV(Vector3<T>(0, 1, 0)) {}
+    Camera(const ClippingVolume& clippingVolume) : clippingVolume(clippingVolume), positionV(Vector3(0, 0, 0)),
+        directionV(Vector3(0, 0, -1)), rightV(Vector3(1, 0, 0)), upV(Vector3(0, 1, 0)) {}
     void reset() {
-        positionV = Vector3<T>(0, 0, 0);
-        directionV = Vector3<T>(0, 0, -1);
-        rightV = Vector3<T>(1, 0, 0);
-        upV = Vector3<T>(0, 1, 0);
+        positionV = Vector3(0, 0, 0);
+        directionV = Vector3(0, 0, -1);
+        rightV = Vector3(1, 0, 0);
+        upV = Vector3(0, 1, 0);
     }
-    void rotateX(T deg) {
+    void rotateX(float deg) {
         directionV = normalize(directionV * cos(toRadians(deg)) + upV * sin(toRadians(deg)));
         upV = crossProduct(directionV, rightV) * -1;
     }
-    void rotateY(T deg) {
+    void rotateY(float deg) {
         directionV = normalize(directionV * cos(toRadians(deg)) - rightV * sin(toRadians(deg)));
         rightV = crossProduct(directionV, upV);
     }
-    void rotateZ(T deg) {
+    void rotateZ(float deg) {
         rightV = normalize(rightV * cos(toRadians(deg)) + upV * sin(toRadians(deg)));
         upV = crossProduct(directionV, rightV) * -1;
     }
-    void moveRight(T dist) {
+    void moveRight(float dist) {
         positionV = positionV + (rightV * dist);
     }
-    void moveLeft(T dist) {
+    void moveLeft(float dist) {
         positionV = positionV - (rightV * dist);
     }
-    void moveUp(T dist) {
+    void moveUp(float dist) {
         positionV = positionV + (upV * dist);
     }
-    void moveDown(T Float) {
+    void moveDown(float dist) {
         positionV = positionV - (upV * dist);
     }
-    void moveForward(T dist) {
+    void moveForward(float dist) {
         positionV = positionV + (directionV * dist);
     }
-    void moveBackward(T dist) {
+    void moveBackward(float dist) {
         positionV = positionV - (directionV * dist);
     }
-    void positionAndOrient() {
-        centerV = positionV + directionV;
-        context.matrixStack.pushModelView(
-            Matrix44.lookAt(positionV.x, positionV.y, positionV.z, centerV.x, centerV.y, centerV.z, upV.x, upV.y, upV.z));
+    Matrix44 positionAndOrient() {
+        Vector3 centerV = positionV + directionV;
+        return LookAt(positionV.x(), positionV.y(), positionV.z(), centerV.x(), centerV.y(), centerV.z(), upV.x(), upV.y(), upV.z());
     }
 protected:
-    ClippingVolume<T> clippingVolume;
+    ClippingVolume clippingVolume;
 private:
-    Vector3<T> positionV;
-    Vector3<T> directionV;
-    Vector3<T> rightV;
-    Vector3<T> upV;
+    Vector3 positionV;
+    Vector3 directionV;
+    Vector3 rightV;
+    Vector3 upV;
 };
 
-template<class T>
-class PerspectiveCamera : public Camera<T> {
+class PerspectiveCamera : public Camera {
 public:
-    PerspectiveCamera(const ClippingVolume<T>& clippingVolume) : Camera(clippingVolume) {}
-    void  preRender(RenderingContext<T> ctx) {
+    PerspectiveCamera(const ClippingVolume& clippingVolume) : Camera(clippingVolume) {}
+    void  preRender(RenderingContext ctx) {
     }
-    void render(RenderingContext<T> ctx) {
+    void render(RenderingContext ctx) {
     }
-    void  postRender(RenderingContext<T> ctx) {
+    void  postRender(RenderingContext ctx) {
     }
 };
 
-template<class T>
-class ParallelCamera : public Camera<T> {
+class ParallelCamera : public Camera {
 public:
-    ParallelCamera(const ClippingVolume<T>& clippingVolume) : Camera(clippingVolume) {}
-    void  preRender(RenderingContext<T> ctx) {
+    ParallelCamera(const ClippingVolume& clippingVolume) : Camera(clippingVolume) {}
+    void  preRender(RenderingContext& ctx) {
         auto& cv = clippingVolume;
-        mvpStack.push(Ortho<T>(cv.right, cv.left, cv.top, cv.bottom, cv.nearp, cv.farp));
+        ctx.push(Ortho(cv.right, cv.left, cv.top, cv.bottom, cv.nearp, cv.farp));
     }
-    void  postRender(RenderingContext<T> ctx) {
-        mvpStack.pop();
+    void  postRender(RenderingContext& ctx) {
+        ctx.pop();
     }
 };
 
-template<class T>
-class Group : public Node<T> {
+class Group : public Node {
 public:
-    Group() : transformation(Identity<T>()) {}
-    void Transformation(const Matrix44<T>& tr) { transformation = tr; };
-    void Add(std::shared_ptr<Node<T>> node) { children.push_back(node); }
-    virtual void Render(RenderingContext<T>& ctx) {
+    Group() : transformation(Identity()) {}
+    void Transformation(const Matrix44& tr) { transformation = tr; };
+    void Add(std::shared_ptr<Node> node) { children.push_back(node); }
+    virtual void Render(RenderingContext& ctx) {
         ctx.push(transformation);
         for (auto child : children) {
             child->Render(ctx);
@@ -152,8 +139,8 @@ public:
         ctx.pop();
     }
 protected:
-    std::vector<std::shared_ptr<Node<T>>> children;
-    Matrix44<T> transformation;
+    std::vector<std::shared_ptr<Node>> children;
+    Matrix44 transformation;
 };
 
 #endif

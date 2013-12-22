@@ -35,32 +35,32 @@ int main()
 
     float mf = 0.7f; // margin factor, i.e. how much blank space around the maze
 
-    ClippingVolume<float> cv;
+    ClippingVolume cv;
     cv.right = mazeWidth * mf;
     cv.left = -mazeWidth * mf;
     cv.bottom = -mazeHeight * mf;
     cv.top = mazeHeight * mf;
     cv.nearp = mazeWidth + mazeHeight;
     cv.farp = -(mazeWidth + mazeHeight);
-    ParallelCamera<float> camera(cv);
+    ParallelCamera camera(cv);
 
-    auto root = std::make_shared<Group<float>>(Group<float>());
-    auto rot1 = std::make_shared<Group<float>>(Group<float>());
-    rot1->Transformation(Rotation<float>(-20.0, 0.0f, 1.0f, 0.0f));
-    auto rot2 = std::make_shared<Group<float>>(Group<float>());
-    rot2->Transformation(Rotation<float>(-20.0f, 1.0f, 0.0f, 0.0f));
+    auto root = std::make_shared<Group>(Group());
+    auto rot1 = std::make_shared<Group>(Group());
+    rot1->Transformation(Rotation(-20.0, 0.0f, 1.0f, 0.0f));
+    auto rot2 = std::make_shared<Group>(Group());
+    rot2->Transformation(Rotation(-20.0f, 1.0f, 0.0f, 0.0f));
     rot2->Add(mazeGeom3d);
     rot1->Add(rot2);
     root->Add(rot1);
 
-    RenderingContext<float> ctx;
-    ctx.projection(Ortho<float>(mazeWidth * mf, -mazeWidth * mf, mazeHeight * mf, -mazeHeight * mf,
+    RenderingContext ctx;
+    ctx.projection(Ortho(mazeWidth * mf, -mazeWidth * mf, mazeHeight * mf, -mazeHeight * mf,
         (mazeWidth + mazeHeight), -(mazeWidth + mazeHeight)));
-    ctx.push(Translation<float>(-mazeWidth / 2.0f + 0.5f, -mazeHeight / 2.0f + 0.5f, 0.0f));
-    ctx.push(Rotation<float>(-20.0, 0.0f, 1.0f, 0.0f));
-    ctx.push(Rotation<float>(-20.0f, 1.0f, 0.0f, 0.0f));
+    ctx.push(Translation(-mazeWidth / 2.0f + 0.5f, -mazeHeight / 2.0f + 0.5f, 0.0f));
+    ctx.push(Rotation(-20.0, 0.0f, 1.0f, 0.0f));
+    ctx.push(Rotation(-20.0f, 1.0f, 0.0f, 0.0f));
 
-    Vector3<float> dir = Vector3<float>(-0.5f, -0.5f, -1.0f);
+    Vector3 dir = Vector3(-0.5f, -0.5f, -1.0f);
     Color color = Color(0.0f, 1.0f, 0.0f);
     
     std::shared_ptr<MonochromeProgram> monochromeProgram = MonochromeProgram::Create();

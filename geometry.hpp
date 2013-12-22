@@ -14,7 +14,7 @@ enum VertexAttribute {
 };
 
 template<class T>
-class Geometry : public Node<T> {
+class Geometry : public Node {
 
 public:
 	Geometry(GLsizei count_) :

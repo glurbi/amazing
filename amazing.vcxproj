@@ -84,6 +84,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="amazing.cpp" />
+    <ClCompile Include="matrix.cpp" />
     <ClCompile Include="misc.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="program.cpp" />
