@@ -11,22 +11,23 @@ template<class T>
 struct RenderingContext {
     std::vector<Matrix44<T>> mvpStack;
     std::vector<Matrix44<T>> mvStack;
+    RenderingContext() {
+        mvpStack.push_back(Identity<T>());
+        mvStack.push_back(Identity<T>());
+    }
+    void projection(const Matrix44<T>& mat) {
+        mvpStack.push_back(mat);
+    }
+    void push(Matrix44<T>& mat) {
+        mvpStack.push_back(Multm(mvpStack.back(), mat));
+        mvStack.push_back(Multm(mvStack.back(), mat));
+    }
     Matrix44<T> mvp() {
-        // TODO: use for_each
-        Matrix44<T> res = Identity<T>();
-        for (auto m : mvpStack) {
-            res = Multm(res, m);
-        }
-        return res;
+        return mvpStack.back();
     }
     Matrix44<T> mv() {
-        Matrix44<T> res = Identity<T>();
-        for (auto m : mvStack) {
-            res = Multm(res, m);
-        }
-        return res;
+        return mvStack.back();
     }
-
 };
 
 template<class T>

@@ -34,8 +34,7 @@ int main()
     std::shared_ptr<Geometry3D> mazeGeom3d = builder3d.build();
 
     float mf = 0.7f; // margin factor, i.e. how much blank space around the maze
-    Matrix44<float> mat = Ortho<float>(mazeWidth * mf, -mazeWidth * mf, mazeHeight * mf, -mazeHeight * mf,
-        (mazeWidth + mazeHeight), -(mazeWidth + mazeHeight));
+
     ClippingVolume<float> cv;
     cv.right = mazeWidth * mf;
     cv.left = -mazeWidth * mf;
@@ -44,19 +43,13 @@ int main()
     cv.nearp = mazeWidth + mazeHeight;
     cv.farp = -(mazeWidth + mazeHeight);
     ParallelCamera<float> camera(cv);
-    RenderingContext<float> ctx;
 
-    Matrix44<float> tr = Translation<float>(-mazeWidth/2.0f+0.5f, -mazeHeight/2.0f+0.5f, 0.0f);
-    Matrix44<float> rot1 = Rotation<float>(-20.0, 0.0f, 1.0f, 0.0f);
-    Matrix44<float> rot2 = Rotation<float>(-20.0f, 1.0f, 0.0f, 0.0f);
-    //Matrix44<float> mv = Multm(tr, rot1, rot2);
-    //Matrix44<float> mvp = Multm(mat, tr, rot1, rot2);
-    ctx.mvpStack.push_back(mat);
-    ctx.mvpStack.push_back(tr);
-    ctx.mvpStack.push_back(rot1);
-    ctx.mvpStack.push_back(rot2);
-    Matrix44<float> mvp = ctx.mvp();
-    Matrix44<float> mv = Multm(tr, rot1, rot2);
+    RenderingContext<float> ctx;
+    ctx.projection(Ortho<float>(mazeWidth * mf, -mazeWidth * mf, mazeHeight * mf, -mazeHeight * mf,
+        (mazeWidth + mazeHeight), -(mazeWidth + mazeHeight)));
+    ctx.push(Translation<float>(-mazeWidth / 2.0f + 0.5f, -mazeHeight / 2.0f + 0.5f, 0.0f));
+    ctx.push(Rotation<float>(-20.0, 0.0f, 1.0f, 0.0f));
+    ctx.push(Rotation<float>(-20.0f, 1.0f, 0.0f, 0.0f));
 
     Vector3<float> dir = Vector3<float>(-0.5f, -0.5f, -1.0f);
     Color color = Color(0.0f, 1.0f, 0.0f);
@@ -84,7 +77,7 @@ int main()
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
-        flatShadingProgram->Render(*mazeGeom3d, mvp, mv, dir, color);
+        flatShadingProgram->Render(*mazeGeom3d, ctx.mvp(), ctx.mv(), dir, color);
 		window.display();
     }
 
