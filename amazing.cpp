@@ -13,8 +13,8 @@ int main()
 {
     srand(time(0));
 
-    const int mazeWidth = 35;
-    const int mazeHeight = 35;
+    const int mazeWidth = 51;
+    const int mazeHeight = 51;
 
     const int width = mazeWidth * 20;
     const int height = mazeHeight * 20;
@@ -60,8 +60,8 @@ int main()
     ctx.push(Rotation(-20.0, 0.0f, 1.0f, 0.0f));
     ctx.push(Rotation(-20.0f, 1.0f, 0.0f, 0.0f));
 
-    Vector3 dir = Vector3(-0.5f, -0.5f, -1.0f);
-    Color color = Color(0.0f, 1.0f, 0.0f);
+    ctx.dir = Vector3(-0.5f, -0.5f, -1.0f);
+    ctx.color = Color(0.0f, 1.0f, 0.0f);
     
     std::shared_ptr<MonochromeProgram> monochromeProgram = MonochromeProgram::Create();
     std::shared_ptr<FlatShadingProgram> flatShadingProgram = FlatShadingProgram::Create();
@@ -86,7 +86,7 @@ int main()
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
-        flatShadingProgram->Render(*mazeGeom3d, ctx.mvp(), ctx.mv(), dir, color);
+        flatShadingProgram->Render(*mazeGeom3d, ctx);
 		window.display();
     }
 

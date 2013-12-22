@@ -2,6 +2,7 @@
 
 #include "matrix.hpp"
 
+Vector3::Vector3() { v[0] = 0; v[1] = 0; v[2] = 0; }
 Vector3::Vector3(float x, float y, float z) { v[0] = x; v[1] = y; v[2] = z; }
 float Vector3::x() const { return v[0]; }
 float Vector3::y() const { return v[1]; }
@@ -22,6 +23,7 @@ Vector3 operator*(const Vector3& v, float t) {
 Vector4::Vector4(float x, float y, float z, float w) { v[0] = x; v[1] = y; v[2] = z; v[3] = w; }
 Vector4::Vector4(const Vector3 vec3, float w) { v[0] = vec3.v[0]; v[1] = vec3.v[1]; v[2] = vec3.v[3]; v[3] = w; }
 
+Color::Color() : Vector4(1, 1, 1, 1) {};
 Color::Color(float r, float g, float b, float a) : Vector4(r, g, b, a) {};
 float Color::r() const { return v[0]; }
 float Color::g() const { return v[1]; }

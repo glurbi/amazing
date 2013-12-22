@@ -2,6 +2,7 @@
 #define _matrix_hpp_
 
 struct Vector3 {
+    Vector3();
     Vector3(float x, float y, float z);
     float v[3];
     float x() const;
@@ -22,6 +23,7 @@ struct Vector4 {
 };
 
 struct Color : Vector4 {
+    Color();
     Color(float r, float g, float b, float a = 1.0f);
     float r() const;
     float g() const;

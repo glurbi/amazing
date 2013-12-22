@@ -6,10 +6,14 @@
 #include <memory>
 
 #include "matrix.hpp"
+#include "texture.hpp"
 
 struct RenderingContext {
     std::vector<Matrix44> mvpStack;
     std::vector<Matrix44> mvStack;
+    Vector3 dir;
+    Color color;
+    Texture* texture;
     RenderingContext();
     void projection(const Matrix44& mat);
     void push(Matrix44& mat);
