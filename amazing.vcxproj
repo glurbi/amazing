@@ -91,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="geometry.hpp" />
+    <ClInclude Include="graph.hpp" />
     <ClInclude Include="matrix.hpp" />
     <ClInclude Include="misc.hpp" />
     <ClInclude Include="model.hpp" />
