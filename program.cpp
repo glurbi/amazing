@@ -79,7 +79,7 @@ Program::~Program() {
     glDeleteProgram(id);
 }
 
-void MonochromeProgram::Render(const Geometry2D& geometry, const Matrix44<float>& mat, const Color& color) {
+void MonochromeProgram::Render(const Geometry<float>& geometry, const Matrix44<float>& mat, const Color& color) {
     glUseProgram(id);
     GLuint matrixUniform = glGetUniformLocation(id, "mvpMatrix");
     glUniformMatrix4fv(matrixUniform, 1, false, mat.m);
@@ -103,7 +103,7 @@ std::shared_ptr<MonochromeProgram> MonochromeProgram::Create() {
 MonochromeProgram::MonochromeProgram(const std::map<int, std::string>& attributeIndices) :
     Program(readTextFile("monochrome.vert"), readTextFile("monochrome.frag"), attributeIndices) {}
 
-void TextureProgram::Render(const Geometry3D& geometry, const Texture& texture, const Matrix44<float>& mat) {
+void TextureProgram::Render(const Geometry<float>& geometry, const Texture& texture, const Matrix44<float>& mat) {
     glUseProgram(id);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture.getId());
@@ -133,7 +133,7 @@ std::shared_ptr<TextureProgram> TextureProgram::Create() {
 TextureProgram::TextureProgram(std::map<int, std::string>& attributeIndices) :
     Program(readTextFile("texture.vert"), readTextFile("texture.frag"), attributeIndices) {}
 
-void FlatShadingProgram::Render(const Geometry3D& geometry, const Matrix44<float>& mvp, const Matrix44<float>& mv, const Vector3<float> dir, const Color& color) {
+void FlatShadingProgram::Render(const Geometry<float>& geometry, const Matrix44<float>& mvp, const Matrix44<float>& mv, const Vector3<float> dir, const Color& color) {
     glUseProgram(id);
 
     GLuint mvpUniform = glGetUniformLocation(id, "mvpMatrix");

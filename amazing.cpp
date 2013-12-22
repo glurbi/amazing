@@ -31,7 +31,7 @@ int main()
 	model.create();
 
     MazeGeometryBuilder3D builder3d(model);
-    std::shared_ptr<Geometry3D> mazeGeom3d = builder3d.build();
+    std::shared_ptr<Geometry<float>> mazeGeom3d = builder3d.build();
 
     float mf = 0.7f; // margin factor, i.e. how much blank space around the maze
 
@@ -43,6 +43,15 @@ int main()
     cv.nearp = mazeWidth + mazeHeight;
     cv.farp = -(mazeWidth + mazeHeight);
     ParallelCamera<float> camera(cv);
+
+    auto root = std::make_shared<Group<float>>(Group<float>());
+    auto rot1 = std::make_shared<Group<float>>(Group<float>());
+    rot1->Transformation(Rotation<float>(-20.0, 0.0f, 1.0f, 0.0f));
+    auto rot2 = std::make_shared<Group<float>>(Group<float>());
+    rot2->Transformation(Rotation<float>(-20.0f, 1.0f, 0.0f, 0.0f));
+    rot2->Add(mazeGeom3d);
+    rot1->Add(rot2);
+    root->Add(rot1);
 
     RenderingContext<float> ctx;
     ctx.projection(Ortho<float>(mazeWidth * mf, -mazeWidth * mf, mazeHeight * mf, -mazeHeight * mf,

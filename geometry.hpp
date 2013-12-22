@@ -5,14 +5,16 @@
 #include <memory>
 #include <GL/glew.h>
 
+#include "graph.hpp"
+
 enum VertexAttribute {
     POSITION,
     TEXCOORD,
     NORMAL
 };
 
-template<int posVecSize>
-class Geometry {
+template<class T>
+class Geometry : public Node<T> {
 
 public:
 	Geometry(GLsizei count_) :
@@ -77,9 +79,6 @@ private:
     GLsizei count;
 
 };
-
-typedef Geometry<2> Geometry2D;
-typedef Geometry<3> Geometry3D;
 
 template <class T>
 class BufferObjectBuilder {

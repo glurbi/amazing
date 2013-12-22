@@ -57,7 +57,7 @@ void MazeModel::visit(Cell& c, std::set<Cell, Cell::Comp>& visited) {
 
 MazeGeometryBuilder2D ::MazeGeometryBuilder2D(MazeModel& model_) : model(model_) {}
 
-std::shared_ptr<Geometry2D> MazeGeometryBuilder2D::build() {
+std::shared_ptr<Geometry<float>> MazeGeometryBuilder2D::build() {
     std::vector<float> v;
     for (auto& cell : model.getCells()) {
         if (cell.wall) {
@@ -67,14 +67,14 @@ std::shared_ptr<Geometry2D> MazeGeometryBuilder2D::build() {
             v.push_back(cell.x-0.5f); v.push_back(cell.y+0.5f);
         }
     }
-    auto mazeGeom = std::make_shared<Geometry2D>(Geometry2D(v.size()/2));
+    auto mazeGeom = std::make_shared<Geometry<float>>(Geometry<float>(v.size()/2));
     mazeGeom->SetVertexPositions(&v[0], v.size() * sizeof(float));
     return mazeGeom;
 }
 
 MazeGeometryBuilder3D ::MazeGeometryBuilder3D(MazeModel& model_) : model(model_) {}
 
-std::shared_ptr<Geometry3D> MazeGeometryBuilder3D::build() {
+std::shared_ptr<Geometry<float>> MazeGeometryBuilder3D::build() {
     BufferObjectBuilder<float> posb;
     BufferObjectBuilder<float> norb;
     for (auto& cell : model.getCells()) {
@@ -99,7 +99,7 @@ std::shared_ptr<Geometry3D> MazeGeometryBuilder3D::build() {
             for (int i = 0; i < 4; i++) norb << 0.0f << 1.0f << 0.0f;
         }
     }
-    auto mazeGeom = std::make_shared<Geometry3D>(Geometry3D(posb.GetSize()/3));
+    auto mazeGeom = std::make_shared<Geometry<float>>(Geometry<float>(posb.GetSize()/3));
     mazeGeom->SetVertexPositions(posb.Build());
     mazeGeom->SetVertexNormals(norb.Build());
     return mazeGeom;

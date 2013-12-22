@@ -37,7 +37,7 @@ private:
 
 class MonochromeProgram : public Program {
 public:
-    void Render(const Geometry2D& geometry, const Matrix44<float>& mat, const Color& color);
+    void Render(const Geometry<float>& geometry, const Matrix44<float>& mat, const Color& color);
     static std::shared_ptr<MonochromeProgram> Create();
 private:
     MonochromeProgram(const std::map<int, std::string>& attributeIndices);
@@ -45,7 +45,7 @@ private:
 
 class TextureProgram : public Program {
 public:
-    void Render(const Geometry3D& geometry, const Texture& texture, const Matrix44<float>& mat);
+    void Render(const Geometry<float>& geometry, const Texture& texture, const Matrix44<float>& mat);
     static std::shared_ptr<TextureProgram> Create();
 private:
     TextureProgram(std::map<int, std::string>& attributeIndices);
@@ -53,7 +53,7 @@ private:
 
 class FlatShadingProgram : public Program {
 public:
-    void Render(const Geometry3D& geometry, const Matrix44<float>& mvp, const Matrix44<float>& mv, const Vector3<float> dir, const Color& color);
+    void Render(const Geometry<float>& geometry, const Matrix44<float>& mvp, const Matrix44<float>& mv, const Vector3<float> dir, const Color& color);
     static std::shared_ptr<FlatShadingProgram> Create();
 private:
     FlatShadingProgram(const std::map<int, std::string>& attributeIndices);

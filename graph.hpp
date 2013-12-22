@@ -22,6 +22,10 @@ struct RenderingContext {
         mvpStack.push_back(Multm(mvpStack.back(), mat));
         mvStack.push_back(Multm(mvStack.back(), mat));
     }
+    void pop() {
+        mvpStack.pop_back();
+        mvStack.pop_back();
+    }
     Matrix44<T> mvp() {
         return mvpStack.back();
     }
@@ -31,10 +35,20 @@ struct RenderingContext {
 };
 
 template<class T>
+class Node {
+public:
+    void preRender(RenderingContext<T>& ctx) {}
+    void Render(RenderingContext<T>& ctx) {}
+    void postRender(RenderingContext<T>& ctx) {}
+};
+
+enum class NodeType {
+    Group,
+    Geometry
+};
+
+template<class T>
 struct ClippingVolume {
-    ClippingVolume() {}
-//    ClippingVolume(T left, T right, T bottom, T top, T nearp, T farp) :
-//        left(left), right(right), bottom(bottom), top(top), nearp(nearp), farp(farp) {}
     T left;
     T right;
     T bottom;
@@ -119,33 +133,27 @@ public:
         auto& cv = clippingVolume;
         mvpStack.push(Ortho<T>(cv.right, cv.left, cv.top, cv.bottom, cv.nearp, cv.farp));
     }
-    void render(RenderingContext<T> ctx) {
-    }
     void  postRender(RenderingContext<T> ctx) {
         mvpStack.pop();
     }
 };
 
-class Node {
+template<class T>
+class Group : public Node<T> {
 public:
-    virtual void Render(Matrix44f matrix) = 0;
-    void SetParent(std::shared_ptr<Node> parent);
-private:
-    std::shared_ptr<Node> parent;
-};
-
-class Group : public Node {
-public:
-    void Add(std::shared_ptr<Node> node);
+    Group() : transformation(Identity<T>()) {}
+    void Transformation(const Matrix44<T>& tr) { transformation = tr; };
+    void Add(std::shared_ptr<Node<T>> node) { children.push_back(node); }
+    virtual void Render(RenderingContext<T>& ctx) {
+        ctx.push(transformation);
+        for (auto child : children) {
+            child->Render(ctx);
+        }
+        ctx.pop();
+    }
 protected:
-    std::vector<std::shared_ptr<Node>> children;
-};
-
-class Transformation : public Group {
-public:
-    
-private:
-    Matrix44f matrix;
+    std::vector<std::shared_ptr<Node<T>>> children;
+    Matrix44<T> transformation;
 };
 
 #endif

@@ -34,7 +34,7 @@ private:
 class MazeGeometryBuilder2D {
 public:
     MazeGeometryBuilder2D(MazeModel& model_);
-    std::shared_ptr<Geometry2D> build();
+    std::shared_ptr<Geometry<float>> build();
 private:
     MazeModel& model;
 };
@@ -42,7 +42,7 @@ private:
 class MazeGeometryBuilder3D {
 public:
     MazeGeometryBuilder3D(MazeModel& model_);
-    std::shared_ptr<Geometry3D> build();
+    std::shared_ptr<Geometry<float>> build();
 private:
     MazeModel& model;
 };
