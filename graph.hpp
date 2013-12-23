@@ -6,27 +6,14 @@
 #include <memory>
 
 #include "matrix.hpp"
+#include "geometry.hpp"
 #include "texture.hpp"
-
-struct RenderingContext {
-    std::vector<Matrix44> mvpStack;
-    std::vector<Matrix44> mvStack;
-    Vector3 dir;
-    Color color;
-    Texture* texture;
-    RenderingContext();
-    void projection(const Matrix44& mat);
-    void push(Matrix44& mat);
-    void pop();
-    Matrix44 mvp();
-    Matrix44 mv();
-};
+#include "program.hpp"
+#include "context.hpp"
 
 class Node {
 public:
-    void preRender(RenderingContext& ctx);
-    void Render(RenderingContext& ctx);
-    void postRender(RenderingContext& ctx);
+    virtual void Render(RenderingContext& ctx) = 0;
 };
 
 struct ClippingVolume {
@@ -42,6 +29,7 @@ struct ClippingVolume {
 class Camera {
 public:
     Camera(const ClippingVolume& clippingVolume);
+    virtual void Render(std::shared_ptr<Node> node, RenderingContext& ctx, std::shared_ptr<Program> program) = 0;
     void reset();
     void rotateX(float deg);
     void rotateY(float deg);
@@ -65,16 +53,13 @@ private:
 class PerspectiveCamera : public Camera {
 public:
     PerspectiveCamera(const ClippingVolume& clippingVolume);
-    void  preRender(RenderingContext ctx);
-    void render(RenderingContext ctx);
-    void  postRender(RenderingContext ctx);
+    virtual void Render(std::shared_ptr<Node> node, RenderingContext& ctx, std::shared_ptr<Program> program);
 };
 
 class ParallelCamera : public Camera {
 public:
     ParallelCamera(const ClippingVolume& clippingVolume);
-    void  preRender(RenderingContext& ctx);
-    void  postRender(RenderingContext& ctx);
+    virtual void Render(std::shared_ptr<Node> node, RenderingContext& ctx, std::shared_ptr<Program> program);
 };
 
 class Group : public Node {
@@ -86,6 +71,17 @@ public:
 protected:
     std::vector<std::shared_ptr<Node>> children;
     Matrix44 transformation;
+};
+
+template<class T>
+class GeometryNode : public Node {
+public:
+    GeometryNode(std::shared_ptr<Geometry<T>> geom) : geom(geom) {}
+    virtual void Render(RenderingContext& ctx) {
+        ctx.program->Render(*geom, ctx);
+    }
+private:
+    std::shared_ptr<Geometry<T>> geom;
 };
 
 #endif

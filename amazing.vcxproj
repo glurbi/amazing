@@ -92,6 +92,7 @@
     <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="context.hpp" />
     <ClInclude Include="geometry.hpp" />
     <ClInclude Include="graph.hpp" />
     <ClInclude Include="matrix.hpp" />

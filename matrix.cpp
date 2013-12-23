@@ -32,7 +32,7 @@ float Color::a() const { return v[3]; }
 
 Vector3 normalize(Vector3 v) {
     float norm = sqrt(v.v[0] * v.v[0] + v.v[1] * v.v[1] + v.v[2] * v.v[2]);
-    return Vector3(v.v[0] / norm, v.v[0] / norm, v.v[0] / norm);
+    return Vector3(v.v[0] / norm, v.v[1] / norm, v.v[2] / norm);
 }
 
 Vector3 crossProduct(const Vector3& u, const Vector3& v) {
@@ -122,7 +122,7 @@ Matrix44 Translation(float x, float y, float z) {
 }
 
 float toRadians(float a) {
-    return a * 3.141592653589793 / 180.0;
+    return a * 3.1415926f / 180.0f;
 }
 
 Matrix44 Rotation(float a, float x, float y, float z) {

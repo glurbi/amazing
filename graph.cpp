@@ -4,14 +4,15 @@
 
 #include "matrix.hpp"
 #include "graph.hpp"
+#include "program.hpp"
 
 RenderingContext::RenderingContext() {
-    mvpStack.push_back(Identity());
-    mvStack.push_back(Identity());
+    elapsed_seconds = 0.0;
+    reset();
 }
 
-void RenderingContext::projection(const Matrix44& mat) {
-    mvpStack.push_back(mat);
+void RenderingContext::projection(Matrix44& mat) {
+    mvpStack.push_back(Multm(mvpStack.back(), mat));
 }
 
 void RenderingContext::push(Matrix44& mat) {
@@ -24,6 +25,13 @@ void RenderingContext::pop() {
     mvStack.pop_back();
 }
 
+void RenderingContext::reset() {
+    mvpStack.clear();
+    mvStack.clear();
+    mvpStack.push_back(Identity());
+    mvStack.push_back(Identity());
+}
+
 Matrix44 RenderingContext::mvp() {
     return mvpStack.back();
 }
@@ -31,10 +39,6 @@ Matrix44 RenderingContext::mvp() {
 Matrix44 RenderingContext::mv() {
     return mvStack.back();
 }
-
-void Node::preRender(RenderingContext& ctx) {}
-void Node::Render(RenderingContext& ctx) {}
-void Node::postRender(RenderingContext& ctx) {}
 
 Camera::Camera(const ClippingVolume& clippingVolume) : clippingVolume(clippingVolume), positionV(Vector3(0, 0, 0)),
         directionV(Vector3(0, 0, -1)), rightV(Vector3(1, 0, 0)), upV(Vector3(0, 1, 0)) {}
@@ -92,24 +96,18 @@ Matrix44 Camera::positionAndOrient() {
 
 PerspectiveCamera::PerspectiveCamera(const ClippingVolume& clippingVolume) : Camera(clippingVolume) {}
 
-void PerspectiveCamera::preRender(RenderingContext ctx) {
-}
-
-void PerspectiveCamera::render(RenderingContext ctx) {
-}
-
-void PerspectiveCamera::postRender(RenderingContext ctx) {
+void PerspectiveCamera::Render(std::shared_ptr<Node> node, RenderingContext& ctx, std::shared_ptr<Program> program) {
 }
 
 ParallelCamera::ParallelCamera(const ClippingVolume& clippingVolume) : Camera(clippingVolume) {}
 
-void ParallelCamera::preRender(RenderingContext& ctx) {
+void ParallelCamera::Render(std::shared_ptr<Node> node, RenderingContext& ctx, std::shared_ptr<Program> program) {
     auto& cv = clippingVolume;
-    ctx.push(Ortho(cv.right, cv.left, cv.top, cv.bottom, cv.nearp, cv.farp));
-}
-
-void ParallelCamera::postRender(RenderingContext& ctx) {
-    ctx.pop();
+    ctx.projection(Ortho(cv.right, cv.left, cv.top, cv.bottom, cv.nearp, cv.farp));
+    ctx.push(positionAndOrient());
+    ctx.program = program;
+    node->Render(ctx);
+    ctx.reset();
 }
 
 Group::Group() : transformation(Identity()) {}
@@ -125,3 +123,4 @@ void Group::Render(RenderingContext& ctx) {
     }
     ctx.pop();
 }
+

@@ -5,8 +5,6 @@
 #include <memory>
 #include <GL/glew.h>
 
-#include "graph.hpp"
-
 enum VertexAttribute {
     POSITION,
     TEXCOORD,
@@ -14,7 +12,7 @@ enum VertexAttribute {
 };
 
 template<class T>
-class Geometry : public Node {
+class Geometry {
 
 public:
 	Geometry(GLsizei count_) :
