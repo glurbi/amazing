@@ -12,7 +12,8 @@
 
 int main()
 {
-    std::chrono::steady_clock::time_point clock_begin = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point clock_start = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point clock_last = clock_start;
 
     srand((unsigned int)time(0));
 
@@ -51,15 +52,15 @@ int main()
     auto root = std::make_shared<Group>(Group());
     root->Transformation(Translation(-mazeWidth / 2.0f + 0.5f, -mazeHeight / 2.0f + 0.5f, 0.0f));
     auto rot1 = std::make_shared<Group>(Group());
-    rot1->Transformation(Rotation(-20.0, 0.0f, 1.0f, 0.0f));
+    rot1->Transformation(Rotation(0.0f, 0.0f, 1.0f, 0.0f));
     auto rot2 = std::make_shared<Group>(Group());
-    rot2->Transformation(Rotation(-20.0f, 1.0f, 0.0f, 0.0f));
+    rot2->Transformation(Rotation(0.0f, 1.0f, 0.0f, 0.0f));
     rot2->Add(mazeNode);
     rot1->Add(rot2);
     root->Add(rot1);
 
     RenderingContext ctx;
-    ctx.dir = Vector3(-0.5f, -0.5f, -1.0f);
+    ctx.dir = Vector3(0, 0, -1.0f);
     ctx.color = Color(0.0f, 1.0f, 0.0f);
     
     std::shared_ptr<MonochromeProgram> monochromeProgram = MonochromeProgram::Create();
@@ -68,9 +69,11 @@ int main()
 	bool running = true;
     while (running)
     {
-        std::chrono::steady_clock::time_point clock_now = std::chrono::steady_clock::now();
-        std::chrono::steady_clock::duration time_span = clock_now - clock_begin;
-        ctx.elapsed_seconds = double(time_span.count()) * std::chrono::steady_clock::period::num / std::chrono::steady_clock::period::den;
+        std::chrono::system_clock::time_point clock_now = std::chrono::system_clock::now();
+        std::chrono::system_clock::duration last_frame_duration = clock_now - clock_last;
+        std::chrono::system_clock::duration from_start_duration = clock_now - clock_start;
+        ctx.last_frame_time_seconds = double(last_frame_duration.count()) * std::chrono::system_clock::period::num / std::chrono::system_clock::period::den;
+        ctx.elapsed_time_seconds = double(from_start_duration.count()) * std::chrono::system_clock::period::num / std::chrono::system_clock::period::den;
         CheckForOpenGLErrors();
 		sf::Event event;
         while (window.pollEvent(event)) {
@@ -88,9 +91,14 @@ int main()
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
-        camera.rotateZ((float)ctx.elapsed_seconds/1000);
+        glEnable(GL_CULL_FACE);
+        camera.rotateZ((float)ctx.last_frame_time_seconds * 30);
+        camera.rotateY((float)ctx.last_frame_time_seconds * 50);
+        //std::cout << ctx.elapsed_seconds << std::endl;
+        //rot1->Transformation(Rotation(sin(ctx.elapsed_time_seconds)*360, 0.0f, 1.0f, 0.0f));
         camera.Render(root, ctx, flatShadingProgram);
 		window.display();
+        clock_last = clock_now;
     }
 
     return 0;
