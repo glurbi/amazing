@@ -20,6 +20,8 @@ class MazeModel {
 public:
     MazeModel(int width_, int height_);
     void create();
+    int get_width();
+    int get_height();
     inline Cell& getCell(int x, int y) { return cells[x+y*width]; }
     inline std::vector<Cell>& getCells() { return cells; }
 	inline bool contains(Cell& c, std::set<Cell, Cell::Comp>& visited) { return visited.find(c) != visited.end(); }

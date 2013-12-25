@@ -34,6 +34,14 @@ void MazeModel::create() {
     visit(getCell(1,1), visited);
 }
 
+int MazeModel::get_width() {
+    return width;
+}
+
+int MazeModel::get_height() {
+    return height;
+}
+
 void MazeModel::visit(Cell& c, std::set<Cell, Cell::Comp>& visited) {
 	c.wall = false;
     visited.insert(c);
