@@ -19,6 +19,48 @@ enum class menu_choice {
     exit
 };
 
+void draw_left_arrow(sf::RenderWindow& window) {
+    window.pushGLStates();
+    float ratio = 20.0f;
+    float radius = window.getSize().x / ratio;
+    sf::Color color = sf::Color(255, 255, 255, 255);
+    sf::CircleShape left_circle = sf::CircleShape(radius);
+    left_circle.setOutlineThickness(3.0f);
+    left_circle.setOutlineColor(color);
+    left_circle.setPosition(sf::Vector2f(left_circle.getOutlineThickness(), window.getSize().y / 2.0f - radius));
+    left_circle.setFillColor(sf::Color(255, 255, 255, 140));
+    window.draw(left_circle);
+    sf::ConvexShape left_arrow = sf::ConvexShape(3);
+    left_arrow.setFillColor(color);
+    left_arrow.setPosition(sf::Vector2f(left_circle.getOutlineThickness()+radius, window.getSize().y / 2.0f));
+    left_arrow.setPoint(0, sf::Vector2f(radius*.7f, -radius*.7f));
+    left_arrow.setPoint(1, sf::Vector2f(radius*.7f, radius*.7f));
+    left_arrow.setPoint(2, sf::Vector2f(-radius, 0));
+    window.draw(left_arrow);
+    window.popGLStates();
+}
+
+void draw_right_arrow(sf::RenderWindow& window) {
+    window.pushGLStates();
+    float ratio = 20.0f;
+    float radius = window.getSize().x / ratio;
+    sf::Color color = sf::Color(255, 255, 255, 255);
+    sf::CircleShape right_circle = sf::CircleShape(radius);
+    right_circle.setOutlineThickness(3.0f);
+    right_circle.setOutlineColor(color);
+    right_circle.setPosition(sf::Vector2f(window.getSize().x-radius*2.0f-right_circle.getOutlineThickness(), window.getSize().y / 2.0f - radius));
+    right_circle.setFillColor(sf::Color(255, 255, 255, 140));
+    window.draw(right_circle);
+    sf::ConvexShape right_arrow = sf::ConvexShape(3);
+    right_arrow.setFillColor(color);
+    right_arrow.setPosition(sf::Vector2f(window.getSize().x-radius-right_circle.getOutlineThickness(), window.getSize().y / 2.0f));
+    right_arrow.setPoint(0, sf::Vector2f(-radius*.7f, -radius*.7f));
+    right_arrow.setPoint(1, sf::Vector2f(-radius*.7f, radius*.7f));
+    right_arrow.setPoint(2, sf::Vector2f(radius, 0));
+    window.draw(right_arrow);
+    window.popGLStates();
+}
+
 menu_choice show_maze(MazeModel& model, sf::RenderWindow& window) {
 
     timer timer_absolute;
@@ -93,21 +135,8 @@ menu_choice show_maze(MazeModel& model, sf::RenderWindow& window) {
         gr1->Transformation(Rotation((float) sin(ctx.elapsed_time_seconds) * 180, 0.0f, 1.0f, 0.0f));
         camera.Render(root, ctx, flatShadingProgram);
 
-        window.pushGLStates();
-        float ratio = 20.0f;
-        float radius = window.getSize().x / 20.0f;
-        sf::CircleShape leftCircle = sf::CircleShape(radius);
-        leftCircle.setOutlineThickness(2.0f);
-        leftCircle.setPosition(sf::Vector2f(leftCircle.getOutlineThickness(), window.getSize().y / 2.0f - radius));
-        leftCircle.setFillColor(sf::Color(255, 255, 255, 140));
-        window.draw(leftCircle);
-        sf::ConvexShape left_arrow = sf::ConvexShape(3);
-        left_arrow.setFillColor(sf::Color::White);
-        left_arrow.setPoint(0, sf::Vector2f(radius*.4f, 0));
-        left_arrow.setPoint(1, sf::Vector2f(radius*.4f, radius*.8f));
-        left_arrow.setPoint(2, sf::Vector2f(0, radius*.4f));
-        window.draw(left_arrow);
-        window.popGLStates();
+        draw_left_arrow(window);
+        draw_right_arrow(window);
 
         window.display();
     }
