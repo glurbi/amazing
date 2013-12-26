@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 
 #include "misc.hpp"
+#include "timer.hpp"
 #include "matrix.hpp"
 #include "model.hpp"
 #include "geometry.hpp"
@@ -20,8 +21,8 @@ enum class menu_choice {
 
 menu_choice show_maze(MazeModel& model, sf::RenderWindow& window) {
 
-    std::chrono::steady_clock::time_point clock_start = std::chrono::steady_clock::now();
-    std::chrono::steady_clock::time_point clock_last = clock_start;
+    timer timer_absolute;
+    timer timer_frame;
 
     MazeGeometryBuilder3D builder3d(model);
     std::shared_ptr<Geometry<float>> mazeGeom3d = builder3d.build();
@@ -56,11 +57,9 @@ menu_choice show_maze(MazeModel& model, sf::RenderWindow& window) {
     menu_choice choice = menu_choice::undefined;
     while (choice == menu_choice::undefined)
     {
-        std::chrono::steady_clock::time_point clock_now = std::chrono::steady_clock::now();
-        std::chrono::steady_clock::duration last_frame_duration = clock_now - clock_last;
-        std::chrono::steady_clock::duration from_start_duration = clock_now - clock_start;
-        ctx.last_frame_time_seconds = double(last_frame_duration.count()) * std::chrono::steady_clock::period::num / std::chrono::steady_clock::period::den;
-        ctx.elapsed_time_seconds = double(from_start_duration.count()) * std::chrono::steady_clock::period::num / std::chrono::steady_clock::period::den;
+        ctx.elapsed_time_seconds = timer_absolute.elapsed();
+        ctx.last_frame_time_seconds = timer_frame.elapsed();
+        timer_frame.reset();
         CheckForOpenGLErrors();
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -111,7 +110,6 @@ menu_choice show_maze(MazeModel& model, sf::RenderWindow& window) {
         window.popGLStates();
 
         window.display();
-        clock_last = clock_now;
     }
 
     return choice;
@@ -137,8 +135,8 @@ int main() {
     sf::ContextSettings settings;
     settings.antialiasingLevel = 2;
     settings.depthBits = 16;
-    //sf::RenderWindow window(sf::VideoMode(800, 600), "Amazing!", sf::Style::Default, settings);
-    sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "Amazing!", sf::Style::Fullscreen, settings);
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Amazing!", sf::Style::Default, settings);
+    //sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "Amazing!", sf::Style::Fullscreen, settings);
     window.setMouseCursorVisible(false);
     glewInit();
     glViewport(0, 0, window.getSize().x, window.getSize().y);
