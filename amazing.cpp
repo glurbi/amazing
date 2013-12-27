@@ -19,11 +19,10 @@ enum class menu_choice {
     exit
 };
 
-void draw_left_arrow(sf::RenderWindow& window) {
+void draw_left_arrow(sf::RenderWindow& window, sf::Color& color) {
     window.pushGLStates();
     float ratio = 20.0f;
     float radius = window.getSize().x / ratio;
-    sf::Color color = sf::Color(255, 255, 255, 255);
     sf::CircleShape left_circle = sf::CircleShape(radius);
     left_circle.setOutlineThickness(3.0f);
     left_circle.setOutlineColor(color);
@@ -40,11 +39,10 @@ void draw_left_arrow(sf::RenderWindow& window) {
     window.popGLStates();
 }
 
-void draw_right_arrow(sf::RenderWindow& window) {
+void draw_right_arrow(sf::RenderWindow& window, sf::Color& color) {
     window.pushGLStates();
     float ratio = 20.0f;
     float radius = window.getSize().x / ratio;
-    sf::Color color = sf::Color(255, 255, 255, 255);
     sf::CircleShape right_circle = sf::CircleShape(radius);
     right_circle.setOutlineThickness(3.0f);
     right_circle.setOutlineColor(color);
@@ -61,7 +59,7 @@ void draw_right_arrow(sf::RenderWindow& window) {
     window.popGLStates();
 }
 
-menu_choice show_maze(MazeModel& model, sf::RenderWindow& window) {
+menu_choice show_maze(sf::RenderWindow& window, MazeModel& model, bool left_arrow_enabled, bool right_arrow_enabled, const Color& color) {
 
     timer timer_absolute;
     timer timer_frame;
@@ -91,7 +89,7 @@ menu_choice show_maze(MazeModel& model, sf::RenderWindow& window) {
 
     RenderingContext ctx;
     ctx.dir = Vector3(0, 0, -1.0f);
-    ctx.color = Color(0.0f, 1.0f, 0.0f);
+    ctx.color = color;
 
     std::shared_ptr<MonochromeProgram> monochromeProgram = MonochromeProgram::Create();
     std::shared_ptr<FlatShadingProgram> flatShadingProgram = FlatShadingProgram::Create();
@@ -135,8 +133,9 @@ menu_choice show_maze(MazeModel& model, sf::RenderWindow& window) {
         gr1->Transformation(Rotation((float) sin(ctx.elapsed_time_seconds) * 180, 0.0f, 1.0f, 0.0f));
         camera.Render(root, ctx, flatShadingProgram);
 
-        draw_left_arrow(window);
-        draw_right_arrow(window);
+        sf::Color arrow_colors[] = { sf::Color(128, 128, 128, 255), sf::Color(255, 255, 255, 255) };
+        draw_left_arrow(window, arrow_colors[left_arrow_enabled]);
+        draw_right_arrow(window, arrow_colors[right_arrow_enabled]);
 
         window.display();
     }
@@ -145,18 +144,42 @@ menu_choice show_maze(MazeModel& model, sf::RenderWindow& window) {
 }
 
 void menu(sf::RenderWindow& window) {
-    const int mazeWidth = 41;
-    const int mazeHeight = 41;
-    const int width = mazeWidth * 20;
-    const int height = mazeHeight * 20;
-    MazeModel model(mazeWidth, mazeHeight);
-	model.create();
-
-    MazeGeometryBuilder3D builder3d(model);
-    std::shared_ptr<Geometry<float>> mazeGeom3d = builder3d.build();
-    std::shared_ptr<GeometryNode<float>> mazeNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(mazeGeom3d));
-
-    show_maze(model, window);
+    int index = 0;
+    const int len = 8;
+    const int widths[] = { 5, 11, 17, 25, 31, 41, 51, 65, 87 };
+    const int heights[] = { 5, 11, 15, 21, 25, 31, 41, 45, 51 };
+    const Color colors[] = {
+        Color(0.0f, 1.0f, 0.0f),
+        Color(0.0f, 0.0f, 1.0f),
+        Color(1.0f, 0.0f, 0.0f),
+        Color(0.5f, 0.5f, 0.5f),
+        Color(0.0f, 0.7f, 0.9f),
+        Color(0.7f, 0.9f, 0.0f),
+        Color(0.7f, 0.5f, 0.3f),
+        Color(0.5f, 0.3f, 0.7f),
+        Color(0.3f, 0.7f, 0.5f)
+    };
+    menu_choice choice = menu_choice::undefined;
+    while (choice != menu_choice::exit) {
+        const int mazeWidth = widths[index];
+        const int mazeHeight = heights[index];
+        MazeModel model(mazeWidth, mazeHeight);
+        model.create();
+        MazeGeometryBuilder3D builder3d(model);
+        std::shared_ptr<Geometry<float>> mazeGeom3d = builder3d.build();
+        std::shared_ptr<GeometryNode<float>> mazeNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(mazeGeom3d));
+        choice = show_maze(window, model , index > 0, index < len - 1, colors[index]);
+        switch (choice) {
+        case menu_choice::next_maze:
+            if (index < len - 1) index++;
+            break;
+        case menu_choice::previous_maze:
+            if (index > 0) index--;
+            break;
+        case menu_choice::select_maze:
+            std::cout << "play with " << index << std::endl;
+        }
+    }
 }
 
 int main() {
