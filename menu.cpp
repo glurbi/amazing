@@ -12,6 +12,7 @@
 #include "program.hpp"
 #include "graph.hpp"
 #include "menu.hpp"
+#include "play.hpp"
 
 void draw_left_arrow(sf::RenderWindow& window, sf::Color& color) {
     window.pushGLStates();
@@ -115,7 +116,7 @@ menu_choice show_maze(sf::RenderWindow& window, MazeModel& model, bool left_arro
                     choice = menu_choice::next_maze;
                     break;
                 case sf::Keyboard::Return:
-                    choice = menu_choice::select_maze;
+                    play(model, window);
                     break;
                 }
             }
