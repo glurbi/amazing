@@ -25,7 +25,7 @@ void play(MazeModel& model, sf::RenderWindow& window) {
     ParallelCamera camera(cv);
 
     auto root = std::make_shared<Group>(Group());
-    root->Transformation(Translation(-model.get_width() / 2.0f + 0.5f, -model.get_height() / 2.0f + 0.5f, 0.0f));
+    root->Transformation(Translation(0.0f, 0.0f, 0.0f));
     root->Add(mazeNode);
 
     rendering_context ctx;
