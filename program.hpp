@@ -28,7 +28,7 @@ public:
     Program(const std::string& vertexShaderSource,
             const std::string& fragmentShaderSource,
             const std::map<int, std::string>& attributeIndices);
-    virtual void Render(const Geometry<float>& geometry, RenderingContext& ctx) = 0;
+    virtual void Render(const Geometry<float>& geometry, rendering_context& ctx) = 0;
     ~Program();
 protected:
     GLuint id;
@@ -40,7 +40,7 @@ private:
 
 class MonochromeProgram : public Program {
 public:
-    virtual void Render(const Geometry<float>& geometry, RenderingContext& ctx);
+    virtual void Render(const Geometry<float>& geometry, rendering_context& ctx);
     static std::shared_ptr<MonochromeProgram> Create();
 private:
     MonochromeProgram(const std::map<int, std::string>& attributeIndices);
@@ -48,7 +48,7 @@ private:
 
 class TextureProgram : public Program {
 public:
-    virtual void Render(const Geometry<float>& geometry, RenderingContext& ctx);
+    virtual void Render(const Geometry<float>& geometry, rendering_context& ctx);
     static std::shared_ptr<TextureProgram> Create();
 private:
     TextureProgram(std::map<int, std::string>& attributeIndices);
@@ -56,7 +56,7 @@ private:
 
 class FlatShadingProgram : public Program {
 public:
-    virtual void Render(const Geometry<float>& geometry, RenderingContext& ctx);
+    virtual void Render(const Geometry<float>& geometry, rendering_context& ctx);
     static std::shared_ptr<FlatShadingProgram> Create();
 private:
     FlatShadingProgram(const std::map<int, std::string>& attributeIndices);

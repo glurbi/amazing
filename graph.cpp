@@ -6,38 +6,38 @@
 #include "graph.hpp"
 #include "program.hpp"
 
-RenderingContext::RenderingContext() {
+rendering_context::rendering_context() {
     last_frame_time_seconds = 0.0;
     elapsed_time_seconds = 0.0;
     reset();
 }
 
-void RenderingContext::projection(Matrix44& mat) {
+void rendering_context::projection(Matrix44& mat) {
     mvpStack.push_back(Multm(mvpStack.back(), mat));
 }
 
-void RenderingContext::push(Matrix44& mat) {
+void rendering_context::push(Matrix44& mat) {
     mvpStack.push_back(Multm(mvpStack.back(), mat));
     mvStack.push_back(Multm(mvStack.back(), mat));
 }
 
-void RenderingContext::pop() {
+void rendering_context::pop() {
     mvpStack.pop_back();
     mvStack.pop_back();
 }
 
-void RenderingContext::reset() {
+void rendering_context::reset() {
     mvpStack.clear();
     mvStack.clear();
     mvpStack.push_back(Identity());
     mvStack.push_back(Identity());
 }
 
-Matrix44 RenderingContext::mvp() {
+Matrix44 rendering_context::mvp() {
     return mvpStack.back();
 }
 
-Matrix44 RenderingContext::mv() {
+Matrix44 rendering_context::mv() {
     return mvStack.back();
 }
 
@@ -97,12 +97,12 @@ Matrix44 Camera::positionAndOrient() {
 
 PerspectiveCamera::PerspectiveCamera(const ClippingVolume& clippingVolume) : Camera(clippingVolume) {}
 
-void PerspectiveCamera::Render(std::shared_ptr<Node> node, RenderingContext& ctx, std::shared_ptr<Program> program) {
+void PerspectiveCamera::Render(std::shared_ptr<Node> node, rendering_context& ctx, std::shared_ptr<Program> program) {
 }
 
 ParallelCamera::ParallelCamera(const ClippingVolume& clippingVolume) : Camera(clippingVolume) {}
 
-void ParallelCamera::Render(std::shared_ptr<Node> node, RenderingContext& ctx, std::shared_ptr<Program> program) {
+void ParallelCamera::Render(std::shared_ptr<Node> node, rendering_context& ctx, std::shared_ptr<Program> program) {
     auto& cv = clippingVolume;
     ctx.projection(Ortho(cv.right, cv.left, cv.top, cv.bottom, cv.nearp, cv.farp));
     ctx.push(positionAndOrient());
@@ -117,7 +117,7 @@ void Group::Transformation(const Matrix44& tr) { transformation = tr; }
 
 void Group::Add(std::shared_ptr<Node> node) { children.push_back(node); }
 
-void Group::Render(RenderingContext& ctx) {
+void Group::Render(rendering_context& ctx) {
     ctx.push(transformation);
     for (auto child : children) {
         child->Render(ctx);

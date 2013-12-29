@@ -84,6 +84,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="amazing.cpp" />
+    <ClCompile Include="menu.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="graph.cpp" />
     <ClCompile Include="matrix.cpp" />
@@ -93,6 +94,7 @@
     <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="menu.hpp" />
     <ClInclude Include="timer.hpp" />
     <ClInclude Include="context.hpp" />
     <ClInclude Include="geometry.hpp" />

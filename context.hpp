@@ -9,22 +9,24 @@
 
 class Program;
 
-struct RenderingContext {
-    double elapsed_time_seconds;
-    double last_frame_time_seconds;
-    std::vector<Matrix44> mvpStack;
-    std::vector<Matrix44> mvStack;
-    Vector3 dir;
-    Color color;
-    std::shared_ptr<Program> program;
-    Texture* texture;
-    RenderingContext();
+struct rendering_context {
+public:
+    rendering_context();
     void projection(Matrix44& mat);
     void push(Matrix44& mat);
     void pop();
     Matrix44 mvp();
     Matrix44 mv();
     void reset();
+    Vector3 dir;
+    Color color;
+    double elapsed_time_seconds;
+    double last_frame_time_seconds;
+    std::shared_ptr<Program> program;
+    Texture* texture;
+private:
+    std::vector<Matrix44> mvpStack;
+    std::vector<Matrix44> mvStack;
 };
 
 
