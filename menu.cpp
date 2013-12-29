@@ -21,12 +21,12 @@ void draw_left_arrow(sf::RenderWindow& window, sf::Color& color) {
     sf::CircleShape left_circle = sf::CircleShape(radius);
     left_circle.setOutlineThickness(3.0f);
     left_circle.setOutlineColor(color);
-    left_circle.setPosition(sf::Vector2f(left_circle.getOutlineThickness(), window.getSize().y / 2.0f - radius));
+    left_circle.setPosition(sf::Vector2f(radius / 2.0f + left_circle.getOutlineThickness(), window.getSize().y / 2.0f - radius));
     left_circle.setFillColor(sf::Color(255, 255, 255, 140));
     window.draw(left_circle);
     sf::ConvexShape left_arrow = sf::ConvexShape(3);
     left_arrow.setFillColor(color);
-    left_arrow.setPosition(sf::Vector2f(left_circle.getOutlineThickness() + radius, window.getSize().y / 2.0f));
+    left_arrow.setPosition(sf::Vector2f(radius / 2.0f + left_circle.getOutlineThickness() + radius, window.getSize().y / 2.0f));
     left_arrow.setPoint(0, sf::Vector2f(radius*.7f, -radius*.7f));
     left_arrow.setPoint(1, sf::Vector2f(radius*.7f, radius*.7f));
     left_arrow.setPoint(2, sf::Vector2f(-radius, 0));
@@ -41,12 +41,12 @@ void draw_right_arrow(sf::RenderWindow& window, sf::Color& color) {
     sf::CircleShape right_circle = sf::CircleShape(radius);
     right_circle.setOutlineThickness(3.0f);
     right_circle.setOutlineColor(color);
-    right_circle.setPosition(sf::Vector2f(window.getSize().x - radius*2.0f - right_circle.getOutlineThickness(), window.getSize().y / 2.0f - radius));
+    right_circle.setPosition(sf::Vector2f(window.getSize().x - radius*2.0f - right_circle.getOutlineThickness() - radius / 2.0f, window.getSize().y / 2.0f - radius));
     right_circle.setFillColor(sf::Color(255, 255, 255, 140));
     window.draw(right_circle);
     sf::ConvexShape right_arrow = sf::ConvexShape(3);
     right_arrow.setFillColor(color);
-    right_arrow.setPosition(sf::Vector2f(window.getSize().x - radius - right_circle.getOutlineThickness(), window.getSize().y / 2.0f));
+    right_arrow.setPosition(sf::Vector2f(window.getSize().x - radius - right_circle.getOutlineThickness() - radius / 2.0f, window.getSize().y / 2.0f));
     right_arrow.setPoint(0, sf::Vector2f(-radius*.7f, -radius*.7f));
     right_arrow.setPoint(1, sf::Vector2f(-radius*.7f, radius*.7f));
     right_arrow.setPoint(2, sf::Vector2f(radius, 0));
@@ -123,7 +123,7 @@ menu_choice show_maze(sf::RenderWindow& window, MazeModel& model, bool left_arro
                     choice = menu_choice::next_maze;
                     break;
                 case sf::Keyboard::Return:
-                    play(model, window);
+                    play(model, window, Color(color));
                     break;
                 }
             }

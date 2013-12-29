@@ -6,7 +6,7 @@
 #include "geometry.hpp"
 #include "misc.hpp"
 
-void play(MazeModel& model, sf::RenderWindow& window) {
+void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
 
     timer timer_absolute;
     timer timer_frame;
@@ -29,6 +29,7 @@ void play(MazeModel& model, sf::RenderWindow& window) {
     root->Add(mazeNode);
 
     rendering_context ctx;
+    ctx.color = color;
     std::shared_ptr<MonochromeProgram> monochromeProgram = MonochromeProgram::Create();
 
     while (true)
