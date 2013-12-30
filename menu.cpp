@@ -54,17 +54,19 @@ void draw_right_arrow(sf::RenderWindow& window, sf::Color& color) {
     window.popGLStates();
 }
 
-std::shared_ptr<ParallelCamera> createCamera(MazeModel& model, sf::RenderWindow& window) {
+std::shared_ptr<Camera> createCamera(MazeModel& model, sf::RenderWindow& window) {
     float aspectRatio = (float)window.getSize().x / window.getSize().y;
-    float mf = 2.0f; // margin factor, i.e. how much blank space around the maze
+    float mf = 0.5f; // margin factor, i.e. how much blank space around the maze
     ClippingVolume cv;
-    cv.right = model.get_width() * mf;
     cv.left = -model.get_width() * mf;
+    cv.right = model.get_width() * mf;
     cv.bottom = -model.get_width() / aspectRatio * mf;
     cv.top = model.get_width() / aspectRatio * mf;
-    cv.nearp = (float)(model.get_width() + model.get_height());
-    cv.farp = (float)-(model.get_width() + model.get_height());
-    return std::make_shared<ParallelCamera>(ParallelCamera(cv));
+    cv.nearp = 1.0f*(model.get_width() + model.get_height());
+    cv.farp = 3.0f*(model.get_width() + model.get_height());
+    auto camera =  std::make_shared<PerspectiveCamera>(PerspectiveCamera(cv));
+    camera->moveBackward(2.0f*(model.get_width()+model.get_height()));
+    return camera;
 }
 
 menu_choice show_maze(sf::RenderWindow& window, MazeModel& model, bool left_arrow_enabled, bool right_arrow_enabled, const Color& color) {
@@ -76,7 +78,7 @@ menu_choice show_maze(sf::RenderWindow& window, MazeModel& model, bool left_arro
     std::shared_ptr<Geometry<float>> mazeGeom3d = builder3d.build();
     std::shared_ptr<GeometryNode<float>> mazeNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(mazeGeom3d));
 
-    std::shared_ptr<ParallelCamera> camera = createCamera(model, window);
+    std::shared_ptr<Camera> camera = createCamera(model, window);
 
     auto root = std::make_shared<Group>(Group());
     auto gr1 = std::make_shared<Group>(Group());

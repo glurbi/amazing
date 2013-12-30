@@ -44,7 +44,9 @@ Matrix44 Multm(Matrix44& m1, Matrix44& m2);
 
 Matrix44 Identity();
 
-Matrix44 Ortho(float right, float left, float top, float bottom, float nearp, float farp);
+Matrix44 Frustum(float left, float right, float bottom, float top, float nearp, float farp);
+
+Matrix44 Ortho(float left, float right, float bottom, float top, float nearp, float farp);
 
 Matrix44 Translation(float x, float y, float z);
 

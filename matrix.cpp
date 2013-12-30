@@ -79,7 +79,28 @@ Matrix44 Identity() {
     return mat;
 }
 
-Matrix44 Ortho(float right, float left, float top, float bottom, float nearp, float farp) {
+Matrix44 Frustum(float left, float right, float bottom, float top, float nearp, float farp) {
+    Matrix44 mat;
+    mat.m[0] = 2 * nearp / (right - left);
+    mat.m[1] = 0.0f;
+    mat.m[2] = 0.0f;
+    mat.m[3] = 0.0f;
+    mat.m[4] = 0.0f;
+    mat.m[5] = 2 * nearp / (top - bottom);
+    mat.m[6] = 0.0f;
+    mat.m[7] = 0.0f;
+    mat.m[8] = (right + left) / (right - left);
+    mat.m[9] = (top + bottom) / (top - bottom);
+    mat.m[10] = -(farp + nearp) / (farp - nearp);
+    mat.m[11] = -1.0f;
+    mat.m[12] = 0.0f;
+    mat.m[13] = 0.0f;
+    mat.m[14] = -2.0f * farp * nearp / (farp - nearp);
+    mat.m[15] = 0.0f;
+    return mat;
+}
+
+Matrix44 Ortho(float left, float right, float bottom, float top, float nearp, float farp) {
     Matrix44 mat;
     mat.m[0] = 2 / (right - left);
     mat.m[1] = 0.0f;

@@ -98,13 +98,19 @@ Matrix44 Camera::positionAndOrient() {
 PerspectiveCamera::PerspectiveCamera(const ClippingVolume& clippingVolume) : Camera(clippingVolume) {}
 
 void PerspectiveCamera::Render(std::shared_ptr<Node> node, rendering_context& ctx, std::shared_ptr<Program> program) {
+    auto& cv = clippingVolume;
+    ctx.projection(Frustum(cv.left, cv.right, cv.bottom, cv.top, cv.nearp, cv.farp));
+    ctx.push(positionAndOrient());
+    ctx.program = program;
+    node->Render(ctx);
+    ctx.reset();
 }
 
 ParallelCamera::ParallelCamera(const ClippingVolume& clippingVolume) : Camera(clippingVolume) {}
 
 void ParallelCamera::Render(std::shared_ptr<Node> node, rendering_context& ctx, std::shared_ptr<Program> program) {
     auto& cv = clippingVolume;
-    ctx.projection(Ortho(cv.right, cv.left, cv.top, cv.bottom, cv.nearp, cv.farp));
+    ctx.projection(Ortho(cv.left, cv.right, cv.bottom, cv.top, cv.nearp, cv.farp));
     ctx.push(positionAndOrient());
     ctx.program = program;
     node->Render(ctx);
