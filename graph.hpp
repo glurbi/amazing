@@ -26,8 +26,7 @@ struct ClippingVolume {
 };
 
 // cf http://www.codecolony.de/opengl.htm#camera2
-class Camera {
-public:
+struct Camera {
     Camera(const ClippingVolume& clippingVolume);
     virtual void Render(std::shared_ptr<Node> node, rendering_context& ctx, std::shared_ptr<Program> program) = 0;
     void reset();
@@ -41,13 +40,11 @@ public:
     void moveForward(float dist);
     void moveBackward(float dist);
     Matrix44 positionAndOrient();
-protected:
-    ClippingVolume clippingVolume;
-private:
     Vector3 positionV;
     Vector3 directionV;
     Vector3 rightV;
     Vector3 upV;
+    ClippingVolume clippingVolume;
 };
 
 class PerspectiveCamera : public Camera {

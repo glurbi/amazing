@@ -6,6 +6,43 @@
 #include "geometry.hpp"
 #include "misc.hpp"
 
+enum class direction {
+    none, up, down, right, left
+};
+
+struct game_data {
+    game_data(MazeModel& model) : model(model) {}
+    MazeModel& model;
+    std::shared_ptr<Camera> camera;
+    float pos_x;
+    float pos_y;
+    direction dir;
+};
+
+std::shared_ptr<Camera> create_camera(MazeModel& model, sf::RenderWindow& window) {
+    ClippingVolume cv;
+    cv.right = (float)window.getSize().x / 20;
+    cv.left = (float)-(int)window.getSize().x / 20;
+    cv.bottom = (float)-(int)window.getSize().y / 20;
+    cv.top = (float)window.getSize().y / 20;
+    cv.nearp = 1.0f;
+    cv.farp = -1.0f;
+    return std::make_shared<ParallelCamera>(ParallelCamera(cv));
+}
+
+void update_position(game_data& game, rendering_context& ctx) {
+    switch (game.dir) {
+    case direction::left:
+        if (!game.model.getCell((int)game.pos_x-1, (int)game.pos_y).wall) game.pos_x -= 0.1f;
+        break;
+    case direction::right:
+        if (!game.model.getCell((int)game.pos_x+1, (int)game.pos_y).wall) game.pos_x += 0.1f;
+        break;
+
+    };
+    game.camera->positionV = Vector3(game.pos_x, game.pos_y, 0);
+}
+
 void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
 
     timer timer_absolute;
@@ -15,17 +52,14 @@ void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
     std::shared_ptr<Geometry<float>> mazeGeom2d = builder2d.build();
     std::shared_ptr<GeometryNode<float>> mazeNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(mazeGeom2d));
 
-    ClippingVolume cv;
-    cv.right = (float) window.getSize().x / 20;
-    cv.left = (float) -(int)window.getSize().x / 20;
-    cv.bottom = (float) -(int)window.getSize().y / 20;
-    cv.top = (float) window.getSize().y / 20;
-    cv.nearp = 1.0f;
-    cv.farp = -1.0f;
-    ParallelCamera camera(cv);
+    game_data game = game_data(model);
+    game.pos_x = 1;
+    game.pos_y = 1;
+    game.camera = create_camera(model, window);
+    game.camera->moveUp(1.0f);
+    game.camera->moveRight(1.0f);
 
     auto root = std::make_shared<Group>(Group());
-    root->Transformation(Translation(0.0f, 0.0f, 0.0f));
     root->Add(mazeNode);
 
     rendering_context ctx;
@@ -52,15 +86,24 @@ void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
                     return;
                     break;
                 case sf::Keyboard::Left:
+                    game.dir = direction::left;
                     break;
                 case sf::Keyboard::Right:
+                    game.dir = direction::right;
+                    break;
+                case sf::Keyboard::Up:
+                    game.dir = direction::up;
+                    break;
+                case sf::Keyboard::Down:
+                    game.dir = direction::down;
                     break;
                 }
             }
         }
+        update_position(game, ctx);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
-        camera.Render(root, ctx, monochromeProgram);
+        game.camera->Render(root, ctx, monochromeProgram);
         window.display();
     }
 }
