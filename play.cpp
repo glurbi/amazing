@@ -1,3 +1,4 @@
+#include <iostream>
 #include <SFML/Graphics.hpp>
 
 #include "play.hpp"
@@ -5,6 +6,7 @@
 #include "graph.hpp"
 #include "geometry.hpp"
 #include "misc.hpp"
+#include "texture.hpp"
 
 enum class direction {
     none, up, down, right, left
@@ -21,10 +23,11 @@ struct game_data {
 
 std::shared_ptr<Camera> create_camera(MazeModel& model, sf::RenderWindow& window) {
     ClippingVolume cv;
-    cv.right = (float)window.getSize().x / 20;
-    cv.left = (float)-(int)window.getSize().x / 20;
-    cv.bottom = (float)-(int)window.getSize().y / 20;
-    cv.top = (float)window.getSize().y / 20;
+    int div = 100;
+    cv.right = (float)window.getSize().x / div;
+    cv.left = (float)-(int)window.getSize().x / div;
+    cv.bottom = (float)-(int)window.getSize().y / div;
+    cv.top = (float)window.getSize().y / div;
     cv.nearp = 1.0f;
     cv.farp = -1.0f;
     return std::make_shared<ParallelCamera>(ParallelCamera(cv));
@@ -38,7 +41,6 @@ void update_position(game_data& game, rendering_context& ctx) {
     case direction::right:
         if (!game.model.getCell((int)game.pos_x+1, (int)game.pos_y).wall) game.pos_x += 0.1f;
         break;
-
     };
     game.camera->positionV = Vector3(game.pos_x, game.pos_y, 0);
 }
@@ -48,6 +50,16 @@ void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
     timer timer_absolute;
     timer timer_frame;
 
+    sf::Image heroImage;
+    if (!heroImage.loadFromFile("smiley.png")) {
+        std::cout << "Failed to load smiley.png" << std::endl;
+    }
+    heroImage.flipVertically();
+    auto heroTexture = std::make_shared<Texture>((GLubyte*)heroImage.getPixelsPtr(), heroImage.getSize().x, heroImage.getSize().y);
+
+    HeroBuilder2D heroBuilder;
+    std::shared_ptr<Geometry<float>> hero = heroBuilder.build();
+    std::shared_ptr<GeometryNode<float>> heroNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(hero));
     MazeGeometryBuilder2D builder2d(model);
     std::shared_ptr<Geometry<float>> mazeGeom2d = builder2d.build();
     std::shared_ptr<GeometryNode<float>> mazeNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(mazeGeom2d));
@@ -64,7 +76,9 @@ void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
 
     rendering_context ctx;
     ctx.color = color;
+    ctx.texture = heroTexture;
     std::shared_ptr<MonochromeProgram> monochromeProgram = MonochromeProgram::Create();
+    std::shared_ptr<TextureProgram> textureProgram = TextureProgram::Create();
 
     while (true)
     {
@@ -104,6 +118,7 @@ void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
         game.camera->Render(root, ctx, monochromeProgram);
+        game.camera->Render(heroNode, ctx, textureProgram);
         window.display();
     }
 }

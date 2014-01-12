@@ -23,7 +23,7 @@ public:
     double elapsed_time_seconds;
     double last_frame_time_seconds;
     std::shared_ptr<Program> program;
-    Texture* texture;
+    std::shared_ptr<Texture> texture;
 private:
     std::vector<Matrix44> mvpStack;
     std::vector<Matrix44> mvStack;

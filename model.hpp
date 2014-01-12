@@ -49,4 +49,10 @@ private:
     MazeModel& model;
 };
 
+class HeroBuilder2D {
+public:
+    HeroBuilder2D();
+    std::shared_ptr<Geometry<float>> build();
+};
+
 #endif

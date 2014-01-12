@@ -129,3 +129,17 @@ std::shared_ptr<Geometry<float>> MazeGeometryBuilder3D::build() {
     mazeGeom->SetVertexNormals(norb.Build());
     return mazeGeom;
 }
+
+HeroBuilder2D::HeroBuilder2D() {}
+
+std::shared_ptr<Geometry<float>> HeroBuilder2D::build() {
+    BufferObjectBuilder<float> b;
+    b << 0.0f << 0.0f;
+    b << 1.0f << 0.0f;
+    b << 1.0f << 1.0f;
+    b << 0.0f << 1.0f;
+    auto mazeGeom = std::make_shared<Geometry<float>>(Geometry<float>(b.GetSize() / 2));
+    mazeGeom->SetVertexPositions(b.Build());
+    mazeGeom->SetVertexTexCoords(b.Build());
+    return mazeGeom;
+}

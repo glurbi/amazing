@@ -113,7 +113,7 @@ void TextureProgram::Render(const Geometry<float>& geometry, rendering_context& 
     glUniform1i(textureUniform, 0); // we pass the texture unit
     glEnableVertexAttribArray(VertexAttribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
-    glVertexAttribPointer(VertexAttribute::POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(VertexAttribute::POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(VertexAttribute::TEXCOORD);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.GetTexCoordsId());
     glVertexAttribPointer(VertexAttribute::TEXCOORD, 2, GL_FLOAT, GL_FALSE, 0, 0);
