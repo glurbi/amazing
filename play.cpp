@@ -16,6 +16,7 @@ struct game_data {
     game_data(MazeModel& model) : model(model) {}
     MazeModel& model;
     std::shared_ptr<Camera> camera;
+    std::shared_ptr<Group> hero;
     float pos_x;
     float pos_y;
     direction dir;
@@ -41,8 +42,15 @@ void update_position(game_data& game, rendering_context& ctx) {
     case direction::right:
         if (!game.model.getCell((int)game.pos_x+1, (int)game.pos_y).wall) game.pos_x += 0.1f;
         break;
+    case direction::up:
+        if (!game.model.getCell((int)game.pos_x, (int)game.pos_y - 1).wall) game.pos_y -= 0.1f;
+        break;
+    case direction::down:
+        if (!game.model.getCell((int)game.pos_x, (int)game.pos_y + 1).wall) game.pos_y += 0.1f;
+        break;
     };
     game.camera->positionV = Vector3(game.pos_x, game.pos_y, 0);
+    game.hero->Transformation(Translation(game.pos_x, game.pos_y, 0.0f));
 }
 
 void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
@@ -65,14 +73,17 @@ void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
     std::shared_ptr<GeometryNode<float>> mazeNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(mazeGeom2d));
 
     game_data game = game_data(model);
-    game.pos_x = 1;
+    game.pos_x = 0;
     game.pos_y = 1;
     game.camera = create_camera(model, window);
-    game.camera->moveUp(1.0f);
-    game.camera->moveRight(1.0f);
+    game.camera->moveUp(1.5f);
+    game.camera->moveRight(0.5f);
 
     auto root = std::make_shared<Group>(Group());
     root->Add(mazeNode);
+    auto root2 = std::make_shared<Group>(Group());
+    root2->Add(heroNode);
+    game.hero = root2;
 
     rendering_context ctx;
     ctx.color = color;
@@ -118,7 +129,8 @@ void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
         game.camera->Render(root, ctx, monochromeProgram);
-        game.camera->Render(heroNode, ctx, textureProgram);
+        glDisable(GL_DEPTH_TEST);
+        game.camera->Render(root2, ctx, textureProgram);
         window.display();
     }
 }

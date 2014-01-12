@@ -32,6 +32,8 @@ MazeModel::MazeModel(int width_, int height_) :
 void MazeModel::create() {
     std::set<Cell, Cell::Comp> visited;
     visit(getCell(1,1), visited);
+    getCell(0, 1).wall = false;
+    getCell(width-1, height-2).wall = false;
 }
 
 int MazeModel::get_width() {
@@ -68,10 +70,10 @@ std::shared_ptr<Geometry<float>> MazeGeometryBuilder2D::build() {
     std::vector<float> v;
     for (auto& cell : model.getCells()) {
         if (cell.wall) {
-            v.push_back(cell.x-0.5f); v.push_back(cell.y-0.5f);
-            v.push_back(cell.x+0.5f); v.push_back(cell.y-0.5f);
-            v.push_back(cell.x+0.5f); v.push_back(cell.y+0.5f);
-            v.push_back(cell.x-0.5f); v.push_back(cell.y+0.5f);
+            v.push_back(cell.x+0.0f); v.push_back(cell.y+0.0f);
+            v.push_back(cell.x+1.0f); v.push_back(cell.y+0.0f);
+            v.push_back(cell.x+1.0f); v.push_back(cell.y+1.0f);
+            v.push_back(cell.x+0.0f); v.push_back(cell.y+1.0f);
         }
     }
     auto mazeGeom = std::make_shared<Geometry<float>>(Geometry<float>(v.size()/2));
@@ -87,40 +89,40 @@ std::shared_ptr<Geometry<float>> MazeGeometryBuilder3D::build() {
     for (auto& cell : model.getCells()) {
         if (cell.wall) {
             // top
-            posb << cell.x - 0.5f << cell.y - 0.5f << 1.0f;
-            posb << cell.x + 0.5f << cell.y - 0.5f << 1.0f;
-            posb << cell.x + 0.5f << cell.y + 0.5f << 1.0f;
-            posb << cell.x - 0.5f << cell.y + 0.5f << 1.0f;
+            posb << cell.x + 0.0f << cell.y + 0.0f << 1.0f;
+            posb << cell.x + 1.0f << cell.y + 0.0f << 1.0f;
+            posb << cell.x + 1.0f << cell.y + 1.0f << 1.0f;
+            posb << cell.x + 0.0f << cell.y + 1.0f << 1.0f;
             for (int i = 0; i < 4; i++) norb << 0.0f << 0.0f << 1.0f;
             // bottom
-            posb << cell.x - 0.5f << cell.y - 0.5f << 0.0f;
-            posb << cell.x - 0.5f << cell.y + 0.5f << 0.0f;
-            posb << cell.x + 0.5f << cell.y + 0.5f << 0.0f;
-            posb << cell.x + 0.5f << cell.y - 0.5f << 0.0f;
+            posb << cell.x + 0.0f << cell.y + 0.0f << 0.0f;
+            posb << cell.x + 0.0f << cell.y + 1.0f << 0.0f;
+            posb << cell.x + 1.0f << cell.y + 1.0f << 0.0f;
+            posb << cell.x + 1.0f << cell.y + 0.0f << 0.0f;
             for (int i = 0; i < 4; i++) norb << 0.0f << 0.0f << -1.0f;
             // right
-            posb << cell.x + 0.5f << cell.y - 0.5f << 1.0f;
-            posb << cell.x + 0.5f << cell.y - 0.5f << 0.0f;
-            posb << cell.x + 0.5f << cell.y + 0.5f << 0.0f;
-            posb << cell.x + 0.5f << cell.y + 0.5f << 1.0f;
+            posb << cell.x + 1.0f << cell.y + 0.0f << 1.0f;
+            posb << cell.x + 1.0f << cell.y + 0.0f << 0.0f;
+            posb << cell.x + 1.0f << cell.y + 1.0f << 0.0f;
+            posb << cell.x + 1.0f << cell.y + 1.0f << 1.0f;
             for (int i = 0; i < 4; i++) norb << 1.0f << 0.0f << 0.0f;
             // left
-            posb << cell.x - 0.5f << cell.y - 0.5f << 1.0f;
-            posb << cell.x - 0.5f << cell.y + 0.5f << 1.0f;
-            posb << cell.x - 0.5f << cell.y + 0.5f << 0.0f;
-            posb << cell.x - 0.5f << cell.y - 0.5f << 0.0f;
+            posb << cell.x + 0.0f << cell.y + 0.0f << 1.0f;
+            posb << cell.x + 0.0f << cell.y + 1.0f << 1.0f;
+            posb << cell.x + 0.0f << cell.y + 1.0f << 0.0f;
+            posb << cell.x + 0.0f << cell.y + 0.0f << 0.0f;
             for (int i = 0; i < 4; i++) norb << -1.0f << 0.0f << 0.0f;
             // front
-            posb << cell.x - 0.5f << cell.y - 0.5f << 1.0f;
-            posb << cell.x - 0.5f << cell.y - 0.5f << 0.0f;
-            posb << cell.x + 0.5f << cell.y - 0.5f << 0.0f;
-            posb << cell.x + 0.5f << cell.y - 0.5f << 1.0f;
+            posb << cell.x + 0.0f << cell.y + 0.0f << 1.0f;
+            posb << cell.x + 0.0f << cell.y + 0.0f << 0.0f;
+            posb << cell.x + 1.0f << cell.y + 0.0f << 0.0f;
+            posb << cell.x + 1.0f << cell.y + 0.0f << 1.0f;
             for (int i = 0; i < 4; i++) norb << 0.0f << -1.0f << 0.0f;
             // back
-            posb << cell.x - 0.5f << cell.y + 0.5f << 1.0f;
-            posb << cell.x + 0.5f << cell.y + 0.5f << 1.0f;
-            posb << cell.x + 0.5f << cell.y + 0.5f << 0.0f;
-            posb << cell.x - 0.5f << cell.y + 0.5f << 0.0f;
+            posb << cell.x + 0.0f << cell.y + 1.0f << 1.0f;
+            posb << cell.x + 1.0f << cell.y + 1.0f << 1.0f;
+            posb << cell.x + 1.0f << cell.y + 1.0f << 0.0f;
+            posb << cell.x + 0.0f << cell.y + 1.0f << 0.0f;
             for (int i = 0; i < 4; i++) norb << 0.0f << 1.0f << 0.0f;
         }
     }
