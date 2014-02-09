@@ -17,8 +17,10 @@ struct game_data {
     MazeModel& model;
     std::shared_ptr<Camera> camera;
     std::shared_ptr<Group> hero;
-    float pos_x;
-    float pos_y;
+    int pos_x;
+    int pos_y;
+    float pos_fx;
+    float pos_fy;
     direction dir;
 };
 
@@ -34,23 +36,28 @@ std::shared_ptr<Camera> create_camera(MazeModel& model, sf::RenderWindow& window
     return std::make_shared<ParallelCamera>(ParallelCamera(cv));
 }
 
-void update_position(game_data& game, rendering_context& ctx) {
-    switch (game.dir) {
+void update_position(game_data& g, rendering_context& ctx) {
+    float inc = 0.05f;
+    switch (g.dir) {
     case direction::left:
-        if (!game.model.getCell((int)game.pos_x-1, (int)game.pos_y).wall) game.pos_x -= 0.1f;
+        if (!g.model.is_wall(g.pos_x - 1, g.pos_y)) g.pos_fx -= inc;
         break;
     case direction::right:
-        if (!game.model.getCell((int)game.pos_x+1, (int)game.pos_y).wall) game.pos_x += 0.1f;
+        if (!g.model.is_wall(g.pos_x + 1, g.pos_y)) g.pos_fx += inc;
         break;
     case direction::up:
-        if (!game.model.getCell((int)game.pos_x, (int)game.pos_y - 1).wall) game.pos_y -= 0.1f;
+        if (!g.model.is_wall(g.pos_x, g.pos_y + 1)) g.pos_fy += inc;
         break;
     case direction::down:
-        if (!game.model.getCell((int)game.pos_x, (int)game.pos_y + 1).wall) game.pos_y += 0.1f;
+        if (!g.model.is_wall(g.pos_x, g.pos_y - 1)) g.pos_fy -= inc;
+        break;
+    default:
         break;
     };
-    game.camera->positionV = Vector3(game.pos_x, game.pos_y, 0);
-    game.hero->Transformation(Translation(game.pos_x, game.pos_y, 0.0f));
+    if (abs(g.pos_fx - round(g.pos_fx)) < inc / 10.0f) { g.pos_x = (int)round(g.pos_fx); g.pos_fx = g.pos_x; }
+    if (abs(g.pos_fy - round(g.pos_fy)) < inc / 10.0f) { g.pos_y = (int)round(g.pos_fy); g.pos_fy = g.pos_y; }
+    g.camera->positionV = Vector3(g.pos_fx, g.pos_fy, 0);
+    g.hero->Transformation(Translation(g.pos_fx, g.pos_fy, 0.0f));
 }
 
 void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
@@ -75,6 +82,8 @@ void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
     game_data game = game_data(model);
     game.pos_x = 0;
     game.pos_y = 1;
+    game.pos_fx = 0;
+    game.pos_fy = 1;
     game.camera = create_camera(model, window);
     game.camera->moveUp(1.5f);
     game.camera->moveRight(0.5f);

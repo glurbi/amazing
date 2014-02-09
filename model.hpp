@@ -23,6 +23,8 @@ public:
     int get_width();
     int get_height();
     inline Cell& getCell(int x, int y) { return cells[x+y*width]; }
+    inline bool is_wall(int x, int y) { return (x < 0) || (x >= width) || (y < 0) || (y >= height) || getCell(x, y).wall; }
+    inline bool is_wall(float x, float y) { return is_wall((int)floor(x), (int)floor(y)); }
     inline std::vector<Cell>& getCells() { return cells; }
 	inline bool contains(Cell& c, std::set<Cell, Cell::Comp>& visited) { return visited.find(c) != visited.end(); }
 private:
