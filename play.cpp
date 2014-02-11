@@ -22,6 +22,7 @@ struct game_data {
     float pos_fx;
     float pos_fy;
     direction dir;
+    direction next_direction;
 };
 
 std::shared_ptr<Camera> create_camera(MazeModel& model, sf::RenderWindow& window) {
@@ -34,6 +35,10 @@ std::shared_ptr<Camera> create_camera(MazeModel& model, sf::RenderWindow& window
     cv.nearp = 1.0f;
     cv.farp = -1.0f;
     return std::make_shared<ParallelCamera>(ParallelCamera(cv));
+}
+
+bool is_int(float f, float eps) {
+    return abs(f - round(f)) < eps;
 }
 
 void update_position(game_data& g, rendering_context& ctx) {
@@ -54,8 +59,16 @@ void update_position(game_data& g, rendering_context& ctx) {
     default:
         break;
     };
-    if (abs(g.pos_fx - round(g.pos_fx)) < inc / 10.0f) { g.pos_x = (int)round(g.pos_fx); g.pos_fx = g.pos_x; }
-    if (abs(g.pos_fy - round(g.pos_fy)) < inc / 10.0f) { g.pos_y = (int)round(g.pos_fy); g.pos_fy = g.pos_y; }
+    if (is_int(g.pos_fx, inc/10.0f) && (is_int(g.pos_fy, inc/10.0f))) {
+        g.pos_x = (int)round(g.pos_fx);
+        g.pos_fx = (float)g.pos_x;
+        g.pos_y = (int)round(g.pos_fy);
+        g.pos_fy = (float)g.pos_y;
+        if (g.next_direction != direction::none) {
+            g.dir = g.next_direction;
+            g.next_direction = direction::none;
+        }
+    }
     g.camera->positionV = Vector3(g.pos_fx, g.pos_fy, 0);
     g.hero->Transformation(Translation(g.pos_fx, g.pos_fy, 0.0f));
 }
@@ -87,6 +100,8 @@ void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
     game.camera = create_camera(model, window);
     game.camera->moveUp(1.5f);
     game.camera->moveRight(0.5f);
+    game.dir = direction::none;
+    game.next_direction = direction::none;
 
     auto root = std::make_shared<Group>(Group());
     root->Add(mazeNode);
@@ -120,16 +135,16 @@ void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
                     return;
                     break;
                 case sf::Keyboard::Left:
-                    game.dir = direction::left;
+                    game.next_direction = direction::left;
                     break;
                 case sf::Keyboard::Right:
-                    game.dir = direction::right;
+                    game.next_direction = direction::right;
                     break;
                 case sf::Keyboard::Up:
-                    game.dir = direction::up;
+                    game.next_direction = direction::up;
                     break;
                 case sf::Keyboard::Down:
-                    game.dir = direction::down;
+                    game.next_direction = direction::down;
                     break;
                 }
             }
