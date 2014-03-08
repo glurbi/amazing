@@ -28,7 +28,7 @@ public:
     inline std::vector<Cell>& getCells() { return cells; }
 	inline bool contains(Cell& c, std::set<Cell, Cell::Comp>& visited) { return visited.find(c) != visited.end(); }
 private:
-    void visit(Cell& c, std::set<Cell, Cell::Comp>& visited);
+    void visit(Cell& c, std::set<Cell, Cell::Comp>& visited, int& count);
     int width;
 	int height;
 	std::vector<Cell> cells;

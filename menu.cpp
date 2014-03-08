@@ -149,8 +149,8 @@ menu_choice show_maze(sf::RenderWindow& window, MazeModel& model, bool left_arro
 
 void menu(sf::RenderWindow& window) {
     int index = 0;
-    const int len = 8;
-    const int sizes[] = { 11, 17, 25, 31, 41, 51, 65, 87, 101 };
+    const int len = 10;
+    const int sizes[] = { 11, 17, 25, 31, 41, 51, 65, 87, 101, 123, 181 };
     const Color colors[] = {
         Color(0.0f, 1.0f, 0.0f),
         Color(0.0f, 0.0f, 1.0f),
@@ -160,7 +160,8 @@ void menu(sf::RenderWindow& window) {
         Color(0.7f, 0.9f, 0.0f),
         Color(0.7f, 0.5f, 0.3f),
         Color(0.5f, 0.3f, 0.7f),
-        Color(0.3f, 0.7f, 0.5f)
+        Color(0.3f, 0.7f, 0.5f),
+        Color(1.0f, 0.3f, 0.4f)
     };
     menu_choice choice = menu_choice::undefined;
     while (choice != menu_choice::exit) {

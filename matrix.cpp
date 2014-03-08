@@ -21,7 +21,7 @@ Vector3 operator*(const Vector3& v, float t) {
 }
 
 Vector4::Vector4(float x, float y, float z, float w) { v[0] = x; v[1] = y; v[2] = z; v[3] = w; }
-Vector4::Vector4(const Vector3 vec3, float w) { v[0] = vec3.v[0]; v[1] = vec3.v[1]; v[2] = vec3.v[3]; v[3] = w; }
+Vector4::Vector4(const Vector3 vec3, float w) { v[0] = vec3.v[0]; v[1] = vec3.v[1]; v[2] = vec3.v[2]; v[3] = w; }
 
 Color::Color() : Vector4(1, 1, 1, 1) {};
 Color::Color(float r, float g, float b, float a) : Vector4(r, g, b, a) {};

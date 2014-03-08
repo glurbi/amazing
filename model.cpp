@@ -31,7 +31,8 @@ MazeModel::MazeModel(int width_, int height_) :
 
 void MazeModel::create() {
     std::set<Cell, Cell::Comp> visited;
-    visit(getCell(1,1), visited);
+    int count = 0;
+    visit(getCell(1,1), visited, count);
     getCell(0, 1).wall = false;
     getCell(width-1, height-2).wall = false;
 }
@@ -44,7 +45,7 @@ int MazeModel::get_height() {
     return height;
 }
 
-void MazeModel::visit(Cell& c, std::set<Cell, Cell::Comp>& visited) {
+void MazeModel::visit(Cell& c, std::set<Cell, Cell::Comp>& visited, int& count) {
 	c.wall = false;
     visited.insert(c);
     std::vector<Cell*> neighbors;
@@ -54,13 +55,14 @@ void MazeModel::visit(Cell& c, std::set<Cell, Cell::Comp>& visited) {
 	if ((c.y < height-2) && !contains(getCell(c.x, c.y+2), visited)) neighbors.push_back(&getCell(c.x, c.y+2));
 	std::random_shuffle(neighbors.begin(), neighbors.end());
     for (auto& n : neighbors) {
-		if (visited.find(*n) != visited.end()) {
+		if ((visited.find(*n) != visited.end()) && (count % 11 != 0)) {
             continue;
         }
 		int wx = (n->x + c.x) / 2;
 		int wy = (n->y + c.y) / 2;
 		getCell(wx, wy).wall = false;
-        visit(*n, visited);
+        visit(*n, visited, count);
+        count++;
     }
 }
 
