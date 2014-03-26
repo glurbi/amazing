@@ -6,14 +6,15 @@
 
 #include "matrix.hpp"
 #include "texture.hpp"
+#include "program.hpp"
 
 class Program;
 
 struct rendering_context {
 public:
     rendering_context();
-    void projection(Matrix44& mat);
-    void push(Matrix44& mat);
+    void projection(Matrix44 mat);
+    void push(Matrix44 mat);
     void pop();
     Matrix44 mvp();
     Matrix44 mv();

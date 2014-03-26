@@ -7,8 +7,8 @@
 #include "matrix.hpp"
 #include "model.hpp"
 #include "geometry.hpp"
-#include "program.hpp"
 #include "graph.hpp"
+#include "program.hpp"
 #include "menu.hpp"
 
 int main() {

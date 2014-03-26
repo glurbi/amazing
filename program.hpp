@@ -9,8 +9,11 @@
 #include "matrix.hpp"
 #include "geometry.hpp"
 #include "texture.hpp"
-#include "graph.hpp"
-#include "context.hpp"
+
+class rendering_context;
+
+template <class T>
+class Geometry;
 
 template <GLenum type>
 class Shader {

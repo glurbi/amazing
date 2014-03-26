@@ -31,6 +31,8 @@ set(HEADERS
     timer.hpp
 )
 
+add_definitions(-std=c++11)
+
 add_executable(${EXECUTABLE_NAME} ${SOURCE} ${HEADERS})
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
@@ -43,5 +45,11 @@ target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${OPENGL_LIBRARIES} $
 
 include_directories(${SFML_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_PATH})
 
-configure_file(smiley.png ${CMAKE_CURRENT_BINARY_DIR}/Debug/smiley.png COPYONLY)
-configure_file(Anonymous.ttf ${CMAKE_CURRENT_BINARY_DIR}/Debug/Anonymous.ttf COPYONLY)
+configure_file(smiley.png ${CMAKE_CURRENT_BINARY_DIR}/smiley.png COPYONLY)
+configure_file(Anonymous.ttf ${CMAKE_CURRENT_BINARY_DIR}/Anonymous.ttf COPYONLY)
+configure_file(flatShading.frag ${CMAKE_CURRENT_BINARY_DIR}/flatShading.frag COPYONLY)
+configure_file(monochrome.frag ${CMAKE_CURRENT_BINARY_DIR}/monochrome.frag COPYONLY)
+configure_file(texture.frag ${CMAKE_CURRENT_BINARY_DIR}/texture.frag COPYONLY)
+configure_file(flatShading.vert ${CMAKE_CURRENT_BINARY_DIR}/flatShading.vert COPYONLY)
+configure_file(monochrome.vert ${CMAKE_CURRENT_BINARY_DIR}/monochrome.vert COPYONLY)
+configure_file(texture.vert ${CMAKE_CURRENT_BINARY_DIR}/texture.vert COPYONLY)

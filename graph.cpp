@@ -12,11 +12,11 @@ rendering_context::rendering_context() {
     reset();
 }
 
-void rendering_context::projection(Matrix44& mat) {
+void rendering_context::projection(Matrix44 mat) {
     mvpStack.push_back(Multm(mvpStack.back(), mat));
 }
 
-void rendering_context::push(Matrix44& mat) {
+void rendering_context::push(Matrix44 mat) {
     mvpStack.push_back(Multm(mvpStack.back(), mat));
     mvStack.push_back(Multm(mvStack.back(), mat));
 }

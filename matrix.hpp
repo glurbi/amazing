@@ -40,7 +40,7 @@ struct Matrix44
     float m[16];
 };
 
-Matrix44 Multm(Matrix44& m1, Matrix44& m2);
+Matrix44 Multm(Matrix44 m1, Matrix44 m2);
 
 Matrix44 Identity();
 

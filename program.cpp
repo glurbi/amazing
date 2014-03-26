@@ -3,6 +3,7 @@
 
 #include "program.hpp"
 #include "misc.hpp"
+#include "context.hpp"
 
 static std::string	readTextFile(const std::string& filename) {
     std::ifstream f(filename);

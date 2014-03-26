@@ -73,7 +73,7 @@ void update_position(game_data& g, rendering_context& ctx) {
     g.hero->Transformation(Translation(g.pos_fx, g.pos_fy, 0.0f));
 }
 
-void play(MazeModel& model, sf::RenderWindow& window, Color& color) {
+void play(MazeModel& model, sf::RenderWindow& window, Color color) {
 
     timer timer_absolute;
     timer timer_frame;

@@ -39,7 +39,7 @@ Vector3 crossProduct(const Vector3& u, const Vector3& v) {
     return Vector3(u.y()*v.z() - u.z()*v.y(), u.z()*v.x() - u.x()*v.z(), u.x()*v.y() - u.y()*v.x());
 }
 
-Matrix44 Multm(Matrix44& m1, Matrix44& m2) {
+Matrix44 Multm(Matrix44 m1, Matrix44 m2) {
     Matrix44 m;
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
