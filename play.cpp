@@ -38,7 +38,7 @@ std::shared_ptr<Camera> create_camera(MazeModel& model, sf::RenderWindow& window
 }
 
 bool is_int(float f, float eps) {
-    return abs(f - round(f)) < eps;
+    return fabs(f - round(f)) < eps;
 }
 
 void update_position(game_data& g, rendering_context& ctx) {
@@ -48,7 +48,7 @@ void update_position(game_data& g, rendering_context& ctx) {
         if (!g.model.is_wall(g.pos_x - 1, g.pos_y)) g.pos_fx -= inc;
         break;
     case direction::right:
-        if (!g.model.is_wall(g.pos_x + 1, g.pos_y)) g.pos_fx += inc;
+        if (!g.model.is_wall(g.pos_x + 1, g.pos_y)) { g.pos_fx += inc;  }
         break;
     case direction::up:
         if (!g.model.is_wall(g.pos_x, g.pos_y + 1)) g.pos_fy += inc;
