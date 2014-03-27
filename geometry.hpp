@@ -91,6 +91,10 @@ public:
         return data.size() * sizeof(T);
     }
 
+    GLsizeiptr GetCount() {
+        return data.size();
+    }
+
     GLuint Build() {
         GLuint id;
         glGenBuffers(1, &id);

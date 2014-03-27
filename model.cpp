@@ -128,7 +128,7 @@ std::shared_ptr<Geometry<float>> MazeGeometryBuilder3D::build() {
             for (int i = 0; i < 4; i++) norb << 0.0f << 1.0f << 0.0f;
         }
     }
-    auto mazeGeom = std::make_shared<Geometry<float>>(Geometry<float>(posb.GetSize()/3));
+    auto mazeGeom = std::make_shared<Geometry<float>>(Geometry<float>(posb.GetCount()/3));
     mazeGeom->SetVertexPositions(posb.Build());
     mazeGeom->SetVertexNormals(norb.Build());
     return mazeGeom;
