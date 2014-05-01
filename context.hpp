@@ -10,7 +10,7 @@
 
 class Program;
 
-struct rendering_context {
+class rendering_context {
 public:
     rendering_context();
     void projection(Matrix44 mat);

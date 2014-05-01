@@ -31,7 +31,11 @@ set(HEADERS
     timer.hpp
 )
 
-add_definitions(-std=c++11)
+if(UNIX)
+    if(CMAKE_COMPILER_IS_GNUCC)
+        add_definitions(-std=c++11)
+    endif(CMAKE_COMPILER_IS_GNUCC)
+endif(UNIX)
 
 add_executable(${EXECUTABLE_NAME} ${SOURCE} ${HEADERS})
 
