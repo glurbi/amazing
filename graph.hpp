@@ -73,12 +73,12 @@ protected:
 template<class T>
 class GeometryNode : public Node {
 public:
-    GeometryNode(std::shared_ptr<Geometry<T>> geom) : geom(geom) {}
+    GeometryNode(std::shared_ptr<geometry<T>> geom) : geom(geom) {}
     virtual void Render(rendering_context& ctx) {
         ctx.program->Render(*geom, ctx);
     }
 private:
-    std::shared_ptr<Geometry<T>> geom;
+    std::shared_ptr<geometry<T>> geom;
 };
 
 #endif

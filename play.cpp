@@ -86,10 +86,10 @@ void play(MazeModel& model, sf::RenderWindow& window, Color color) {
     auto heroTexture = std::make_shared<Texture>((GLubyte*)heroImage.getPixelsPtr(), heroImage.getSize().x, heroImage.getSize().y);
 
     HeroBuilder2D heroBuilder;
-    std::shared_ptr<Geometry<float>> hero = heroBuilder.build();
+    std::shared_ptr<geometry<float>> hero = heroBuilder.build();
     std::shared_ptr<GeometryNode<float>> heroNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(hero));
     MazeGeometryBuilder2D builder2d(model);
-    std::shared_ptr<Geometry<float>> mazeGeom2d = builder2d.build();
+    std::shared_ptr<geometry<float>> mazeGeom2d = builder2d.build();
     std::shared_ptr<GeometryNode<float>> mazeNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(mazeGeom2d));
 
     game_data game = game_data(model);

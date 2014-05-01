@@ -75,7 +75,7 @@ menu_choice show_maze(sf::RenderWindow& window, MazeModel& model, bool left_arro
     timer timer_frame;
 
     MazeGeometryBuilder3D builder3d(model);
-    std::shared_ptr<Geometry<float>> mazeGeom3d = builder3d.build();
+    std::shared_ptr<geometry<float>> mazeGeom3d = builder3d.build();
     std::shared_ptr<GeometryNode<float>> mazeNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(mazeGeom3d));
 
     std::shared_ptr<Camera> camera = createCamera(model, window);
@@ -170,7 +170,7 @@ void menu(sf::RenderWindow& window) {
         MazeModel model(mazeWidth, mazeHeight);
         model.create();
         MazeGeometryBuilder3D builder3d(model);
-        std::shared_ptr<Geometry<float>> mazeGeom3d = builder3d.build();
+        std::shared_ptr<geometry<float>> mazeGeom3d = builder3d.build();
         std::shared_ptr<GeometryNode<float>> mazeNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(mazeGeom3d));
         choice = show_maze(window, model, index > 0, index < len - 1, colors[index]);
         switch (choice) {

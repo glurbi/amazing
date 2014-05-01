@@ -68,7 +68,7 @@ void MazeModel::visit(Cell& c, std::set<Cell, Cell::Comp>& visited, int& count) 
 
 MazeGeometryBuilder2D ::MazeGeometryBuilder2D(MazeModel& model_) : model(model_) {}
 
-std::shared_ptr<Geometry<float>> MazeGeometryBuilder2D::build() {
+std::shared_ptr<geometry<float>> MazeGeometryBuilder2D::build() {
     std::vector<float> v;
     for (auto& cell : model.getCells()) {
         if (cell.wall) {
@@ -78,14 +78,14 @@ std::shared_ptr<Geometry<float>> MazeGeometryBuilder2D::build() {
             v.push_back(cell.x+0.0f); v.push_back(cell.y+1.0f);
         }
     }
-    auto mazeGeom = std::make_shared<Geometry<float>>(Geometry<float>(v.size()/2));
+    auto mazeGeom = std::make_shared<geometry<float>>(geometry<float>(v.size()/2));
     mazeGeom->SetVertexPositions(&v[0], v.size() * sizeof(float));
     return mazeGeom;
 }
 
 MazeGeometryBuilder3D ::MazeGeometryBuilder3D(MazeModel& model_) : model(model_) {}
 
-std::shared_ptr<Geometry<float>> MazeGeometryBuilder3D::build() {
+std::shared_ptr<geometry<float>> MazeGeometryBuilder3D::build() {
     BufferObjectBuilder<float> posb;
     BufferObjectBuilder<float> norb;
     for (auto& cell : model.getCells()) {
@@ -128,7 +128,7 @@ std::shared_ptr<Geometry<float>> MazeGeometryBuilder3D::build() {
             for (int i = 0; i < 4; i++) norb << 0.0f << 1.0f << 0.0f;
         }
     }
-    auto mazeGeom = std::make_shared<Geometry<float>>(Geometry<float>(posb.GetCount()/3));
+    auto mazeGeom = std::make_shared<geometry<float>>(geometry<float>(posb.GetCount()/3));
     mazeGeom->SetVertexPositions(posb.Build());
     mazeGeom->SetVertexNormals(norb.Build());
     return mazeGeom;
@@ -136,13 +136,13 @@ std::shared_ptr<Geometry<float>> MazeGeometryBuilder3D::build() {
 
 HeroBuilder2D::HeroBuilder2D() {}
 
-std::shared_ptr<Geometry<float>> HeroBuilder2D::build() {
+std::shared_ptr<geometry<float>> HeroBuilder2D::build() {
     BufferObjectBuilder<float> b;
     b << 0.0f << 0.0f;
     b << 1.0f << 0.0f;
     b << 1.0f << 1.0f;
     b << 0.0f << 1.0f;
-    auto mazeGeom = std::make_shared<Geometry<float>>(Geometry<float>(b.GetSize() / 2));
+    auto mazeGeom = std::make_shared<geometry<float>>(geometry<float>(b.GetSize() / 2));
     mazeGeom->SetVertexPositions(b.Build());
     mazeGeom->SetVertexTexCoords(b.Build());
     return mazeGeom;

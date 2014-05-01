@@ -80,31 +80,31 @@ Program::~Program() {
     glDeleteProgram(id);
 }
 
-void MonochromeProgram::Render(const Geometry<float>& geometry, rendering_context& ctx) {
+void MonochromeProgram::Render(const geometry<float>& geometry, rendering_context& ctx) {
     glUseProgram(id);
     GLuint matrixUniform = glGetUniformLocation(id, "mvpMatrix");
     glUniformMatrix4fv(matrixUniform, 1, false, ctx.mvp().m);
     GLuint colorUniform = glGetUniformLocation(id, "color");
     glUniform4f(colorUniform, ctx.color.r(), ctx.color.g(), ctx.color.b(), ctx.color.a());
-    glEnableVertexAttribArray(VertexAttribute::POSITION);
+    glEnableVertexAttribArray(vertex_attribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
-    glVertexAttribPointer(VertexAttribute::POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(vertex_attribute::POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_QUADS, 0, geometry.GetCount());
-    glDisableVertexAttribArray(VertexAttribute::POSITION);
+    glDisableVertexAttribArray(vertex_attribute::POSITION);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     glUseProgram(id);
 }
 
 std::shared_ptr<MonochromeProgram> MonochromeProgram::Create() {
     std::map<int, std::string> monochromeAttributeIndices;
-    monochromeAttributeIndices[VertexAttribute::POSITION] = "vpos";
+    monochromeAttributeIndices[vertex_attribute::POSITION] = "vpos";
     return std::shared_ptr<MonochromeProgram>(new MonochromeProgram(monochromeAttributeIndices));
 }
 
 MonochromeProgram::MonochromeProgram(const std::map<int, std::string>& attributeIndices) :
     Program(readTextFile("monochrome.vert"), readTextFile("monochrome.frag"), attributeIndices) {}
 
-void TextureProgram::Render(const Geometry<float>& geometry, rendering_context& ctx) {
+void TextureProgram::Render(const geometry<float>& geometry, rendering_context& ctx) {
     glUseProgram(id);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, ctx.texture->getId());
@@ -112,29 +112,29 @@ void TextureProgram::Render(const Geometry<float>& geometry, rendering_context& 
     glUniformMatrix4fv(matrixUniform, 1, false, ctx.mvp().m);
     GLuint textureUniform = glGetUniformLocation(id, "texture");
     glUniform1i(textureUniform, 0); // we pass the texture unit
-    glEnableVertexAttribArray(VertexAttribute::POSITION);
+    glEnableVertexAttribArray(vertex_attribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
-    glVertexAttribPointer(VertexAttribute::POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(VertexAttribute::TEXCOORD);
+    glVertexAttribPointer(vertex_attribute::POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(vertex_attribute::TEXCOORD);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.GetTexCoordsId());
-    glVertexAttribPointer(VertexAttribute::TEXCOORD, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(vertex_attribute::TEXCOORD, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_QUADS, 0, 4);
-    glDisableVertexAttribArray(VertexAttribute::POSITION);
-    glDisableVertexAttribArray(VertexAttribute::TEXCOORD);
+    glDisableVertexAttribArray(vertex_attribute::POSITION);
+    glDisableVertexAttribArray(vertex_attribute::TEXCOORD);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 std::shared_ptr<TextureProgram> TextureProgram::Create() {
     std::map<int, std::string> textureAttributeIndices;
-    textureAttributeIndices[VertexAttribute::POSITION] = "pos";
-    textureAttributeIndices[VertexAttribute::TEXCOORD] = "texCoord";
+    textureAttributeIndices[vertex_attribute::POSITION] = "pos";
+    textureAttributeIndices[vertex_attribute::TEXCOORD] = "texCoord";
     return std::shared_ptr<TextureProgram>(new TextureProgram(textureAttributeIndices));
 }
 
 TextureProgram::TextureProgram(std::map<int, std::string>& attributeIndices) :
     Program(readTextFile("texture.vert"), readTextFile("texture.frag"), attributeIndices) {}
 
-void FlatShadingProgram::Render(const Geometry<float>& geometry, rendering_context& ctx) {
+void FlatShadingProgram::Render(const geometry<float>& geometry, rendering_context& ctx) {
     glUseProgram(id);
 
     GLuint mvpUniform = glGetUniformLocation(id, "mvpMatrix");
@@ -149,22 +149,22 @@ void FlatShadingProgram::Render(const Geometry<float>& geometry, rendering_conte
     GLuint colorUniform = glGetUniformLocation(id, "color");
     glUniform3f(colorUniform, ctx.color.r(), ctx.color.g(), ctx.color.b());
 
-    glEnableVertexAttribArray(VertexAttribute::POSITION);
+    glEnableVertexAttribArray(vertex_attribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
-    glVertexAttribPointer(VertexAttribute::POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(VertexAttribute::NORMAL);
+    glVertexAttribPointer(vertex_attribute::POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(vertex_attribute::NORMAL);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.GetNormalsId());
-    glVertexAttribPointer(VertexAttribute::NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(vertex_attribute::NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_QUADS, 0, geometry.GetCount());
-    glDisableVertexAttribArray(VertexAttribute::POSITION);
-    glDisableVertexAttribArray(VertexAttribute::NORMAL);
+    glDisableVertexAttribArray(vertex_attribute::POSITION);
+    glDisableVertexAttribArray(vertex_attribute::NORMAL);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 std::shared_ptr<FlatShadingProgram> FlatShadingProgram::Create() {
     std::map<int, std::string> attributeIndices;
-    attributeIndices[VertexAttribute::POSITION] = "vPosition";
-    attributeIndices[VertexAttribute::NORMAL] = "vNormal";
+    attributeIndices[vertex_attribute::POSITION] = "vPosition";
+    attributeIndices[vertex_attribute::NORMAL] = "vNormal";
     return std::shared_ptr<FlatShadingProgram>(new FlatShadingProgram(attributeIndices));
 }
 

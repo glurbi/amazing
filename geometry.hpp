@@ -5,20 +5,20 @@
 #include <memory>
 #include <GL/glew.h>
 
-enum VertexAttribute {
+enum vertex_attribute {
     POSITION,
     TEXCOORD,
     NORMAL
 };
 
 template<class T>
-class Geometry {
+class geometry {
 
 public:
-	Geometry(GLsizei count_) :
+	geometry(GLsizei count_) :
         count(count_), positionsId(0), texCoordsId(0), normalsId(0) {}
 	
-	~Geometry() {
+	~geometry() {
         glDeleteBuffers(1, &positionsId);
         glDeleteBuffers(1, &texCoordsId);
         glDeleteBuffers(1, &normalsId);
