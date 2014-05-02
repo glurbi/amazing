@@ -25,7 +25,7 @@ struct game_data {
     direction next_direction;
 };
 
-std::shared_ptr<camera> create_camera(maze_model& model, sf::RenderWindow& window) {
+static std::shared_ptr<camera> create_camera(maze_model& model, sf::RenderWindow& window) {
     clipping_volume cv;
     int div = 100;
     cv.right = (float)window.getSize().x / div;

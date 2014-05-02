@@ -54,7 +54,7 @@ void draw_right_arrow(sf::RenderWindow& window, sf::Color& color) {
     window.popGLStates();
 }
 
-std::shared_ptr<camera> create_camera(maze_model& model, sf::RenderWindow& window) {
+static std::shared_ptr<camera> create_camera(maze_model& model, sf::RenderWindow& window) {
     float aspectRatio = (float)window.getSize().x / window.getSize().y;
     float mf = 0.5f; // margin factor, i.e. how much blank space around the maze
     clipping_volume cv;
