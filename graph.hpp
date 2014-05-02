@@ -11,12 +11,12 @@
 #include "program.hpp"
 #include "context.hpp"
 
-class Node {
+class node {
 public:
-    virtual void Render(rendering_context& ctx) = 0;
+    virtual void render(rendering_context& ctx) = 0;
 };
 
-struct ClippingVolume {
+struct clipping_volume {
     float left;
     float right;
     float bottom;
@@ -26,56 +26,56 @@ struct ClippingVolume {
 };
 
 // cf http://www.codecolony.de/opengl.htm#camera2
-struct Camera {
-    Camera(const ClippingVolume& clippingVolume);
-    virtual void Render(std::shared_ptr<Node> node, rendering_context& ctx, std::shared_ptr<Program> program) = 0;
+struct camera {
+    camera(const clipping_volume& clippingVolume);
+    virtual void render(std::shared_ptr<node> node, rendering_context& ctx, std::shared_ptr<program> program) = 0;
     void reset();
-    void rotateX(float deg);
-    void rotateY(float deg);
-    void rotateZ(float deg);
-    void moveRight(float dist);
-    void moveLeft(float dist);
-    void moveUp(float dist);
-    void moveDown(float dist);
-    void moveForward(float dist);
-    void moveBackward(float dist);
-    Matrix44 positionAndOrient();
-    Vector3 positionV;
-    Vector3 directionV;
-    Vector3 rightV;
-    Vector3 upV;
-    ClippingVolume clippingVolume;
+    void rotate_x(float deg);
+    void rotate_y(float deg);
+    void rotate_z(float deg);
+    void move_right(float dist);
+    void move_left(float dist);
+    void move_up(float dist);
+    void move_down(float dist);
+    void move_forward(float dist);
+    void move_backward(float dist);
+    matrix44 position_and_orient();
+    vector3 position_v;
+    vector3 direction_v;
+    vector3 right_v;
+    vector3 up_v;
+    clipping_volume cv;
 };
 
-class PerspectiveCamera : public Camera {
+class perspective_camera : public camera {
 public:
-    PerspectiveCamera(const ClippingVolume& clippingVolume);
-    virtual void Render(std::shared_ptr<Node> node, rendering_context& ctx, std::shared_ptr<Program> program);
+    perspective_camera(const clipping_volume& cv);
+    virtual void render(std::shared_ptr<node> node, rendering_context& ctx, std::shared_ptr<program> program);
 };
 
-class ParallelCamera : public Camera {
+class parallel_camera : public camera {
 public:
-    ParallelCamera(const ClippingVolume& clippingVolume);
-    virtual void Render(std::shared_ptr<Node> node, rendering_context& ctx, std::shared_ptr<Program> program);
+    parallel_camera(const clipping_volume& cv);
+    virtual void render(std::shared_ptr<node> node, rendering_context& ctx, std::shared_ptr<program> program);
 };
 
-class Group : public Node {
+class group : public node {
 public:
-    Group();
-    void Transformation(const Matrix44& tr);
-    void Add(std::shared_ptr<Node> node);
-    virtual void Render(rendering_context& ctx);
+    group();
+    void transformation(const matrix44& tr);
+    void add(std::shared_ptr<node> node);
+    virtual void render(rendering_context& ctx);
 protected:
-    std::vector<std::shared_ptr<Node>> children;
-    Matrix44 transformation;
+    std::vector<std::shared_ptr<node>> children;
+    matrix44 transform;
 };
 
 template<class T>
-class GeometryNode : public Node {
+class geometry_node : public node {
 public:
-    GeometryNode(std::shared_ptr<geometry<T>> geom) : geom(geom) {}
-    virtual void Render(rendering_context& ctx) {
-        ctx.program->Render(*geom, ctx);
+    geometry_node(std::shared_ptr<geometry<T>> geom) : geom(geom) {}
+    virtual void render(rendering_context& ctx) {
+        ctx.program->render(*geom, ctx);
     }
 private:
     std::shared_ptr<geometry<T>> geom;

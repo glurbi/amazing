@@ -16,53 +16,53 @@ template <class T>
 class geometry;
 
 template <GLenum type>
-class Shader {
+class shader {
 public:
-    Shader(const std::string& source);
-    ~Shader();
-    GLuint getId() const;
+    shader(const std::string& source);
+    ~shader();
+    GLuint get_id() const;
 private:
     GLuint id;
-    Shader(const Shader&);
+    shader(const shader&);
 };
 
-class Program {
+class program {
 public:
-    Program(const std::string& vertexShaderSource,
-            const std::string& fragmentShaderSource,
-            const std::map<int, std::string>& attributeIndices);
-    virtual void Render(const geometry<float>& geometry, rendering_context& ctx) = 0;
-    ~Program();
+    program(const std::string& vertex_shader_source,
+            const std::string& fragment_shader_source,
+            const std::map<int, std::string>& attribute_indices);
+    virtual void render(const geometry<float>& geometry, rendering_context& ctx) = 0;
+    ~program();
 protected:
     GLuint id;
 private:
-    Shader<GL_VERTEX_SHADER> vertexShader;
-    Shader<GL_FRAGMENT_SHADER> fragmentShader;
-    Program(const Program& that);
+    shader<GL_VERTEX_SHADER> vertex_shader;
+    shader<GL_FRAGMENT_SHADER> fragment_shader;
+    program(const program& that);
 };
 
-class MonochromeProgram : public Program {
+class monochrome_program : public program {
 public:
-    virtual void Render(const geometry<float>& geometry, rendering_context& ctx);
-    static std::shared_ptr<MonochromeProgram> Create();
+    virtual void render(const geometry<float>& geometry, rendering_context& ctx);
+    static std::shared_ptr<monochrome_program> Create();
 private:
-    MonochromeProgram(const std::map<int, std::string>& attributeIndices);
+    monochrome_program(const std::map<int, std::string>& attribute_indices);
 };
 
-class TextureProgram : public Program {
+class texture_program : public program {
 public:
-    virtual void Render(const geometry<float>& geometry, rendering_context& ctx);
-    static std::shared_ptr<TextureProgram> Create();
+    virtual void render(const geometry<float>& geometry, rendering_context& ctx);
+    static std::shared_ptr<texture_program> create();
 private:
-    TextureProgram(std::map<int, std::string>& attributeIndices);
+    texture_program(std::map<int, std::string>& attribute_indices);
 };
 
-class FlatShadingProgram : public Program {
+class flat_shading_program : public program {
 public:
-    virtual void Render(const geometry<float>& geometry, rendering_context& ctx);
-    static std::shared_ptr<FlatShadingProgram> Create();
+    virtual void render(const geometry<float>& geometry, rendering_context& ctx);
+    static std::shared_ptr<flat_shading_program> Create();
 private:
-    FlatShadingProgram(const std::map<int, std::string>& attributeIndices);
+    flat_shading_program(const std::map<int, std::string>& attribute_indices);
 };
 
 #endif

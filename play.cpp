@@ -13,10 +13,10 @@ enum class direction {
 };
 
 struct game_data {
-    game_data(MazeModel& model) : model(model) {}
-    MazeModel& model;
-    std::shared_ptr<Camera> camera;
-    std::shared_ptr<Group> hero;
+    game_data(maze_model& model) : model(model) {}
+    maze_model& model;
+    std::shared_ptr<camera> camera;
+    std::shared_ptr<group> hero;
     int pos_x;
     int pos_y;
     float pos_fx;
@@ -25,8 +25,8 @@ struct game_data {
     direction next_direction;
 };
 
-std::shared_ptr<Camera> create_camera(MazeModel& model, sf::RenderWindow& window) {
-    ClippingVolume cv;
+std::shared_ptr<camera> create_camera(maze_model& model, sf::RenderWindow& window) {
+    clipping_volume cv;
     int div = 100;
     cv.right = (float)window.getSize().x / div;
     cv.left = (float)-(int)window.getSize().x / div;
@@ -34,7 +34,7 @@ std::shared_ptr<Camera> create_camera(MazeModel& model, sf::RenderWindow& window
     cv.top = (float)window.getSize().y / div;
     cv.nearp = 1.0f;
     cv.farp = -1.0f;
-    return std::make_shared<ParallelCamera>(ParallelCamera(cv));
+    return std::make_shared<parallel_camera>(parallel_camera(cv));
 }
 
 bool is_int(float f, float eps) {
@@ -69,11 +69,11 @@ void update_position(game_data& g, rendering_context& ctx) {
             g.next_direction = direction::none;
         }
     }
-    g.camera->positionV = Vector3(g.pos_fx, g.pos_fy, 0);
-    g.hero->Transformation(Translation(g.pos_fx, g.pos_fy, 0.0f));
+    g.camera->position_v = vector3(g.pos_fx, g.pos_fy, 0);
+    g.hero->transformation(translation(g.pos_fx, g.pos_fy, 0.0f));
 }
 
-void play(MazeModel& model, sf::RenderWindow& window, Color color) {
+void play(maze_model& model, sf::RenderWindow& window, color color) {
 
     timer timer_absolute;
     timer timer_frame;
@@ -83,14 +83,14 @@ void play(MazeModel& model, sf::RenderWindow& window, Color color) {
         std::cout << "Failed to load smiley.png" << std::endl;
     }
     heroImage.flipVertically();
-    auto heroTexture = std::make_shared<Texture>((GLubyte*)heroImage.getPixelsPtr(), heroImage.getSize().x, heroImage.getSize().y);
+    auto heroTexture = std::make_shared<texture>((GLubyte*)heroImage.getPixelsPtr(), heroImage.getSize().x, heroImage.getSize().y);
 
-    HeroBuilder2D heroBuilder;
+    hero_builder_2d heroBuilder;
     std::shared_ptr<geometry<float>> hero = heroBuilder.build();
-    std::shared_ptr<GeometryNode<float>> heroNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(hero));
-    MazeGeometryBuilder2D builder2d(model);
+    std::shared_ptr<geometry_node<float>> heroNode = std::make_shared<geometry_node<float>>(geometry_node<float>(hero));
+    maze_geometry_builder_2d builder2d(model);
     std::shared_ptr<geometry<float>> mazeGeom2d = builder2d.build();
-    std::shared_ptr<GeometryNode<float>> mazeNode = std::make_shared<GeometryNode<float>>(GeometryNode<float>(mazeGeom2d));
+    std::shared_ptr<geometry_node<float>> mazeNode = std::make_shared<geometry_node<float>>(geometry_node<float>(mazeGeom2d));
 
     game_data game = game_data(model);
     game.pos_x = 0;
@@ -98,29 +98,29 @@ void play(MazeModel& model, sf::RenderWindow& window, Color color) {
     game.pos_fx = 0;
     game.pos_fy = 1;
     game.camera = create_camera(model, window);
-    game.camera->moveUp(1.5f);
-    game.camera->moveRight(0.5f);
+    game.camera->move_up(1.5f);
+    game.camera->move_right(0.5f);
     game.dir = direction::none;
     game.next_direction = direction::none;
 
-    auto root = std::make_shared<Group>(Group());
-    root->Add(mazeNode);
-    auto root2 = std::make_shared<Group>(Group());
-    root2->Add(heroNode);
+    auto root = std::make_shared<group>(group());
+    root->add(mazeNode);
+    auto root2 = std::make_shared<group>(group());
+    root2->add(heroNode);
     game.hero = root2;
 
     rendering_context ctx;
     ctx.color = color;
     ctx.texture = heroTexture;
-    std::shared_ptr<MonochromeProgram> monochromeProgram = MonochromeProgram::Create();
-    std::shared_ptr<TextureProgram> textureProgram = TextureProgram::Create();
+    std::shared_ptr<monochrome_program> monochromeProgram = monochrome_program::Create();
+    std::shared_ptr<texture_program> textureProgram = texture_program::create();
 
     while (true)
     {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();
         ctx.last_frame_time_seconds = timer_frame.elapsed();
         timer_frame.reset();
-        CheckForOpenGLErrors();
+        check_for_opengl_errors();
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -152,9 +152,9 @@ void play(MazeModel& model, sf::RenderWindow& window, Color color) {
         update_position(game, ctx);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
-        game.camera->Render(root, ctx, monochromeProgram);
+        game.camera->render(root, ctx, monochromeProgram);
         glDisable(GL_DEPTH_TEST);
-        game.camera->Render(root2, ctx, textureProgram);
+        game.camera->render(root2, ctx, textureProgram);
         window.display();
     }
 }

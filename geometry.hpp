@@ -16,86 +16,86 @@ class geometry {
 
 public:
 	geometry(GLsizei count_) :
-        count(count_), positionsId(0), texCoordsId(0), normalsId(0) {}
+        count(count_), positions_id(0), tex_coords_id(0), normals_id(0) {}
 	
 	~geometry() {
-        glDeleteBuffers(1, &positionsId);
-        glDeleteBuffers(1, &texCoordsId);
-        glDeleteBuffers(1, &normalsId);
+        glDeleteBuffers(1, &positions_id);
+        glDeleteBuffers(1, &tex_coords_id);
+        glDeleteBuffers(1, &normals_id);
     }
 
-	void SetVertexPositions(GLuint positionsId_) {
-        positionsId = positionsId_;
+	void set_vertex_positions(GLuint positionsId_) {
+        positions_id = positionsId_;
     }
 
-    void SetVertexTexCoords(GLuint texCoordsId_) {
-        texCoordsId = texCoordsId_;
+    void set_vertex_tex_coords(GLuint texCoordsId_) {
+        tex_coords_id = texCoordsId_;
     }
 
-    void SetVertexNormals(GLuint normalsId_) {
-        normalsId = normalsId_;
+    void set_vertex_normals(GLuint normalsId_) {
+        normals_id = normalsId_;
     }
 
-    void SetVertexPositions(void* data, long size) {
-        glGenBuffers(1, &positionsId);
-        glBindBuffer(GL_ARRAY_BUFFER, positionsId);
+    void set_vertex_positions(void* data, long size) {
+        glGenBuffers(1, &positions_id);
+        glBindBuffer(GL_ARRAY_BUFFER, positions_id);
         glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
     }
 
-	void SetVertexTexCoords(void* data, long size) {
-        glGenBuffers(1, &texCoordsId);
-        glBindBuffer(GL_ARRAY_BUFFER, texCoordsId);
+	void set_vertex_tex_coords(void* data, long size) {
+        glGenBuffers(1, &tex_coords_id);
+        glBindBuffer(GL_ARRAY_BUFFER, tex_coords_id);
         glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
     }
 
-    void SetVertexNormals(void* data, long size) {
-        glGenBuffers(1, &normalsId);
-        glBindBuffer(GL_ARRAY_BUFFER, normalsId);
+    void set_vertex_normals(void* data, long size) {
+        glGenBuffers(1, &normals_id);
+        glBindBuffer(GL_ARRAY_BUFFER, normals_id);
         glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
     }
 
-    GLuint GetPositionsId() const {
-        return positionsId;
+    GLuint get_positions_id() const {
+        return positions_id;
     }
 
-    GLuint GetTexCoordsId() const {
-        return texCoordsId;
+    GLuint get_tex_coords_id() const {
+        return tex_coords_id;
     }
 
-    GLuint GetNormalsId() const {
-        return normalsId;
+    GLuint get_normals_id() const {
+        return normals_id;
     }
 
-    GLsizei GetCount() const {
+    GLsizei get_count() const {
         return count;
     }
 
 private:
-	GLuint positionsId;
-	GLuint texCoordsId;
-	GLuint normalsId;
+	GLuint positions_id;
+	GLuint tex_coords_id;
+	GLuint normals_id;
     GLsizei count;
 
 };
 
 template <class T>
-class BufferObjectBuilder {
+class buffer_object_builder {
 
 public:
 
-    void* GetData() {
+    void* get_data() {
         return &data[0];
     }
 
-    GLsizeiptr GetSize() {
+    GLsizeiptr get_size() {
         return data.size() * sizeof(T);
     }
 
-    GLsizeiptr GetCount() {
+    GLsizeiptr get_count() {
         return data.size();
     }
 
-    GLuint Build() {
+    GLuint build() {
         GLuint id;
         glGenBuffers(1, &id);
         glBindBuffer(GL_ARRAY_BUFFER, id);
@@ -103,7 +103,7 @@ public:
         return id;
     }
 
-    BufferObjectBuilder<T>& operator<<(T t) {
+    buffer_object_builder<T>& operator<<(T t) {
         data.push_back(t);
         return *this;
     }

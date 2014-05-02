@@ -5,14 +5,14 @@
 #include "misc.hpp"
 #include "context.hpp"
 
-static std::string	readTextFile(const std::string& filename) {
+static std::string	read_text_file(const std::string& filename) {
     std::ifstream f(filename);
     std::stringstream buffer;
     buffer << f.rdbuf();
     return buffer.str();
 }
 
-static void checkShaderCompileStatus(GLuint shaderId) {
+static void check_shader_compile_status(GLuint shaderId) {
     GLint compileStatus;
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &compileStatus);
     if (compileStatus == GL_FALSE) {
@@ -41,34 +41,34 @@ static void checkProgramLinkStatus(GLuint programId) {
 }
 
 template <GLenum type>
-Shader<type>::Shader(const std::string& source) {
+shader<type>::shader(const std::string& source) {
     id = glCreateShader(type);
     const GLchar* str = source.c_str();
     const GLint length = source.length();
     glShaderSource(id, 1, &str, &length);
     glCompileShader(id);
-    checkShaderCompileStatus(id);
+    check_shader_compile_status(id);
 }
 
 template <GLenum type>
-Shader<type>::~Shader() {
+shader<type>::~shader() {
     glDeleteShader(id);
 }
 
 template <GLenum type>
-GLuint Shader<type>::getId() const {
+GLuint shader<type>::get_id() const {
     return id;
 }
 
-Program::Program(const std::string& vertexShaderSource,
+program::program(const std::string& vertexShaderSource,
                  const std::string& fragmentShaderSource,
                  const std::map<int, std::string>& attributeIndices) :
-    vertexShader(vertexShaderSource),
-    fragmentShader(fragmentShaderSource)
+    vertex_shader(vertexShaderSource),
+    fragment_shader(fragmentShaderSource)
 {
     id = glCreateProgram();
-    glAttachShader(id, vertexShader.getId());
-    glAttachShader(id, fragmentShader.getId());
+    glAttachShader(id, vertex_shader.get_id());
+    glAttachShader(id, fragment_shader.get_id());
     for (auto it = attributeIndices.begin(); it != attributeIndices.end(); it++) {
         glBindAttribLocation(id, it->first, it->second.c_str());
     }
@@ -76,47 +76,47 @@ Program::Program(const std::string& vertexShaderSource,
     checkProgramLinkStatus(id);
 }
 
-Program::~Program() {
+program::~program() {
     glDeleteProgram(id);
 }
 
-void MonochromeProgram::Render(const geometry<float>& geometry, rendering_context& ctx) {
+void monochrome_program::render(const geometry<float>& geometry, rendering_context& ctx) {
     glUseProgram(id);
     GLuint matrixUniform = glGetUniformLocation(id, "mvpMatrix");
     glUniformMatrix4fv(matrixUniform, 1, false, ctx.mvp().m);
     GLuint colorUniform = glGetUniformLocation(id, "color");
     glUniform4f(colorUniform, ctx.color.r(), ctx.color.g(), ctx.color.b(), ctx.color.a());
     glEnableVertexAttribArray(vertex_attribute::POSITION);
-    glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
+    glBindBuffer(GL_ARRAY_BUFFER, geometry.get_positions_id());
     glVertexAttribPointer(vertex_attribute::POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glDrawArrays(GL_QUADS, 0, geometry.GetCount());
+    glDrawArrays(GL_QUADS, 0, geometry.get_count());
     glDisableVertexAttribArray(vertex_attribute::POSITION);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     glUseProgram(id);
 }
 
-std::shared_ptr<MonochromeProgram> MonochromeProgram::Create() {
+std::shared_ptr<monochrome_program> monochrome_program::Create() {
     std::map<int, std::string> monochromeAttributeIndices;
     monochromeAttributeIndices[vertex_attribute::POSITION] = "vpos";
-    return std::shared_ptr<MonochromeProgram>(new MonochromeProgram(monochromeAttributeIndices));
+    return std::shared_ptr<monochrome_program>(new monochrome_program(monochromeAttributeIndices));
 }
 
-MonochromeProgram::MonochromeProgram(const std::map<int, std::string>& attributeIndices) :
-    Program(readTextFile("monochrome.vert"), readTextFile("monochrome.frag"), attributeIndices) {}
+monochrome_program::monochrome_program(const std::map<int, std::string>& attributeIndices) :
+    program(read_text_file("monochrome.vert"), read_text_file("monochrome.frag"), attributeIndices) {}
 
-void TextureProgram::Render(const geometry<float>& geometry, rendering_context& ctx) {
+void texture_program::render(const geometry<float>& geometry, rendering_context& ctx) {
     glUseProgram(id);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, ctx.texture->getId());
+    glBindTexture(GL_TEXTURE_2D, ctx.texture->get_id());
     GLuint matrixUniform = glGetUniformLocation(id, "mvpMatrix");
     glUniformMatrix4fv(matrixUniform, 1, false, ctx.mvp().m);
     GLuint textureUniform = glGetUniformLocation(id, "texture");
     glUniform1i(textureUniform, 0); // we pass the texture unit
     glEnableVertexAttribArray(vertex_attribute::POSITION);
-    glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
+    glBindBuffer(GL_ARRAY_BUFFER, geometry.get_positions_id());
     glVertexAttribPointer(vertex_attribute::POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(vertex_attribute::TEXCOORD);
-    glBindBuffer(GL_ARRAY_BUFFER, geometry.GetTexCoordsId());
+    glBindBuffer(GL_ARRAY_BUFFER, geometry.get_tex_coords_id());
     glVertexAttribPointer(vertex_attribute::TEXCOORD, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glDrawArrays(GL_QUADS, 0, 4);
     glDisableVertexAttribArray(vertex_attribute::POSITION);
@@ -124,17 +124,17 @@ void TextureProgram::Render(const geometry<float>& geometry, rendering_context& 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-std::shared_ptr<TextureProgram> TextureProgram::Create() {
+std::shared_ptr<texture_program> texture_program::create() {
     std::map<int, std::string> textureAttributeIndices;
     textureAttributeIndices[vertex_attribute::POSITION] = "pos";
     textureAttributeIndices[vertex_attribute::TEXCOORD] = "texCoord";
-    return std::shared_ptr<TextureProgram>(new TextureProgram(textureAttributeIndices));
+    return std::shared_ptr<texture_program>(new texture_program(textureAttributeIndices));
 }
 
-TextureProgram::TextureProgram(std::map<int, std::string>& attributeIndices) :
-    Program(readTextFile("texture.vert"), readTextFile("texture.frag"), attributeIndices) {}
+texture_program::texture_program(std::map<int, std::string>& attributeIndices) :
+    program(read_text_file("texture.vert"), read_text_file("texture.frag"), attributeIndices) {}
 
-void FlatShadingProgram::Render(const geometry<float>& geometry, rendering_context& ctx) {
+void flat_shading_program::render(const geometry<float>& geometry, rendering_context& ctx) {
     glUseProgram(id);
 
     GLuint mvpUniform = glGetUniformLocation(id, "mvpMatrix");
@@ -150,23 +150,23 @@ void FlatShadingProgram::Render(const geometry<float>& geometry, rendering_conte
     glUniform3f(colorUniform, ctx.color.r(), ctx.color.g(), ctx.color.b());
 
     glEnableVertexAttribArray(vertex_attribute::POSITION);
-    glBindBuffer(GL_ARRAY_BUFFER, geometry.GetPositionsId());
+    glBindBuffer(GL_ARRAY_BUFFER, geometry.get_positions_id());
     glVertexAttribPointer(vertex_attribute::POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(vertex_attribute::NORMAL);
-    glBindBuffer(GL_ARRAY_BUFFER, geometry.GetNormalsId());
+    glBindBuffer(GL_ARRAY_BUFFER, geometry.get_normals_id());
     glVertexAttribPointer(vertex_attribute::NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glDrawArrays(GL_QUADS, 0, geometry.GetCount());
+    glDrawArrays(GL_QUADS, 0, geometry.get_count());
     glDisableVertexAttribArray(vertex_attribute::POSITION);
     glDisableVertexAttribArray(vertex_attribute::NORMAL);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-std::shared_ptr<FlatShadingProgram> FlatShadingProgram::Create() {
+std::shared_ptr<flat_shading_program> flat_shading_program::Create() {
     std::map<int, std::string> attributeIndices;
     attributeIndices[vertex_attribute::POSITION] = "vPosition";
     attributeIndices[vertex_attribute::NORMAL] = "vNormal";
-    return std::shared_ptr<FlatShadingProgram>(new FlatShadingProgram(attributeIndices));
+    return std::shared_ptr<flat_shading_program>(new flat_shading_program(attributeIndices));
 }
 
-FlatShadingProgram::FlatShadingProgram(const std::map<int, std::string>& attributeIndices) :
-    Program(readTextFile("flatShading.vert"), readTextFile("flatShading.frag"), attributeIndices) {}
+flat_shading_program::flat_shading_program(const std::map<int, std::string>& attributeIndices) :
+    program(read_text_file("flatShading.vert"), read_text_file("flatShading.frag"), attributeIndices) {}

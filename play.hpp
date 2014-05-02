@@ -4,6 +4,6 @@
 #include "context.hpp"
 #include "model.hpp"
 
-void play(MazeModel& model, sf::RenderWindow& window, Color color);
+void play(maze_model& model, sf::RenderWindow& window, color color);
 
 #endif

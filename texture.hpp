@@ -3,11 +3,11 @@
 
 #include <GL/glew.h>
 
-class Texture {
+class texture {
 public:
-    Texture(GLubyte* data, GLsizei w, GLsizei h);
-    ~Texture();
-    GLuint getId() const;
+    texture(GLubyte* data, GLsizei w, GLsizei h);
+    ~texture();
+    GLuint get_id() const;
 private:
     GLuint id;
 };

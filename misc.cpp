@@ -3,7 +3,7 @@
 
 #include "misc.hpp"
 
-void CheckForOpenGLErrors() {
+void check_for_opengl_errors() {
     switch (glGetError()) {
     case GL_INVALID_ENUM: std::cout << "GLenum argument out of range" << std::endl; break;
     case GL_INVALID_VALUE: std::cout << "Numeric argument out of range" << std::endl; break;

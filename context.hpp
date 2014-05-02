@@ -8,26 +8,26 @@
 #include "texture.hpp"
 #include "program.hpp"
 
-class Program;
+class program;
 
 class rendering_context {
 public:
     rendering_context();
-    void projection(Matrix44 mat);
-    void push(Matrix44 mat);
+    void projection(matrix44 mat);
+    void push(matrix44 mat);
     void pop();
-    Matrix44 mvp();
-    Matrix44 mv();
+    matrix44 mvp();
+    matrix44 mv();
     void reset();
-    Vector3 dir;
-    Color color;
+    vector3 dir;
+    color color;
     double elapsed_time_seconds;
     double last_frame_time_seconds;
-    std::shared_ptr<Program> program;
-    std::shared_ptr<Texture> texture;
+    std::shared_ptr<program> program;
+    std::shared_ptr<texture> texture;
 private:
-    std::vector<Matrix44> mvpStack;
-    std::vector<Matrix44> mvStack;
+    std::vector<matrix44> mvp_stack;
+    std::vector<matrix44> mv_stack;
 };
 
 

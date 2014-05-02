@@ -12,121 +12,119 @@ rendering_context::rendering_context() {
     reset();
 }
 
-void rendering_context::projection(Matrix44 mat) {
-    mvpStack.push_back(Multm(mvpStack.back(), mat));
+void rendering_context::projection(matrix44 mat) {
+    mvp_stack.push_back(multm(mvp_stack.back(), mat));
 }
 
-void rendering_context::push(Matrix44 mat) {
-    mvpStack.push_back(Multm(mvpStack.back(), mat));
-    mvStack.push_back(Multm(mvStack.back(), mat));
+void rendering_context::push(matrix44 mat) {
+    mvp_stack.push_back(multm(mvp_stack.back(), mat));
+    mv_stack.push_back(multm(mv_stack.back(), mat));
 }
 
 void rendering_context::pop() {
-    mvpStack.pop_back();
-    mvStack.pop_back();
+    mvp_stack.pop_back();
+    mv_stack.pop_back();
 }
 
 void rendering_context::reset() {
-    mvpStack.clear();
-    mvStack.clear();
-    mvpStack.push_back(Identity());
-    mvStack.push_back(Identity());
+    mvp_stack.clear();
+    mv_stack.clear();
+    mvp_stack.push_back(identity());
+    mv_stack.push_back(identity());
 }
 
-Matrix44 rendering_context::mvp() {
-    return mvpStack.back();
+matrix44 rendering_context::mvp() {
+    return mvp_stack.back();
 }
 
-Matrix44 rendering_context::mv() {
-    return mvStack.back();
+matrix44 rendering_context::mv() {
+    return mv_stack.back();
 }
 
-Camera::Camera(const ClippingVolume& clippingVolume) : clippingVolume(clippingVolume), positionV(Vector3(0, 0, 0)),
-        directionV(Vector3(0, 0, -1)), rightV(Vector3(1, 0, 0)), upV(Vector3(0, 1, 0)) {}
+camera::camera(const clipping_volume& cv) : cv(cv), position_v(vector3(0, 0, 0)),
+        direction_v(vector3(0, 0, -1)), right_v(vector3(1, 0, 0)), up_v(vector3(0, 1, 0)) {}
 
-void Camera::reset() {
-    positionV = Vector3(0, 0, 0);
-    directionV = Vector3(0, 0, -1);
-    rightV = Vector3(1, 0, 0);
-    upV = Vector3(0, 1, 0);
+void camera::reset() {
+    position_v = vector3(0, 0, 0);
+    direction_v = vector3(0, 0, -1);
+    right_v = vector3(1, 0, 0);
+    up_v = vector3(0, 1, 0);
 }
 
-void Camera::rotateX(float deg) {
-    directionV = normalize(directionV * cos(toRadians(deg)) + upV * sin(toRadians(deg)));
-    upV = crossProduct(directionV, rightV) * -1;
+void camera::rotate_x(float deg) {
+    direction_v = normalize(direction_v * cos(to_radians(deg)) + up_v * sin(to_radians(deg)));
+    up_v = cross_product(direction_v, right_v) * -1;
 }
 
-void Camera::rotateY(float deg) {
-    directionV = normalize(directionV * cos(toRadians(deg)) - rightV * sin(toRadians(deg)));
-    rightV = crossProduct(directionV, upV);
+void camera::rotate_y(float deg) {
+    direction_v = normalize(direction_v * cos(to_radians(deg)) - right_v * sin(to_radians(deg)));
+    right_v = cross_product(direction_v, up_v);
 }
 
-void Camera::rotateZ(float deg) {
-    rightV = normalize(rightV * cos(toRadians(deg)) + upV * sin(toRadians(deg)));
-    upV = crossProduct(directionV, rightV) * -1;
+void camera::rotate_z(float deg) {
+    right_v = normalize(right_v * cos(to_radians(deg)) + up_v * sin(to_radians(deg)));
+    up_v = cross_product(direction_v, right_v) * -1;
 }
 
-void Camera::moveRight(float dist) {
-    positionV = positionV + (rightV * dist);
+void camera::move_right(float dist) {
+    position_v = position_v + (right_v * dist);
 }
 
-void Camera::moveLeft(float dist) {
-    positionV = positionV - (rightV * dist);
+void camera::move_left(float dist) {
+    position_v = position_v - (right_v * dist);
 }
 
-void Camera::moveUp(float dist) {
-    positionV = positionV + (upV * dist);
+void camera::move_up(float dist) {
+    position_v = position_v + (up_v * dist);
 }
 
-void Camera::moveDown(float dist) {
-    positionV = positionV - (upV * dist);
+void camera::move_down(float dist) {
+    position_v = position_v - (up_v * dist);
 }
 
-void Camera::moveForward(float dist) {
-    positionV = positionV + (directionV * dist);
+void camera::move_forward(float dist) {
+    position_v = position_v + (direction_v * dist);
 }
 
-void Camera::moveBackward(float dist) {
-    positionV = positionV - (directionV * dist);
+void camera::move_backward(float dist) {
+    position_v = position_v - (direction_v * dist);
 }
 
-Matrix44 Camera::positionAndOrient() {
-    Vector3 centerV = positionV + directionV;
-    return LookAt(positionV.x(), positionV.y(), positionV.z(), centerV.x(), centerV.y(), centerV.z(), upV.x(), upV.y(), upV.z());
+matrix44 camera::position_and_orient() {
+    vector3 centerV = position_v + direction_v;
+    return look_at(position_v.x(), position_v.y(), position_v.z(), centerV.x(), centerV.y(), centerV.z(), up_v.x(), up_v.y(), up_v.z());
 }
 
-PerspectiveCamera::PerspectiveCamera(const ClippingVolume& clippingVolume) : Camera(clippingVolume) {}
+perspective_camera::perspective_camera(const clipping_volume& cv) : camera(cv) {}
 
-void PerspectiveCamera::Render(std::shared_ptr<Node> node, rendering_context& ctx, std::shared_ptr<Program> program) {
-    auto& cv = clippingVolume;
-    ctx.projection(Frustum(cv.left, cv.right, cv.bottom, cv.top, cv.nearp, cv.farp));
-    ctx.push(positionAndOrient());
+void perspective_camera::render(std::shared_ptr<node> node, rendering_context& ctx, std::shared_ptr<program> program) {
+    ctx.projection(frustum(cv.left, cv.right, cv.bottom, cv.top, cv.nearp, cv.farp));
+    ctx.push(position_and_orient());
     ctx.program = program;
-    node->Render(ctx);
+    node->render(ctx);
     ctx.reset();
 }
 
-ParallelCamera::ParallelCamera(const ClippingVolume& clippingVolume) : Camera(clippingVolume) {}
+parallel_camera::parallel_camera(const clipping_volume& clippingVolume) : camera(clippingVolume) {}
 
-void ParallelCamera::Render(std::shared_ptr<Node> node, rendering_context& ctx, std::shared_ptr<Program> program) {
-    auto& cv = clippingVolume;
-    ctx.projection(Ortho(cv.left, cv.right, cv.bottom, cv.top, cv.nearp, cv.farp));
-    ctx.push(positionAndOrient());
+void parallel_camera::render(std::shared_ptr<node> node, rendering_context& ctx, std::shared_ptr<program> program) {
+    ctx.projection(ortho(cv.left, cv.right, cv.bottom, cv.top, cv.nearp, cv.farp));
+    ctx.push(position_and_orient());
     ctx.program = program;
-    node->Render(ctx);
+    node->render(ctx);
     ctx.reset();
 }
 
-Group::Group() : transformation(Identity()) {}
+group::group() : transform(identity()) {}
 
-void Group::Transformation(const Matrix44& tr) { transformation = tr; }
+void group::transformation(const matrix44& tr) { transform = tr; }
 
-void Group::Add(std::shared_ptr<Node> node) { children.push_back(node); }
+void group::add(std::shared_ptr<node> node) { children.push_back(node); }
 
-void Group::Render(rendering_context& ctx) {
-    ctx.push(transformation);
+void group::render(rendering_context& ctx) {
+    ctx.push(transform);
     for (auto child : children) {
-        child->Render(ctx);
+        child->render(ctx);
     }
     ctx.pop();
 }
