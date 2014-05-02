@@ -127,7 +127,10 @@ void play(maze_model& model, sf::RenderWindow& window, color color) {
                 return;
             }
             if (event.type == sf::Event::Resized) {
+                game.camera = create_camera(model, window);
                 glViewport(0, 0, event.size.width, event.size.height);
+                sf::View view(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height));
+                window.setView(view);
             }
             if (event.type == sf::Event::KeyPressed) {
                 switch (event.key.code) {

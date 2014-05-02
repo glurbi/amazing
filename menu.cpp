@@ -54,7 +54,7 @@ void draw_right_arrow(sf::RenderWindow& window, sf::Color& color) {
     window.popGLStates();
 }
 
-std::shared_ptr<camera> createCamera(maze_model& model, sf::RenderWindow& window) {
+std::shared_ptr<camera> create_camera(maze_model& model, sf::RenderWindow& window) {
     float aspectRatio = (float)window.getSize().x / window.getSize().y;
     float mf = 0.5f; // margin factor, i.e. how much blank space around the maze
     clipping_volume cv;
@@ -78,7 +78,7 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
     std::shared_ptr<geometry<float>> mazeGeom3d = builder3d.build();
     std::shared_ptr<geometry_node<float>> maze_node = std::make_shared<geometry_node<float>>(geometry_node<float>(mazeGeom3d));
 
-    std::shared_ptr<camera> camera = createCamera(model, window);
+    std::shared_ptr<camera> camera = create_camera(model, window);
 
     auto root = std::make_shared<group>(group());
     auto gr1 = std::make_shared<group>(group());
@@ -108,7 +108,7 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
                 choice = menu_choice::exit;
             }
             if (event.type == sf::Event::Resized) {
-                camera = createCamera(model, window);
+                camera = create_camera(model, window);
                 glViewport(0, 0, event.size.width, event.size.height);
                 sf::View view(sf::FloatRect(0, 0, (float) event.size.width, (float) event.size.height));
                 window.setView(view);
@@ -126,6 +126,12 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
                     break;
                 case sf::Keyboard::Return:
                     play(model, window, color(c));
+                    camera = create_camera(model, window);
+                    int width = window.getSize().x;
+                    int height = window.getSize().y;
+                    glViewport(0, 0, width, height);
+                    sf::View view(sf::FloatRect(0, 0, (float)width, (float)height));
+                    window.setView(view);
                     break;
                 }
             }
