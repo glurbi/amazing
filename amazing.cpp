@@ -26,7 +26,7 @@ int main() {
     sf::Text text;
     text.setFont(font);
     text.setString("You win!");
-    text.setCharacterSize(94);
+    text.setCharacterSize(138);
     text.setColor(sf::Color::White);
     text.setStyle(sf::Text::Bold);
     glewInit();

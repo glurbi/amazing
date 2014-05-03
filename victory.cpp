@@ -45,6 +45,9 @@ void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text) {
     std::shared_ptr<geometry_node<float>> node = std::make_shared<geometry_node<float>>(geometry_node<float>(multi_hero));
 
     auto camera = create_camera(window);
+    sf::FloatRect textRect = text.getLocalBounds();
+    text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+    text.setPosition(sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f));
 
     auto root = std::make_shared<group>(group());
     root->add(node);
@@ -83,8 +86,9 @@ void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text) {
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         camera->render(root, ctx, textureProgram);
-        //window.resetGLStates();
+        window.pushGLStates();
         window.draw(text);
+        window.popGLStates();
         window.display();
         ctx.frame_count++;
     }
