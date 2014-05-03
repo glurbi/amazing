@@ -147,3 +147,17 @@ std::shared_ptr<geometry<float>> hero_builder_2d::build() {
     mazeGeom->set_vertex_tex_coords(b.build());
     return mazeGeom;
 }
+
+multi_hero_builder_2d::multi_hero_builder_2d() {}
+
+std::shared_ptr<geometry<float>> multi_hero_builder_2d::build() {
+    buffer_object_builder<float> b;
+    b << -50.0f << -50.0f;
+    b << 50.0f << -50.0f;
+    b << 50.0f << 50.0f;
+    b << -50.0f << 50.0f;
+    auto multi_hero = std::make_shared<geometry<float>>(geometry<float>(b.get_size() / 2));
+    multi_hero->set_vertex_positions(b.build());
+    multi_hero->set_vertex_tex_coords(b.build());
+    return multi_hero;
+}

@@ -11,6 +11,7 @@
 #include "geometry.hpp"
 #include "misc.hpp"
 #include "texture.hpp"
+#include "victory.hpp"
 
 enum class direction {
     none, up, down, right, left
@@ -172,6 +173,12 @@ void play(maze_model& model, sf::RenderWindow& window, color color) {
         game.camera->render(root2, ctx, textureProgram);
         window.display();
         ctx.frame_count++;
+
+        if (game.pos_x == model.get_width() - 1 && game.pos_y == model.get_height() - 2) {
+            victory(window);
+            return;
+        }
+        //std::cout << game.pos_x << " " << game.pos_y << std::endl;
     }
 }
 

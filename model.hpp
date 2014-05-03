@@ -57,4 +57,11 @@ public:
     std::shared_ptr<geometry<float>> build();
 };
 
+class multi_hero_builder_2d {
+public:
+    multi_hero_builder_2d();
+    std::shared_ptr<geometry<float>> build();
+};
+
+
 #endif
