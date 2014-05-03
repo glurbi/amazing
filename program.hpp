@@ -44,7 +44,7 @@ private:
 class monochrome_program : public program {
 public:
     virtual void render(const geometry<float>& geometry, rendering_context& ctx);
-    static std::shared_ptr<monochrome_program> Create();
+    static std::shared_ptr<monochrome_program> create();
 private:
     monochrome_program(const std::map<int, std::string>& attribute_indices);
 };

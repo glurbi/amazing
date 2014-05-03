@@ -95,7 +95,7 @@ void monochrome_program::render(const geometry<float>& geometry, rendering_conte
     glUseProgram(id);
 }
 
-std::shared_ptr<monochrome_program> monochrome_program::Create() {
+std::shared_ptr<monochrome_program> monochrome_program::create() {
     std::map<int, std::string> monochromeAttributeIndices;
     monochromeAttributeIndices[vertex_attribute::POSITION] = "vpos";
     return std::shared_ptr<monochrome_program>(new monochrome_program(monochromeAttributeIndices));

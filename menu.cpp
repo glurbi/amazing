@@ -91,15 +91,16 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
     rendering_context ctx;
     ctx.dir = vector3(0, 0, -1.0f);
     ctx.color = c;
+    ctx.frame_count = 0;
 
-    std::shared_ptr<monochrome_program> monochromeProgram = monochrome_program::Create();
+    std::shared_ptr<monochrome_program> monochromeProgram = monochrome_program::create();
     std::shared_ptr<flat_shading_program> flatShadingProgram = flat_shading_program::Create();
 
     menu_choice choice = menu_choice::undefined;
     while (choice == menu_choice::undefined)
     {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();
-        ctx.last_frame_time_seconds = timer_frame.elapsed();
+        ctx.last_frame_times_seconds[ctx.frame_count%100] = timer_frame.elapsed();
         timer_frame.reset();
         check_for_opengl_errors();
         sf::Event event;
@@ -148,6 +149,7 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
         draw_right_arrow(window, arrow_colors[right_arrow_enabled]);
 
         window.display();
+        ctx.frame_count++;
     }
 
     return choice;

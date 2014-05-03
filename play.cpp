@@ -1,5 +1,9 @@
 #include <iostream>
+#include <numeric>
+#include <thread>
+#include <chrono>
 #include <SFML/Graphics.hpp>
+#include <stdlib.h>
 
 #include "play.hpp"
 #include "timer.hpp"
@@ -23,6 +27,7 @@ struct game_data {
     float pos_fy;
     direction dir;
     direction next_direction;
+    float inc;
 };
 
 static std::shared_ptr<camera> create_camera(maze_model& model, sf::RenderWindow& window) {
@@ -42,24 +47,23 @@ bool is_int(float f, float eps) {
 }
 
 void update_position(game_data& g, rendering_context& ctx) {
-    float inc = 0.05f;
     switch (g.dir) {
     case direction::left:
-        if (!g.model.is_wall(g.pos_x - 1, g.pos_y)) g.pos_fx -= inc;
+        if (!g.model.is_wall(g.pos_x - 1, g.pos_y)) g.pos_fx -= g.inc;
         break;
     case direction::right:
-        if (!g.model.is_wall(g.pos_x + 1, g.pos_y)) { g.pos_fx += inc;  }
+        if (!g.model.is_wall(g.pos_x + 1, g.pos_y)) { g.pos_fx += g.inc;  }
         break;
     case direction::up:
-        if (!g.model.is_wall(g.pos_x, g.pos_y + 1)) g.pos_fy += inc;
+        if (!g.model.is_wall(g.pos_x, g.pos_y + 1)) g.pos_fy += g.inc;
         break;
     case direction::down:
-        if (!g.model.is_wall(g.pos_x, g.pos_y - 1)) g.pos_fy -= inc;
+        if (!g.model.is_wall(g.pos_x, g.pos_y - 1)) g.pos_fy -= g.inc;
         break;
     default:
         break;
     };
-    if (is_int(g.pos_fx, inc/10.0f) && (is_int(g.pos_fy, inc/10.0f))) {
+    if (is_int(g.pos_fx, g.inc/10.0f) && (is_int(g.pos_fy, g.inc/10.0f))) {
         g.pos_x = (int)round(g.pos_fx);
         g.pos_fx = (float)g.pos_x;
         g.pos_y = (int)round(g.pos_fy);
@@ -102,6 +106,7 @@ void play(maze_model& model, sf::RenderWindow& window, color color) {
     game.camera->move_right(0.5f);
     game.dir = direction::none;
     game.next_direction = direction::none;
+    game.inc = 0.05f;
 
     auto root = std::make_shared<group>(group());
     root->add(mazeNode);
@@ -112,13 +117,20 @@ void play(maze_model& model, sf::RenderWindow& window, color color) {
     rendering_context ctx;
     ctx.color = color;
     ctx.texture = heroTexture;
-    std::shared_ptr<monochrome_program> monochromeProgram = monochrome_program::Create();
+    std::shared_ptr<monochrome_program> monochromeProgram = monochrome_program::create();
     std::shared_ptr<texture_program> textureProgram = texture_program::create();
+    ctx.frame_count = 0;
 
     while (true)
     {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();
-        ctx.last_frame_time_seconds = timer_frame.elapsed();
+        ctx.last_frame_times_seconds[ctx.frame_count%100] = timer_frame.elapsed();
+        double avg = std::accumulate(ctx.last_frame_times_seconds, ctx.last_frame_times_seconds + 100, 0.0) / 100.0;
+        if (avg < 0.01) {
+            long usec = (long) ((0.01-avg)*1000000);
+            std::this_thread::sleep_for(std::chrono::microseconds(usec));
+            //std::cout << "sleeping for " << usec << std::endl;
+        }
         timer_frame.reset();
         check_for_opengl_errors();
         sf::Event event;
@@ -159,6 +171,7 @@ void play(maze_model& model, sf::RenderWindow& window, color color) {
         glDisable(GL_DEPTH_TEST);
         game.camera->render(root2, ctx, textureProgram);
         window.display();
+        ctx.frame_count++;
     }
 }
 

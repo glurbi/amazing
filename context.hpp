@@ -22,7 +22,8 @@ public:
     vector3 dir;
     color color;
     double elapsed_time_seconds;
-    double last_frame_time_seconds;
+    double last_frame_times_seconds[100];
+    long frame_count;
     std::shared_ptr<program> program;
     std::shared_ptr<texture> texture;
 private:

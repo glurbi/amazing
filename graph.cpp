@@ -7,7 +7,7 @@
 #include "program.hpp"
 
 rendering_context::rendering_context() {
-    last_frame_time_seconds = 0.0;
+    memset(last_frame_times_seconds, 0, 100);
     elapsed_time_seconds = 0.0;
     reset();
 }
