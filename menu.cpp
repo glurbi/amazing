@@ -69,7 +69,8 @@ static std::shared_ptr<camera> create_camera(maze_model& model, sf::RenderWindow
     return camera;
 }
 
-menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arrow_enabled, bool right_arrow_enabled, const color& c) {
+menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arrow_enabled,
+    bool right_arrow_enabled, const color& c, sf::Font& font, sf::Text& text) {
 
     timer timer_absolute;
     timer timer_frame;
@@ -126,7 +127,7 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
                     choice = menu_choice::next_maze;
                     break;
                 case sf::Keyboard::Return:
-                    play(model, window, color(c));
+                    play(model, window, color(c), font, text);
                     camera = create_camera(model, window);
                     int width = window.getSize().x;
                     int height = window.getSize().y;
@@ -139,7 +140,9 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
+        //glEnable(GL_CULL_FACE);
+        //glFrontFace(GL_CCW);
+        //glDisable(GL_BLEND);
         root->transformation(rotation((float)sin(ctx.elapsed_time_seconds / 2) * 180, 1.0f, 0.0f, 0.0f));
         gr1->transformation(rotation((float)sin(ctx.elapsed_time_seconds) * 180, 0.0f, 1.0f, 0.0f));
         camera->render(root, ctx, flatShadingProgram);
@@ -155,7 +158,7 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
     return choice;
 }
 
-void menu(sf::RenderWindow& window) {
+void menu(sf::RenderWindow& window, sf::Font& font, sf::Text& text) {
     int index = 0;
     const int len = 10;
     const int sizes[] = { 11, 17, 25, 31, 41, 51, 65, 87, 101, 123, 181 };
@@ -180,7 +183,7 @@ void menu(sf::RenderWindow& window) {
         maze_geometry_builder_3d builder3d(model);
         std::shared_ptr<geometry<float>> mazeGeom3d = builder3d.build();
         std::shared_ptr<geometry_node<float>> mazeNode = std::make_shared<geometry_node<float>>(geometry_node<float>(mazeGeom3d));
-        choice = show_maze(window, model, index > 0, index < len - 1, colors[index]);
+        choice = show_maze(window, model, index > 0, index < len - 1, colors[index], font, text);
         switch (choice) {
         case menu_choice::next_maze:
             if (index < len - 1) index++;

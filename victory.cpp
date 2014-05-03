@@ -26,7 +26,7 @@ static std::shared_ptr<camera> create_camera(sf::RenderWindow& window) {
     return std::make_shared<parallel_camera>(parallel_camera(cv));
 }
 
-void victory(sf::RenderWindow& window) {
+void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text) {
 
     timer timer_absolute;
     timer timer_frame;
@@ -35,6 +35,8 @@ void victory(sf::RenderWindow& window) {
     if (!heroImage.loadFromFile("smiley.png")) {
         return;
     }
+
+
     heroImage.flipVertically();
     auto heroTexture = std::make_shared<texture>((GLubyte*)heroImage.getPixelsPtr(), heroImage.getSize().x, heroImage.getSize().y);
 
@@ -81,6 +83,8 @@ void victory(sf::RenderWindow& window) {
         }
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         camera->render(root, ctx, textureProgram);
+        //window.resetGLStates();
+        window.draw(text);
         window.display();
         ctx.frame_count++;
     }

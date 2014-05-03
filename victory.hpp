@@ -3,6 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 
-void victory(sf::RenderWindow& window);
+void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text);
 
 #endif

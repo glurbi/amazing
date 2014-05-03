@@ -9,6 +9,6 @@ enum class menu_choice {
     exit
 };
 
-void menu(sf::RenderWindow& window);
+void menu(sf::RenderWindow& window, sf::Font& font, sf::Text& text);
 
 #endif

@@ -78,7 +78,7 @@ void update_position(game_data& g, rendering_context& ctx) {
     g.hero->transformation(translation(g.pos_fx, g.pos_fy, 0.0f));
 }
 
-void play(maze_model& model, sf::RenderWindow& window, color color) {
+void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& font, sf::Text& text) {
 
     timer timer_absolute;
     timer timer_frame;
@@ -175,7 +175,7 @@ void play(maze_model& model, sf::RenderWindow& window, color color) {
         ctx.frame_count++;
 
         if (game.pos_x == model.get_width() - 1 && game.pos_y == model.get_height() - 2) {
-            victory(window);
+            victory(window, font, text);
             return;
         }
         //std::cout << game.pos_x << " " << game.pos_y << std::endl;

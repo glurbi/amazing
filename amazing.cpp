@@ -19,7 +19,17 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Amazing!", sf::Style::Default, settings);
     //sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "Amazing!", sf::Style::Fullscreen, settings);
     window.setMouseCursorVisible(false);
+    sf::Font font;
+    if (!font.loadFromFile("anonymous.ttf")) {
+        return -1;
+    }
+    sf::Text text;
+    text.setFont(font);
+    text.setString("You win!");
+    text.setCharacterSize(94);
+    text.setColor(sf::Color::White);
+    text.setStyle(sf::Text::Bold);
     glewInit();
     glViewport(0, 0, window.getSize().x, window.getSize().y);
-    menu(window);
+    menu(window, font, text);
 }
