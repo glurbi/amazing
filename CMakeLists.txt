@@ -43,7 +43,7 @@ add_executable(${EXECUTABLE_NAME} ${SOURCE} ${HEADERS})
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-find_package(SFML 2.1 REQUIRED system-d window-d graphics-d network-d audio-d)
+find_package(SFML 2.1 REQUIRED system window graphics network audio)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED glew32)
         
@@ -52,6 +52,7 @@ target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES} ${OPENGL_LIBRARIES} $
 include_directories(${SFML_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_PATH})
 
 configure_file(smiley.png ${CMAKE_CURRENT_BINARY_DIR}/smiley.png COPYONLY)
+configure_file(evil.png ${CMAKE_CURRENT_BINARY_DIR}/evil.png COPYONLY)
 configure_file(Anonymous.ttf ${CMAKE_CURRENT_BINARY_DIR}/anonymous.ttf COPYONLY)
 configure_file(flatShading.frag ${CMAKE_CURRENT_BINARY_DIR}/flatShading.frag COPYONLY)
 configure_file(monochrome.frag ${CMAKE_CURRENT_BINARY_DIR}/monochrome.frag COPYONLY)

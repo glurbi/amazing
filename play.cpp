@@ -31,6 +31,17 @@ struct game_data {
     float inc;
 };
 
+struct evil_data {
+    std::shared_ptr<group> evil;
+    int pos_x;
+    int pos_y;
+    float pos_fx;
+    float pos_fy;
+    direction dir;
+    direction next_direction;
+    float inc;
+};
+
 static std::shared_ptr<camera> create_camera(maze_model& model, sf::RenderWindow& window) {
     clipping_volume cv;
     int div = 100;
