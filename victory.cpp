@@ -57,6 +57,28 @@ void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text) {
     std::shared_ptr<texture_program> textureProgram = texture_program::create();
     ctx.frame_count = 0;
 
+    sf::Text text1;
+    text1.setFont(font);
+    text1.setString("You win!");
+    text1.setCharacterSize(142);
+    text1.setColor(sf::Color::White);
+    text1.setStyle(sf::Text::Regular);
+
+    sf::Text text2;
+    text2.setFont(font);
+    text2.setString("You win!");
+    text2.setCharacterSize(138);
+    text2.setColor(sf::Color::Black);
+    text2.setStyle(sf::Text::Bold);
+
+    sf::FloatRect textRect1 = text1.getLocalBounds();
+    text1.setOrigin(textRect1.left + textRect1.width / 2.0f, textRect1.top + textRect1.height / 2.0f);
+    text1.setPosition(sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f));
+
+    sf::FloatRect textRect2 = text2.getLocalBounds();
+    text2.setOrigin(textRect2.left + textRect2.width / 2.0f, textRect2.top + textRect2.height / 2.0f);
+    text2.setPosition(sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f));
+
     while (true)
     {
         ctx.elapsed_time_seconds = timer_absolute.elapsed();
@@ -87,7 +109,8 @@ void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         camera->render(root, ctx, textureProgram);
         window.pushGLStates();
-        window.draw(text);
+        window.draw(text1);
+        window.draw(text2);
         window.popGLStates();
         window.display();
         ctx.frame_count++;
