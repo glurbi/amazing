@@ -18,6 +18,7 @@ int main() {
     settings.depthBits = 16;
     sf::RenderWindow window(sf::VideoMode(800, 600), "Amazing!", sf::Style::Default, settings);
     //sf::RenderWindow window(sf::VideoMode::getFullscreenModes()[0], "Amazing!", sf::Style::Fullscreen, settings);
+    window.setVerticalSyncEnabled(true);
     window.setMouseCursorVisible(false);
     sf::Font font;
     if (!font.loadFromFile("anonymous.ttf")) {

@@ -97,6 +97,8 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
     std::shared_ptr<monochrome_program> monochromeProgram = monochrome_program::create();
     std::shared_ptr<flat_shading_program> flatShadingProgram = flat_shading_program::Create();
 
+    bool fullscreen = false;
+
     menu_choice choice = menu_choice::undefined;
     while (choice == menu_choice::undefined)
     {
@@ -125,6 +127,26 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
                     break;
                 case sf::Keyboard::Right:
                     choice = menu_choice::next_maze;
+                    break;
+                case sf::Keyboard::F11:
+                    {
+                        sf::ContextSettings settings;
+                        settings.antialiasingLevel = 2;
+                        settings.depthBits = 16;
+                        if (fullscreen) {
+                            window.create(sf::VideoMode(800, 600), "Amazing!", sf::Style::Default, settings);
+                        } else {
+                            window.create(sf::VideoMode::getFullscreenModes()[0], "Amazing!", sf::Style::Fullscreen, settings);
+                        }
+                        camera = create_camera(model, window);
+                        int width = window.getSize().x;
+                        int height = window.getSize().y;
+                        glViewport(0, 0, width, height);
+                        sf::View view(sf::FloatRect(0, 0, (float)width, (float)height));
+                        window.setView(view);
+                        fullscreen = !fullscreen;
+                    }
+                    window.setVerticalSyncEnabled(true);
                     break;
                 case sf::Keyboard::Return:
                     play(model, window, color(c), font, text);
