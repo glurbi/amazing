@@ -93,7 +93,7 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
     game->camera->move_right(0.5f);
     hero_data->dir = direction::none;
     hero_data->next_direction = direction::none;
-    hero_data->inc = 0.05f;
+    hero_data->inc = 0.1f;
     game->hero_data = hero_data;
     hero_builder_2d hero_builder;
     auto hero = hero_builder.build();
