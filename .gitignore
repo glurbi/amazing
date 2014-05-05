@@ -5,3 +5,16 @@
 /build
 /Release
 *.user
+CMakeCache.txt
+CMakeFiles/
+Makefile
+amazing
+amazing.config
+amazing.creator
+amazing.files
+amazing.includes
+cmake_install.cmake
+
+
+
+
