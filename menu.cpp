@@ -91,7 +91,7 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
 
     rendering_context ctx;
     ctx.dir = vector3(0, 0, -1.0f);
-    ctx.color = c;
+    ctx.col = c;
     ctx.frame_count = 0;
 
     std::shared_ptr<monochrome_program> monochromeProgram = monochrome_program::create();

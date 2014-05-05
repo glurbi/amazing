@@ -75,7 +75,7 @@ class geometry_node : public node {
 public:
     geometry_node(std::shared_ptr<geometry<T>> geom) : geom(geom) {}
     virtual void render(rendering_context& ctx) {
-        ctx.program->render(*geom, ctx);
+        ctx.prog->render(*geom, ctx);
     }
 private:
     std::shared_ptr<geometry<T>> geom;

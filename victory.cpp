@@ -53,7 +53,7 @@ void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text) {
     root->add(node);
 
     rendering_context ctx;
-    ctx.texture = heroTexture;
+    ctx.text = heroTexture;
     std::shared_ptr<texture_program> textureProgram = texture_program::create();
     ctx.frame_count = 0;
 

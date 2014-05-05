@@ -31,7 +31,7 @@ struct actor_data {
 struct game_data {
     game_data(maze_model& model) : model(model) {}
     maze_model& model;
-    std::shared_ptr<camera> camera;
+    std::shared_ptr<camera> cam;
     std::shared_ptr<actor_data> hero_data;
 };
 
@@ -88,9 +88,9 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
     hero_data->pos_y = 1;
     hero_data->pos_fx = 0;
     hero_data->pos_fy = 1;
-    game->camera = create_camera(model, window);
-    game->camera->move_up(1.5f);
-    game->camera->move_right(0.5f);
+    game->cam = create_camera(model, window);
+    game->cam->move_up(1.5f);
+    game->cam->move_right(0.5f);
     hero_data->dir = direction::none;
     hero_data->next_direction = direction::none;
     hero_data->inc = 0.1f;
@@ -112,8 +112,8 @@ std::shared_ptr<rendering_context> make_rendering_context(color& c) {
     }
     heroImage.flipVertically();
     auto heroTexture = std::make_shared<texture>((GLubyte*)heroImage.getPixelsPtr(), heroImage.getSize().x, heroImage.getSize().y);
-    ctx->color = c;
-    ctx->texture = heroTexture;
+    ctx->col = c;
+    ctx->text = heroTexture;
     ctx->frame_count = 0;
     return ctx;
 }
@@ -157,7 +157,7 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
                 return;
             }
             if (event.type == sf::Event::Resized) {
-                game->camera = create_camera(model, window);
+                game->cam = create_camera(model, window);
                 glViewport(0, 0, event.size.width, event.size.height);
                 sf::View view(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height));
                 window.setView(view);
@@ -183,12 +183,12 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
             }
         }
         update_position(*game->hero_data, model, *ctx);
-        game->camera->position_v = vector3(game->hero_data->pos_fx, game->hero_data->pos_fy, 0);
+        game->cam->position_v = vector3(game->hero_data->pos_fx, game->hero_data->pos_fy, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
-        game->camera->render(maze_group, *ctx, monochromeProgram);
+        game->cam->render(maze_group, *ctx, monochromeProgram);
         glDisable(GL_DEPTH_TEST);
-        game->camera->render(game->hero_data->hero_group, *ctx, textureProgram);
+        game->cam->render(game->hero_data->hero_group, *ctx, textureProgram);
         window.display();
         ctx->frame_count++;
 

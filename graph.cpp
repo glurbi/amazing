@@ -1,6 +1,7 @@
 #include <math.h>
 #include <vector>
 #include <memory>
+#include <string.h>
 
 #include "matrix.hpp"
 #include "graph.hpp"
@@ -97,20 +98,20 @@ matrix44 camera::position_and_orient() {
 
 perspective_camera::perspective_camera(const clipping_volume& cv) : camera(cv) {}
 
-void perspective_camera::render(std::shared_ptr<node> node, rendering_context& ctx, std::shared_ptr<program> program) {
+void perspective_camera::render(std::shared_ptr<node> node, rendering_context& ctx, std::shared_ptr<program> prog) {
     ctx.projection(frustum(cv.left, cv.right, cv.bottom, cv.top, cv.nearp, cv.farp));
     ctx.push(position_and_orient());
-    ctx.program = program;
+    ctx.prog = prog;
     node->render(ctx);
     ctx.reset();
 }
 
 parallel_camera::parallel_camera(const clipping_volume& clippingVolume) : camera(clippingVolume) {}
 
-void parallel_camera::render(std::shared_ptr<node> node, rendering_context& ctx, std::shared_ptr<program> program) {
+void parallel_camera::render(std::shared_ptr<node> node, rendering_context& ctx, std::shared_ptr<program> prog) {
     ctx.projection(ortho(cv.left, cv.right, cv.bottom, cv.top, cv.nearp, cv.farp));
     ctx.push(position_and_orient());
-    ctx.program = program;
+    ctx.prog = prog;
     node->render(ctx);
     ctx.reset();
 }

@@ -85,7 +85,7 @@ void monochrome_program::render(const geometry<float>& geometry, rendering_conte
     GLuint matrixUniform = glGetUniformLocation(id, "mvpMatrix");
     glUniformMatrix4fv(matrixUniform, 1, false, ctx.mvp().m);
     GLuint colorUniform = glGetUniformLocation(id, "color");
-    glUniform4f(colorUniform, ctx.color.r(), ctx.color.g(), ctx.color.b(), ctx.color.a());
+    glUniform4f(colorUniform, ctx.col.r(), ctx.col.g(), ctx.col.b(), ctx.col.a());
     glEnableVertexAttribArray(vertex_attribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.get_positions_id());
     glVertexAttribPointer(vertex_attribute::POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -107,7 +107,7 @@ monochrome_program::monochrome_program(const std::map<int, std::string>& attribu
 void texture_program::render(const geometry<float>& geometry, rendering_context& ctx) {
     glUseProgram(id);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, ctx.texture->get_id());
+    glBindTexture(GL_TEXTURE_2D, ctx.text->get_id());
     GLuint matrixUniform = glGetUniformLocation(id, "mvpMatrix");
     glUniformMatrix4fv(matrixUniform, 1, false, ctx.mvp().m);
     GLuint textureUniform = glGetUniformLocation(id, "texture");
@@ -147,7 +147,7 @@ void flat_shading_program::render(const geometry<float>& geometry, rendering_con
     glUniform3f(lightDirUniform, ctx.dir.v[0], ctx.dir.v[1], ctx.dir.v[2]);
 
     GLuint colorUniform = glGetUniformLocation(id, "color");
-    glUniform3f(colorUniform, ctx.color.r(), ctx.color.g(), ctx.color.b());
+    glUniform3f(colorUniform, ctx.col.r(), ctx.col.g(), ctx.col.b());
 
     glEnableVertexAttribArray(vertex_attribute::POSITION);
     glBindBuffer(GL_ARRAY_BUFFER, geometry.get_positions_id());

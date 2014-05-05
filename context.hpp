@@ -20,12 +20,12 @@ public:
     matrix44 mv();
     void reset();
     vector3 dir;
-    color color;
+    color col;
     double elapsed_time_seconds;
     double last_frame_times_seconds[100];
     long frame_count;
-    std::shared_ptr<program> program;
-    std::shared_ptr<texture> texture;
+    std::shared_ptr<program> prog;
+    std::shared_ptr<texture> text;
 private:
     std::vector<matrix44> mvp_stack;
     std::vector<matrix44> mv_stack;
