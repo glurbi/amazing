@@ -53,7 +53,7 @@ include_directories(${SFML_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS} ${GLEW_INCLUDE_PA
 
 configure_file(smiley.png ${CMAKE_CURRENT_BINARY_DIR}/smiley.png COPYONLY)
 configure_file(evil.png ${CMAKE_CURRENT_BINARY_DIR}/evil.png COPYONLY)
-configure_file(Anonymous.ttf ${CMAKE_CURRENT_BINARY_DIR}/anonymous.ttf COPYONLY)
+configure_file(anonymous.ttf ${CMAKE_CURRENT_BINARY_DIR}/anonymous.ttf COPYONLY)
 configure_file(flatShading.frag ${CMAKE_CURRENT_BINARY_DIR}/flatShading.frag COPYONLY)
 configure_file(monochrome.frag ${CMAKE_CURRENT_BINARY_DIR}/monochrome.frag COPYONLY)
 configure_file(texture.frag ${CMAKE_CURRENT_BINARY_DIR}/texture.frag COPYONLY)
