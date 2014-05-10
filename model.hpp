@@ -63,5 +63,12 @@ public:
     std::shared_ptr<geometry<float>> build();
 };
 
+class bad_guy_builder_2d {
+public:
+    bad_guy_builder_2d();
+    std::shared_ptr<geometry<float>> build();
+};
+
+
 
 #endif

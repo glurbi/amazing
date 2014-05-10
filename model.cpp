@@ -142,10 +142,10 @@ std::shared_ptr<geometry<float>> hero_builder_2d::build() {
     b << 1.0f << 0.0f;
     b << 1.0f << 1.0f;
     b << 0.0f << 1.0f;
-    auto mazeGeom = std::make_shared<geometry<float>>(geometry<float>(b.get_size() / 2));
-    mazeGeom->set_vertex_positions(b.build());
-    mazeGeom->set_vertex_tex_coords(b.build());
-    return mazeGeom;
+    auto hero = std::make_shared<geometry<float>>(geometry<float>(b.get_size() / 2));
+    hero->set_vertex_positions(b.build());
+    hero->set_vertex_tex_coords(b.build());
+    return hero;
 }
 
 multi_hero_builder_2d::multi_hero_builder_2d() {}
@@ -160,4 +160,18 @@ std::shared_ptr<geometry<float>> multi_hero_builder_2d::build() {
     multi_hero->set_vertex_positions(b.build());
     multi_hero->set_vertex_tex_coords(b.build());
     return multi_hero;
+}
+
+bad_guy_builder_2d::bad_guy_builder_2d() {}
+
+std::shared_ptr<geometry<float>> bad_guy_builder_2d::build() {
+    buffer_object_builder<float> b;
+    b << 0.0f << 0.0f;
+    b << 1.0f << 0.0f;
+    b << 1.0f << 1.0f;
+    b << 0.0f << 1.0f;
+    auto bad_guy = std::make_shared<geometry<float>>(geometry<float>(b.get_size() / 2));
+    bad_guy->set_vertex_positions(b.build());
+    bad_guy->set_vertex_tex_coords(b.build());
+    return bad_guy;
 }

@@ -18,7 +18,7 @@ enum class direction {
 };
 
 struct actor_data {
-    std::shared_ptr<group> hero_group;
+    std::shared_ptr<group> actor_group;
     int pos_x;
     int pos_y;
     float pos_fx;
@@ -33,9 +33,10 @@ struct game_data {
     maze_model& model;
     std::shared_ptr<camera> cam;
     std::shared_ptr<actor_data> hero_data;
+    std::vector<std::shared_ptr<actor_data>> bad_guys_data;
 };
 
-static std::shared_ptr<camera> create_camera(maze_model& model, sf::RenderWindow& window) {
+static std::shared_ptr<camera> create_camera(sf::RenderWindow& window) {
     clipping_volume cv;
     int div = 100;
     cv.right = (float)window.getSize().x / div;
@@ -78,29 +79,46 @@ void update_position(actor_data& ad, maze_model& model, rendering_context& ctx) 
             ad.next_direction = direction::none;
         }
     }
-    ad.hero_group->transformation(translation(ad.pos_fx, ad.pos_fy, 0.0f));
+    ad.actor_group->transformation(translation(ad.pos_fx, ad.pos_fy, 0.0f));
 }
 
 std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& window) {
     auto game = std::make_shared<game_data>(game_data(model));
+    game->cam = create_camera(window);
+    game->cam->move_up(1.5f);
+    game->cam->move_right(0.5f);
     std::shared_ptr<actor_data> hero_data = std::make_shared<actor_data>(actor_data());
     hero_data->pos_x = 0;
     hero_data->pos_y = 1;
     hero_data->pos_fx = 0;
     hero_data->pos_fy = 1;
-    game->cam = create_camera(model, window);
-    game->cam->move_up(1.5f);
-    game->cam->move_right(0.5f);
     hero_data->dir = direction::none;
     hero_data->next_direction = direction::none;
     hero_data->inc = 0.1f;
-    game->hero_data = hero_data;
     hero_builder_2d hero_builder;
     auto hero = hero_builder.build();
     auto hero_node = std::make_shared<geometry_node<float>>(geometry_node<float>(hero));
     auto hero_group = std::make_shared<group>(group());
     hero_group->add(hero_node);
-    game->hero_data->hero_group = hero_group;
+    hero_data->actor_group = hero_group;
+    game->hero_data = hero_data;
+    for (int i = 0; i < model.get_height() / 10; i++) {
+        std::shared_ptr<actor_data> bad_guy_data = std::make_shared<actor_data>(actor_data());
+        bad_guy_data->pos_x = 0;
+        bad_guy_data->pos_y = 1;
+        bad_guy_data->pos_fx = 0;
+        bad_guy_data->pos_fy = 1;
+        bad_guy_data->dir = direction::none;
+        bad_guy_data->next_direction = direction::none;
+        bad_guy_data->inc = 0.1f;
+        bad_guy_builder_2d bad_guy_builder;
+        auto bad_guy = bad_guy_builder.build();
+        auto bad_guy_node = std::make_shared<geometry_node<float>>(geometry_node<float>(bad_guy));
+        auto bad_guy_group = std::make_shared<group>(group());
+        bad_guy_group->add(bad_guy_node);
+        bad_guy_data->actor_group = bad_guy_group;
+        game->bad_guys_data.push_back(bad_guy_data);
+    }
     return game;
 }
 
@@ -127,6 +145,40 @@ std::shared_ptr<group> make_maze_group(maze_model& model) {
     return maze_group;
 }
 
+void handle_events(sf::RenderWindow& window, std::shared_ptr<game_data> game) {
+    sf::Event event;
+    while (window.pollEvent(event)) {
+        if (event.type == sf::Event::Closed) {
+            return;
+        }
+        if (event.type == sf::Event::Resized) {
+            game->cam = create_camera(window);
+            glViewport(0, 0, event.size.width, event.size.height);
+            sf::View view(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height));
+            window.setView(view);
+        }
+        if (event.type == sf::Event::KeyPressed) {
+            switch (event.key.code) {
+            case sf::Keyboard::Escape:
+                return;
+                break;
+            case sf::Keyboard::Left:
+                game->hero_data->next_direction = direction::left;
+                break;
+            case sf::Keyboard::Right:
+                game->hero_data->next_direction = direction::right;
+                break;
+            case sf::Keyboard::Up:
+                game->hero_data->next_direction = direction::up;
+                break;
+            case sf::Keyboard::Down:
+                game->hero_data->next_direction = direction::down;
+                break;
+            }
+        }
+    }
+}
+
 void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& font, sf::Text& text) {
 
     timer timer_absolute;
@@ -151,44 +203,20 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
         }
         timer_frame.reset();
         check_for_opengl_errors();
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                return;
-            }
-            if (event.type == sf::Event::Resized) {
-                game->cam = create_camera(model, window);
-                glViewport(0, 0, event.size.width, event.size.height);
-                sf::View view(sf::FloatRect(0, 0, (float)event.size.width, (float)event.size.height));
-                window.setView(view);
-            }
-            if (event.type == sf::Event::KeyPressed) {
-                switch (event.key.code) {
-                case sf::Keyboard::Escape:
-                    return;
-                    break;
-                case sf::Keyboard::Left:
-                    game->hero_data->next_direction = direction::left;
-                    break;
-                case sf::Keyboard::Right:
-                    game->hero_data->next_direction = direction::right;
-                    break;
-                case sf::Keyboard::Up:
-                    game->hero_data->next_direction = direction::up;
-                    break;
-                case sf::Keyboard::Down:
-                    game->hero_data->next_direction = direction::down;
-                    break;
-                }
-            }
-        }
+        handle_events(window, game);
         update_position(*game->hero_data, model, *ctx);
         game->cam->position_v = vector3(game->hero_data->pos_fx, game->hero_data->pos_fy, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_DEPTH_TEST);
         game->cam->render(maze_group, *ctx, monochromeProgram);
         glDisable(GL_DEPTH_TEST);
-        game->cam->render(game->hero_data->hero_group, *ctx, textureProgram);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        game->cam->render(game->hero_data->actor_group, *ctx, textureProgram);
+        for (auto& bad_guy_data : game->bad_guys_data ) {
+            update_position(*bad_guy_data, model, *ctx);
+            game->cam->render(bad_guy_data->actor_group, *ctx, textureProgram);
+        }
+        glDisable(GL_BLEND);
         window.display();
         ctx->frame_count++;
 
