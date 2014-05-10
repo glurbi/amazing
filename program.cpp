@@ -107,7 +107,7 @@ monochrome_program::monochrome_program(const std::map<int, std::string>& attribu
 void texture_program::render(const geometry<float>& geometry, rendering_context& ctx) {
     glUseProgram(id);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, ctx.text->get_id());
+    glBindTexture(GL_TEXTURE_2D, current_texture->get_id());
     GLuint matrixUniform = glGetUniformLocation(id, "mvpMatrix");
     glUniformMatrix4fv(matrixUniform, 1, false, ctx.mvp().m);
     GLuint textureUniform = glGetUniformLocation(id, "texture");
@@ -122,6 +122,10 @@ void texture_program::render(const geometry<float>& geometry, rendering_context&
     glDisableVertexAttribArray(vertex_attribute::POSITION);
     glDisableVertexAttribArray(vertex_attribute::TEXCOORD);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void texture_program::set_texture(std::shared_ptr<texture> t) {
+    current_texture = t;
 }
 
 std::shared_ptr<texture_program> texture_program::create() {

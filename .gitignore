@@ -4,7 +4,6 @@
 /Debug
 /build
 /Release
-*.user
 CMakeCache.txt
 CMakeFiles/
 Makefile
@@ -14,7 +13,7 @@ amazing.creator
 amazing.files
 amazing.includes
 cmake_install.cmake
-
+CMakeLists.txt.user*
 
 
 

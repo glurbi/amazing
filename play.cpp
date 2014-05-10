@@ -122,16 +122,27 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
     return game;
 }
 
-std::shared_ptr<rendering_context> make_rendering_context(color& c) {
-    std::shared_ptr<rendering_context> ctx = std::make_shared<rendering_context>();
-    sf::Image heroImage;
-    if (!heroImage.loadFromFile("smiley.png")) {
+std::shared_ptr<texture> make_hero_texture() {
+    sf::Image hero_image;
+    if (!hero_image.loadFromFile("smiley.png")) {
         std::cout << "Failed to load smiley.png" << std::endl;
     }
-    heroImage.flipVertically();
-    auto heroTexture = std::make_shared<texture>((GLubyte*)heroImage.getPixelsPtr(), heroImage.getSize().x, heroImage.getSize().y);
+    hero_image.flipVertically();
+    return std::make_shared<texture>((GLubyte*)hero_image.getPixelsPtr(), hero_image.getSize().x, hero_image.getSize().y);
+}
+
+std::shared_ptr<texture> make_bad_guy_texture() {
+    sf::Image bad_guy_image;
+    if (!bad_guy_image.loadFromFile("evil.png")) {
+        std::cout << "Failed to load evil.png" << std::endl;
+    }
+    bad_guy_image.flipVertically();
+    return std::make_shared<texture>((GLubyte*)bad_guy_image.getPixelsPtr(), bad_guy_image.getSize().x, bad_guy_image.getSize().y);
+}
+
+std::shared_ptr<rendering_context> make_rendering_context(color& c) {
+    std::shared_ptr<rendering_context> ctx = std::make_shared<rendering_context>();
     ctx->col = c;
-    ctx->text = heroTexture;
     ctx->frame_count = 0;
     return ctx;
 }
@@ -145,11 +156,11 @@ std::shared_ptr<group> make_maze_group(maze_model& model) {
     return maze_group;
 }
 
-void handle_events(sf::RenderWindow& window, std::shared_ptr<game_data> game) {
+int handle_events(sf::RenderWindow& window, std::shared_ptr<game_data> game) {
     sf::Event event;
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
-            return;
+            return -1;
         }
         if (event.type == sf::Event::Resized) {
             game->cam = create_camera(window);
@@ -160,7 +171,7 @@ void handle_events(sf::RenderWindow& window, std::shared_ptr<game_data> game) {
         if (event.type == sf::Event::KeyPressed) {
             switch (event.key.code) {
             case sf::Keyboard::Escape:
-                return;
+                return -1;
                 break;
             case sf::Keyboard::Left:
                 game->hero_data->next_direction = direction::left;
@@ -177,6 +188,7 @@ void handle_events(sf::RenderWindow& window, std::shared_ptr<game_data> game) {
             }
         }
     }
+    return 0;
 }
 
 void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& font, sf::Text& text) {
@@ -190,6 +202,8 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
     auto game = make_game_data(model, window);
     auto maze_group = make_maze_group(model);
     auto ctx = make_rendering_context(color);
+    auto hero_texture = make_hero_texture();
+    auto bad_guy_texture = make_bad_guy_texture();
 
     while (true)
     {
@@ -198,12 +212,12 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
         double avg = std::accumulate(ctx->last_frame_times_seconds, ctx->last_frame_times_seconds + 100, 0.0) / 100.0;
         if (avg < 0.01) {
             long usec = (long) ((0.01-avg)*1000000);
-            std::this_thread::sleep_for(std::chrono::microseconds(usec));
+            //std::this_thread::sleep_for(std::chrono::microseconds(usec));
             //std::cout << "sleeping for " << usec << std::endl;
         }
         timer_frame.reset();
         check_for_opengl_errors();
-        handle_events(window, game);
+        if (handle_events(window, game) == -1) return;
         update_position(*game->hero_data, model, *ctx);
         game->cam->position_v = vector3(game->hero_data->pos_fx, game->hero_data->pos_fy, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -211,7 +225,9 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        textureProgram->set_texture(hero_texture);
         game->cam->render(game->hero_data->actor_group, *ctx, textureProgram);
+        textureProgram->set_texture(bad_guy_texture);
         for (auto& bad_guy_data : game->bad_guys_data ) {
             update_position(*bad_guy_data, model, *ctx);
             game->cam->render(bad_guy_data->actor_group, *ctx, textureProgram);
@@ -221,7 +237,7 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
         ctx->frame_count++;
 
         if (game->hero_data->pos_x == model.get_width() - 1 && game->hero_data->pos_y == model.get_height() - 2) {
-            victory(window, font, text);
+            victory(window, font, text, hero_texture);
             return;
         }
         //std::cout << game.pos_x << " " << game.pos_y << std::endl;

@@ -3,6 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 
-void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text);
+void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text, std::shared_ptr<texture> tex);
 
 #endif

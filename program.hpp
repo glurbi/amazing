@@ -52,9 +52,11 @@ private:
 class texture_program : public program {
 public:
     virtual void render(const geometry<float>& geometry, rendering_context& ctx);
+    void set_texture(std::shared_ptr<texture> t);
     static std::shared_ptr<texture_program> create();
 private:
     texture_program(std::map<int, std::string>& attribute_indices);
+    std::shared_ptr<texture> current_texture;
 };
 
 class flat_shading_program : public program {

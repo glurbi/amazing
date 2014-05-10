@@ -26,7 +26,7 @@ static std::shared_ptr<camera> create_camera(sf::RenderWindow& window) {
     return std::make_shared<parallel_camera>(parallel_camera(cv));
 }
 
-void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text) {
+void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text, std::shared_ptr<texture> tex) {
 
     timer timer_absolute;
     timer timer_frame;
@@ -53,8 +53,8 @@ void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text) {
     root->add(node);
 
     rendering_context ctx;
-    ctx.text = heroTexture;
     std::shared_ptr<texture_program> textureProgram = texture_program::create();
+    textureProgram->set_texture(tex);
     ctx.frame_count = 0;
 
     sf::Text text1;
