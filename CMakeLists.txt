@@ -7,7 +7,7 @@ project(${EXECUTABLE_NAME})
 set(SOURCE
     amazing.cpp
     graph.cpp
-    victory.cpp
+    ending.cpp
     matrix.cpp
     menu.cpp
     misc.cpp
@@ -19,15 +19,12 @@ set(SOURCE
 )
 
 set(HEADERS
+    amazing.hpp
     context.hpp
     graph.hpp
-    victory.hpp
     geometry.hpp
     matrix.hpp
-    menu.hpp
     misc.hpp
-    model.hpp
-    play.hpp
     program.hpp
     texture.hpp
     timer.hpp

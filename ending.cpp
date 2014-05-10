@@ -9,9 +9,8 @@
 
 #include "graph.hpp"
 #include "geometry.hpp"
-#include "victory.hpp"
+#include "amazing.hpp"
 #include "timer.hpp"
-#include "model.hpp"
 #include "misc.hpp"
 
 static std::shared_ptr<camera> create_camera(sf::RenderWindow& window) {
@@ -26,7 +25,7 @@ static std::shared_ptr<camera> create_camera(sf::RenderWindow& window) {
     return std::make_shared<parallel_camera>(parallel_camera(cv));
 }
 
-void victory(sf::RenderWindow& window, sf::Font& font, sf::Text& text, std::shared_ptr<texture> tex) {
+void ending(sf::RenderWindow& window, sf::Font& font, sf::Text& text, std::shared_ptr<texture> tex) {
 
     timer timer_absolute;
     timer timer_frame;

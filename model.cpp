@@ -5,7 +5,7 @@
 #include <chrono>
 #include <random>
 
-#include "model.hpp"
+#include "amazing.hpp"
 
 bool cell::comp::operator() (const cell& c1, const cell& c2) const {
 	if (c1.x < c2.x) {
@@ -43,6 +43,14 @@ int maze_model::get_width() {
 
 int maze_model::get_height() {
     return height;
+}
+
+pos maze_model::find_empty_cell(int col) {
+    for (int y = get_height()-1; y >= 0; y--) {
+        if (!get_cell(col, y).wall) {
+            return pos { col, y };
+        }
+    }
 }
 
 void maze_model::visit(cell& c, std::set<cell, cell::comp>& visited, int& count) {

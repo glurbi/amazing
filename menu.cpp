@@ -7,12 +7,10 @@
 #include "misc.hpp"
 #include "timer.hpp"
 #include "matrix.hpp"
-#include "model.hpp"
+#include "amazing.hpp"
 #include "geometry.hpp"
 #include "program.hpp"
 #include "graph.hpp"
-#include "menu.hpp"
-#include "play.hpp"
 
 void draw_left_arrow(sf::RenderWindow& window, sf::Color& color) {
     window.pushGLStates();

@@ -5,13 +5,12 @@
 #include <SFML/Graphics.hpp>
 #include <stdlib.h>
 
-#include "play.hpp"
+#include "amazing.hpp"
 #include "timer.hpp"
 #include "graph.hpp"
 #include "geometry.hpp"
 #include "misc.hpp"
 #include "texture.hpp"
-#include "victory.hpp"
 
 enum class direction {
     none, up, down, right, left
@@ -104,10 +103,11 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
     game->hero_data = hero_data;
     for (int i = 0; i < model.get_height() / 10; i++) {
         std::shared_ptr<actor_data> bad_guy_data = std::make_shared<actor_data>(actor_data());
-        bad_guy_data->pos_x = 0;
-        bad_guy_data->pos_y = 1;
-        bad_guy_data->pos_fx = 0;
-        bad_guy_data->pos_fy = 1;
+        pos p = model.find_empty_cell(model.get_width()-1);
+        bad_guy_data->pos_x = p.x;
+        bad_guy_data->pos_y = p.y;
+        bad_guy_data->pos_fx = p.x;
+        bad_guy_data->pos_fy = p.y;
         bad_guy_data->dir = direction::none;
         bad_guy_data->next_direction = direction::none;
         bad_guy_data->inc = 0.1f;
@@ -237,7 +237,7 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
         ctx->frame_count++;
 
         if (game->hero_data->pos_x == model.get_width() - 1 && game->hero_data->pos_y == model.get_height() - 2) {
-            victory(window, font, text, hero_texture);
+            ending(window, font, text, hero_texture);
             return;
         }
         //std::cout << game.pos_x << " " << game.pos_y << std::endl;
