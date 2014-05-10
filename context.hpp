@@ -20,7 +20,6 @@ public:
     matrix44 mv();
     void reset();
     vector3 dir;
-    color col;
     double elapsed_time_seconds;
     double last_frame_times_seconds[100];
     long frame_count;

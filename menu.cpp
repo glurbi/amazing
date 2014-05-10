@@ -68,7 +68,7 @@ static std::shared_ptr<camera> create_camera(maze_model& model, sf::RenderWindow
 }
 
 menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arrow_enabled,
-    bool right_arrow_enabled, const color& c, sf::Font& font, sf::Text& text) {
+    bool right_arrow_enabled, const color& col, sf::Font& font, sf::Text& text) {
 
     timer timer_absolute;
     timer timer_frame;
@@ -89,11 +89,9 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
 
     rendering_context ctx;
     ctx.dir = vector3(0, 0, -1.0f);
-    ctx.col = c;
     ctx.frame_count = 0;
 
-    std::shared_ptr<monochrome_program> monochromeProgram = monochrome_program::create();
-    std::shared_ptr<flat_shading_program> flatShadingProgram = flat_shading_program::Create();
+    std::shared_ptr<flat_shading_program> flat_shading_pr = flat_shading_program::Create();
 
     bool fullscreen = false;
 
@@ -147,7 +145,7 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
                     window.setVerticalSyncEnabled(true);
                     break;
                 case sf::Keyboard::Return:
-                    play(model, window, color(c), font, text);
+                    play(model, window, color(col), font, text);
                     camera = create_camera(model, window);
                     int width = window.getSize().x;
                     int height = window.getSize().y;
@@ -165,7 +163,8 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
         //glDisable(GL_BLEND);
         root->transformation(rotation((float)sin(ctx.elapsed_time_seconds / 2) * 180, 1.0f, 0.0f, 0.0f));
         gr1->transformation(rotation((float)sin(ctx.elapsed_time_seconds) * 180, 0.0f, 1.0f, 0.0f));
-        camera->render(root, ctx, flatShadingProgram);
+        flat_shading_pr->set_color(col);
+        camera->render(root, ctx, flat_shading_pr);
 
         sf::Color arrow_colors[] = { sf::Color(128, 128, 128, 255), sf::Color(255, 255, 255, 255) };
         draw_left_arrow(window, arrow_colors[left_arrow_enabled]);

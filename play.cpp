@@ -101,9 +101,9 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
     hero_group->add(hero_node);
     hero_data->actor_group = hero_group;
     game->hero_data = hero_data;
-    for (int i = 0; i < model.get_height() / 10; i++) {
+    for (int i = 0; i < model.get_height() / 5; i++) {
         std::shared_ptr<actor_data> bad_guy_data = std::make_shared<actor_data>(actor_data());
-        pos p = model.find_empty_cell(model.get_width()-1);
+        pos p = model.find_empty_cell(model.get_width()-2 - i);
         bad_guy_data->pos_x = p.x;
         bad_guy_data->pos_y = p.y;
         bad_guy_data->pos_fx = p.x;
@@ -140,9 +140,8 @@ std::shared_ptr<texture> make_bad_guy_texture() {
     return std::make_shared<texture>((GLubyte*)bad_guy_image.getPixelsPtr(), bad_guy_image.getSize().x, bad_guy_image.getSize().y);
 }
 
-std::shared_ptr<rendering_context> make_rendering_context(color& c) {
+std::shared_ptr<rendering_context> make_rendering_context() {
     std::shared_ptr<rendering_context> ctx = std::make_shared<rendering_context>();
-    ctx->col = c;
     ctx->frame_count = 0;
     return ctx;
 }
@@ -196,12 +195,12 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
     timer timer_absolute;
     timer timer_frame;
 
-    std::shared_ptr<monochrome_program> monochromeProgram = monochrome_program::create();
-    std::shared_ptr<texture_program> textureProgram = texture_program::create();
+    std::shared_ptr<monochrome_program> monochrome_pr = monochrome_program::create();
+    std::shared_ptr<texture_program> texture_pr = texture_program::create();
 
     auto game = make_game_data(model, window);
     auto maze_group = make_maze_group(model);
-    auto ctx = make_rendering_context(color);
+    auto ctx = make_rendering_context();
     auto hero_texture = make_hero_texture();
     auto bad_guy_texture = make_bad_guy_texture();
 
@@ -221,16 +220,17 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
         update_position(*game->hero_data, model, *ctx);
         game->cam->position_v = vector3(game->hero_data->pos_fx, game->hero_data->pos_fy, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        game->cam->render(maze_group, *ctx, monochromeProgram);
+        monochrome_pr->set_color(color);
+        game->cam->render(maze_group, *ctx, monochrome_pr);
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        textureProgram->set_texture(hero_texture);
-        game->cam->render(game->hero_data->actor_group, *ctx, textureProgram);
-        textureProgram->set_texture(bad_guy_texture);
+        texture_pr->set_texture(hero_texture);
+        game->cam->render(game->hero_data->actor_group, *ctx, texture_pr);
+        texture_pr->set_texture(bad_guy_texture);
         for (auto& bad_guy_data : game->bad_guys_data ) {
             update_position(*bad_guy_data, model, *ctx);
-            game->cam->render(bad_guy_data->actor_group, *ctx, textureProgram);
+            game->cam->render(bad_guy_data->actor_group, *ctx, texture_pr);
         }
         glDisable(GL_BLEND);
         window.display();
