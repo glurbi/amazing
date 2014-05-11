@@ -33,6 +33,8 @@ set(HEADERS
 if(UNIX)
     if(CMAKE_COMPILER_IS_GNUCC)
         add_definitions(-std=c++11)
+        #set(CMAKE_CXX_FLAGS "-O2")
+        #set(CMAKE_CXX_FLAGS "-pg")
     endif(CMAKE_COMPILER_IS_GNUCC)
 endif(UNIX)
 

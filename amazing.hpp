@@ -14,6 +14,8 @@ struct cell {
     int x;
     int y;
     bool wall;
+    bool bad_guy;
+    bool hero;
     struct comp	{
         bool operator() (const cell& c1, const cell& c2) const;
     };

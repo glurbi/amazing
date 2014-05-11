@@ -16,6 +16,10 @@ enum class direction {
     none, up, down, right, left
 };
 
+enum actor_nature {
+    good, evil
+};
+
 struct actor_data {
     std::shared_ptr<group> actor_group;
     int pos_x;
@@ -25,6 +29,7 @@ struct actor_data {
     direction dir;
     direction next_direction;
     float inc;
+    actor_nature nature;
 };
 
 struct game_data {
@@ -94,6 +99,7 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
     hero_data->dir = direction::none;
     hero_data->next_direction = direction::none;
     hero_data->inc = 0.1f;
+    hero_data->nature = good;
     hero_builder_2d hero_builder;
     auto hero = hero_builder.build();
     auto hero_node = std::make_shared<geometry_node<float>>(geometry_node<float>(hero));
@@ -101,7 +107,7 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
     hero_group->add(hero_node);
     hero_data->actor_group = hero_group;
     game->hero_data = hero_data;
-    for (int i = 0; i < model.get_height() / 5; i++) {
+    for (int i = 0; i < model.get_height() / 10; i++) {
         std::shared_ptr<actor_data> bad_guy_data = std::make_shared<actor_data>(actor_data());
         pos p = model.find_empty_cell(model.get_width()-2 - i);
         bad_guy_data->pos_x = p.x;
@@ -110,7 +116,8 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
         bad_guy_data->pos_fy = p.y;
         bad_guy_data->dir = direction::none;
         bad_guy_data->next_direction = direction::none;
-        bad_guy_data->inc = 0.1f;
+        bad_guy_data->inc = 0.01f;
+        bad_guy_data->nature = evil;
         bad_guy_builder_2d bad_guy_builder;
         auto bad_guy = bad_guy_builder.build();
         auto bad_guy_node = std::make_shared<geometry_node<float>>(geometry_node<float>(bad_guy));
@@ -190,12 +197,20 @@ int handle_events(sf::RenderWindow& window, std::shared_ptr<game_data> game) {
     return 0;
 }
 
+void update_directions(game_data& game, rendering_context& ctx) {
+    for (auto& bad_guy_data : game.bad_guys_data) {
+
+        bad_guy_data->next_direction = direction::left;
+    }
+}
+
 void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& font, sf::Text& text) {
 
     timer timer_absolute;
     timer timer_frame;
 
     std::shared_ptr<monochrome_program> monochrome_pr = monochrome_program::create();
+    monochrome_pr->set_color(color);
     std::shared_ptr<texture_program> texture_pr = texture_program::create();
 
     auto game = make_game_data(model, window);
@@ -218,9 +233,13 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
         check_for_opengl_errors();
         if (handle_events(window, game) == -1) return;
         update_position(*game->hero_data, model, *ctx);
+        update_directions(*game, *ctx);
+        for (auto& bad_guy_data : game->bad_guys_data) {
+            update_position(*bad_guy_data, model, *ctx);
+        }
         game->cam->position_v = vector3(game->hero_data->pos_fx, game->hero_data->pos_fy, 0);
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        monochrome_pr->set_color(color);
         game->cam->render(maze_group, *ctx, monochrome_pr);
         glDisable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
@@ -228,14 +247,13 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
         texture_pr->set_texture(hero_texture);
         game->cam->render(game->hero_data->actor_group, *ctx, texture_pr);
         texture_pr->set_texture(bad_guy_texture);
-        for (auto& bad_guy_data : game->bad_guys_data ) {
-            update_position(*bad_guy_data, model, *ctx);
+        for (auto& bad_guy_data : game->bad_guys_data) {
             game->cam->render(bad_guy_data->actor_group, *ctx, texture_pr);
         }
         glDisable(GL_BLEND);
         window.display();
-        ctx->frame_count++;
 
+        ctx->frame_count++;
         if (game->hero_data->pos_x == model.get_width() - 1 && game->hero_data->pos_y == model.get_height() - 2) {
             ending(window, font, text, hero_texture);
             return;

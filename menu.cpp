@@ -167,8 +167,8 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
         camera->render(root, ctx, flat_shading_pr);
 
         sf::Color arrow_colors[] = { sf::Color(128, 128, 128, 255), sf::Color(255, 255, 255, 255) };
-        draw_left_arrow(window, arrow_colors[left_arrow_enabled]);
-        draw_right_arrow(window, arrow_colors[right_arrow_enabled]);
+        //draw_left_arrow(window, arrow_colors[left_arrow_enabled]);
+        //draw_right_arrow(window, arrow_colors[right_arrow_enabled]);
 
         window.display();
         ctx.frame_count++;
