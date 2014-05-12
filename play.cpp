@@ -197,9 +197,35 @@ int handle_events(sf::RenderWindow& window, std::shared_ptr<game_data> game) {
     return 0;
 }
 
+int shortest_distance(pos src, pos dest, direction dir, game_data& g, int dist, int& best_dist) {
+    dist++;
+    switch (dir) {
+    case direction::up:
+        src.y += 1;
+    case direction::down:
+        src.y -= 1;
+    case direction::right:
+        src.x += 1;
+    case direction::left:
+        src.x -= 1;
+    }
+    if (g.model.is_like_wall(src.x, src.y)) return std::numeric_limits::max();
+    if (dist > best_dist) return dist;
+    if (g.model.get_cell(src.x, src.y).hero) return dist;
+    int dup = shortest_distance(src, dest, direction::up, g, dist, best_dist);
+    if (dup < best_dist) best_dist = dup;
+    int ddown = shortest_distance(src, dest, direction::down, g, dist, best_dist);
+    if (ddown < best_dist) best_dist = ddown;
+    int dright = shortest_distance(src, dest, direction::right, g, dist, best_dist);
+    if (dright < best_dist) best_dist = dright;
+    int dleft = shortest_distance(src, dest, direction::left, g, dist, best_dist);
+    if (dleft < best_dist) best_dist = dleft;
+}
+
 void update_directions(game_data& game, rendering_context& ctx) {
     for (auto& bad_guy_data : game.bad_guys_data) {
-
+        cell c = game.model.get_cell(bad_guy_data.pos_x, bad_guy_data.pos_y);
+        int best = std::numeric_limits::max();
         bad_guy_data->next_direction = direction::left;
     }
 }
