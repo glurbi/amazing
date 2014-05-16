@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <chrono>
 #include <random>
+#include <stdexcept>
 
 #include "amazing.hpp"
 
@@ -53,6 +54,7 @@ pos maze_model::find_empty_cell(int col) {
             return pos { col, y };
         }
     }
+    throw std::exception();
 }
 
 void maze_model::visit(cell& c, std::set<cell, cell::comp>& visited, int& count) {

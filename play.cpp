@@ -112,8 +112,8 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
         pos p = model.find_empty_cell(model.get_width()-2 - i);
         bad_guy_data->pos_x = p.x;
         bad_guy_data->pos_y = p.y;
-        bad_guy_data->pos_fx = p.x;
-        bad_guy_data->pos_fy = p.y;
+        bad_guy_data->pos_fx = (float) p.x;
+        bad_guy_data->pos_fy = (float) p.y;
         bad_guy_data->dir = direction::none;
         bad_guy_data->next_direction = direction::none;
         bad_guy_data->inc = 0.01f;
@@ -209,7 +209,7 @@ int shortest_distance(pos src, pos dest, direction dir, game_data& g, int dist, 
     case direction::left:
         src.x -= 1;
     }
-    if (g.model.is_like_wall(src.x, src.y)) return std::numeric_limits::max();
+    if (g.model.is_like_wall(src.x, src.y)) return std::numeric_limits<int>::max();
     if (dist > best_dist) return dist;
     if (g.model.get_cell(src.x, src.y).hero) return dist;
     int dup = shortest_distance(src, dest, direction::up, g, dist, best_dist);
@@ -220,12 +220,13 @@ int shortest_distance(pos src, pos dest, direction dir, game_data& g, int dist, 
     if (dright < best_dist) best_dist = dright;
     int dleft = shortest_distance(src, dest, direction::left, g, dist, best_dist);
     if (dleft < best_dist) best_dist = dleft;
+    return 0;
 }
 
 void update_directions(game_data& game, rendering_context& ctx) {
     for (auto& bad_guy_data : game.bad_guys_data) {
-        cell c = game.model.get_cell(bad_guy_data.pos_x, bad_guy_data.pos_y);
-        int best = std::numeric_limits::max();
+        cell c = game.model.get_cell(bad_guy_data->pos_x, bad_guy_data->pos_y);
+        int best = std::numeric_limits<int>::max();
         bad_guy_data->next_direction = direction::left;
     }
 }
