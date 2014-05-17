@@ -76,15 +76,12 @@ void update_position(actor_data& ad, maze_model& model, rendering_context& ctx) 
     default:
         break;
     };
-    if (is_int(ad.pos_fx, ad.inc/10.0f) && (is_int(ad.pos_fy, ad.inc/10.0f))) {
+    if (is_int(ad.pos_fx, ad.inc / 10.0f) && (is_int(ad.pos_fy, ad.inc / 10.0f))) {
         ad.pos_x = (int)round(ad.pos_fx);
-        ad.pos_fx = (float)ad.pos_x;
         ad.pos_y = (int)round(ad.pos_fy);
+        ad.pos_fx = (float)ad.pos_x;
         ad.pos_fy = (float)ad.pos_y;
-        if (ad.next_direction != direction::none) {
-            ad.dir = ad.next_direction;
-            ad.next_direction = direction::none;
-        }
+        ad.dir = ad.next_direction;
     }
     ad.actor_group->transformation(translation(ad.pos_fx, ad.pos_fy, 0.0f));
 }
@@ -119,7 +116,7 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
         bad_guy_data->pos_fy = (float) p.y;
         bad_guy_data->dir = direction::none;
         bad_guy_data->next_direction = direction::none;
-        bad_guy_data->inc = 0.01f;
+        bad_guy_data->inc = 0.05f;
         bad_guy_data->nature = actor_nature::evil;
         bad_guy_builder_2d bad_guy_builder;
         auto bad_guy = bad_guy_builder.build();
@@ -234,7 +231,7 @@ distance get_shortest_distance(pos src, pos dest, direction dir, game_data& g, d
 }
 
 direction get_best_direction(actor_data& bad_guy, actor_data& hero, game_data& game) {
-    pos src { bad_guy.pos_x, bad_guy.pos_y };
+    pos src { round(bad_guy.pos_fx), round(bad_guy.pos_fy) };
     pos dest { hero.pos_x, hero.pos_y };
     std::vector<pos> visited;
     distance best_d = std::numeric_limits<int>::max();
@@ -250,7 +247,7 @@ direction get_best_direction(actor_data& bad_guy, actor_data& hero, game_data& g
     return best_dir;
 }
 
-void update_directions(game_data& game, rendering_context& ctx) {
+void update_bad_guys_directions(game_data& game, rendering_context& ctx) {
     for (auto& bad_guy_data : game.bad_guys_data) {
         int best = std::numeric_limits<int>::max();
         bad_guy_data->next_direction = get_best_direction(*bad_guy_data, *game.hero_data, game);
@@ -286,10 +283,10 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
         check_for_opengl_errors();
         if (handle_events(window, game) == -1) return;
         update_position(*game->hero_data, model, *ctx);
-        update_directions(*game, *ctx);
         for (auto& bad_guy_data : game->bad_guys_data) {
             update_position(*bad_guy_data, model, *ctx);
         }
+        update_bad_guys_directions(*game, *ctx);
         game->cam->position_v = vector3(game->hero_data->pos_fx, game->hero_data->pos_fy, 0);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -311,7 +308,6 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
             ending(window, font, text, hero_texture);
             return;
         }
-        //std::cout << game.pos_x << " " << game.pos_y << std::endl;
     }
 }
 
