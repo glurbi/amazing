@@ -210,28 +210,6 @@ int handle_events(sf::RenderWindow& window, std::shared_ptr<game_data> game) {
     return 0;
 }
 
-distance get_shortest_distance(pos src, pos dest, direction dir, game_data& g, distance d, distance best, std::vector<pos>& visited) {
-    d++;
-    auto& movement = move[dir];
-    src.x += movement.dx;
-    src.y += movement.dy;
-    if (g.model.is_like_wall(src.x, src.y)) return std::numeric_limits<int>::max();
-    if (d > best) return std::numeric_limits<int>::max();
-    if (g.hero_data->pos_x == src.x && g.hero_data->pos_y == src.y) return d;
-    if (std::find(visited.begin(), visited.end(), src) != visited.end()) return std::numeric_limits<int>::max();
-    visited.push_back(src);
-    int dup = get_shortest_distance(src, dest, direction::up, g, d, best, visited);
-    if (dup < best) best = dup;
-    int ddown = get_shortest_distance(src, dest, direction::down, g, d, best, visited);
-    if (ddown < best) best = ddown;
-    int dright = get_shortest_distance(src, dest, direction::right, g, d, best, visited);
-    if (dright < best) best = dright;
-    int dleft = get_shortest_distance(src, dest, direction::left, g, d, best, visited);
-    if (dleft < best) best = dleft;
-    visited.pop_back();
-    return best;
-}
-
 class mat {
 public:
     mat(int w, int h) : w(w), h(h) {
@@ -241,23 +219,45 @@ public:
         }
     }
     ~mat() { delete[] ia; }
-    int& elem(int x, int y) { return ia[w*y+x]; }
+    int& elem(int x, int y) { return ia[w*y + x]; }
 private:
     int w;
     int h;
     int* ia;
 };
 
+distance get_shortest_distance(pos src, pos dest, direction dir, game_data& g, distance d, mat& m, int& best) {
+    d++;
+    if (d > best) return std::numeric_limits<int>::max();
+    auto& movement = move[dir];
+    src.x += movement.dx;
+    src.y += movement.dy;
+    if (g.model.is_like_wall(src.x, src.y)) return std::numeric_limits<int>::max();
+    int& best_m = m.elem(src.x, src.y);
+    if (d > best_m) return std::numeric_limits<int>::max();
+    best_m = d;
+    if (g.hero_data->pos_x == src.x && g.hero_data->pos_y == src.y) {
+        best = d;
+    } else {
+        for (auto dir : { direction::up, direction::down, direction::left, direction::right }) {
+            get_shortest_distance(src, dest, dir, g, d, m, best);
+        }
+    }
+    return best;
+}
+
 direction get_best_direction(actor_data& bad_guy, actor_data& hero, game_data& game) {
     pos src { int(bad_guy.pos_fx+0.5), int(bad_guy.pos_fy+0.5) };
     pos dest { hero.pos_x, hero.pos_y };
     std::vector<pos> visited;
     distance best_d = std::numeric_limits<int>::max();
-    if (src == dest) best_d = 0;
     direction best_dir = direction::none;
-    mat dist_mat { game.model.get_width(), game.model.get_height() };
+    if (src == dest) return best_dir;
+    mat m{ game.model.get_width(), game.model.get_height() };
+    m.elem(src.x, src.y) = 0;
     for (auto dir : { direction::up, direction::down, direction::left, direction::right }) {
-        int d = get_shortest_distance(src, dest, dir, game, 0, best_d, visited);
+        int best = std::numeric_limits<int>::max();
+        int d = get_shortest_distance(src, dest, dir, game, 0, m, best);
         if (d < best_d) {
             best_d = d;
             best_dir = dir;
