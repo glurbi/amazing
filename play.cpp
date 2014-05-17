@@ -231,7 +231,7 @@ distance get_shortest_distance(pos src, pos dest, direction dir, game_data& g, d
 }
 
 direction get_best_direction(actor_data& bad_guy, actor_data& hero, game_data& game) {
-    pos src { round(bad_guy.pos_fx), round(bad_guy.pos_fy) };
+    pos src { int(bad_guy.pos_fx+0.5), int(bad_guy.pos_fy+0.5) };
     pos dest { hero.pos_x, hero.pos_y };
     std::vector<pos> visited;
     distance best_d = std::numeric_limits<int>::max();
@@ -252,6 +252,22 @@ void update_bad_guys_directions(game_data& game, rendering_context& ctx) {
         int best = std::numeric_limits<int>::max();
         bad_guy_data->next_direction = get_best_direction(*bad_guy_data, *game.hero_data, game);
     }
+}
+
+bool is_ending(maze_model& model, game_data* game, sf::RenderWindow& window, color color,
+    sf::Font& font, sf::Text& text, std::shared_ptr<texture> hero_texture, std::shared_ptr<texture> bad_guy_texture)
+{
+    if (game->hero_data->pos_x == model.get_width() - 1 && game->hero_data->pos_y == model.get_height() - 2) {
+        ending(window, font, text, hero_texture);
+        return true;
+    }
+    for (auto& bad_guy_data : game->bad_guys_data) {
+        if (game->hero_data->pos_x == bad_guy_data->pos_x && game->hero_data->pos_y == bad_guy_data->pos_y) {
+            ending(window, font, text, bad_guy_texture);
+            return true;
+        }
+    }
+    return false;
 }
 
 void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& font, sf::Text& text) {
@@ -304,10 +320,7 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
         window.display();
 
         ctx->frame_count++;
-        if (game->hero_data->pos_x == model.get_width() - 1 && game->hero_data->pos_y == model.get_height() - 2) {
-            ending(window, font, text, hero_texture);
-            return;
-        }
+        if (is_ending(model, game.get(), window, color, font, text, hero_texture, bad_guy_texture)) break;
     }
 }
 
