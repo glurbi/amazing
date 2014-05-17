@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <stdlib.h>
 #include <map>
+#include <array>
 
 #include "amazing.hpp"
 #include "timer.hpp"
@@ -231,6 +232,22 @@ distance get_shortest_distance(pos src, pos dest, direction dir, game_data& g, d
     return best;
 }
 
+class mat {
+public:
+    mat(int w, int h) : w(w), h(h) {
+        ia = new int[w*h];
+        for (int i = 0; i < w*h; ++i) {
+            ia[i] = std::numeric_limits<int>::max();
+        }
+    }
+    ~mat() { delete[] ia; }
+    int& elem(int x, int y) { return ia[w*y+x]; }
+private:
+    int w;
+    int h;
+    int* ia;
+};
+
 direction get_best_direction(actor_data& bad_guy, actor_data& hero, game_data& game) {
     pos src { int(bad_guy.pos_fx+0.5), int(bad_guy.pos_fy+0.5) };
     pos dest { hero.pos_x, hero.pos_y };
@@ -238,6 +255,7 @@ direction get_best_direction(actor_data& bad_guy, actor_data& hero, game_data& g
     distance best_d = std::numeric_limits<int>::max();
     if (src == dest) best_d = 0;
     direction best_dir = direction::none;
+    mat dist_mat { game.model.get_width(), game.model.get_height() };
     for (auto dir : { direction::up, direction::down, direction::left, direction::right }) {
         int d = get_shortest_distance(src, dest, dir, game, 0, best_d, visited);
         if (d < best_d) {
