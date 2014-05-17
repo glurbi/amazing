@@ -24,6 +24,7 @@ struct cell {
 struct pos {
     int x;
     int y;
+    inline bool operator==(const pos& p) { return x == p.x && y == p.y; }
 };
 
 class maze_model {
@@ -32,7 +33,8 @@ public:
     void create();
     int get_width();
     int get_height();
-    inline cell& get_cell(int x, int y) { return cells[x+y*width]; }
+    inline cell& get_cell(int x, int y) { return cells[x + y*width]; }
+    inline cell& get_cell(pos p) { return get_cell(p.x, p.y); }
     inline bool is_wall(int x, int y) { return (x < 0) || (x >= width) || (y < 0) || (y >= height) || get_cell(x, y).wall; }
     inline bool is_wall(float x, float y) { return is_wall((int)floor(x), (int)floor(y)); }
     inline std::vector<cell>& get_cells() { return cells; }

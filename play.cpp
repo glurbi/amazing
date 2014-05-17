@@ -4,6 +4,7 @@
 #include <chrono>
 #include <SFML/Graphics.hpp>
 #include <stdlib.h>
+#include <tuple>
 
 #include "amazing.hpp"
 #include "timer.hpp"
@@ -12,11 +13,13 @@
 #include "misc.hpp"
 #include "texture.hpp"
 
+typedef int distance;
+
 enum class direction {
     none, up, down, right, left
 };
 
-enum actor_nature {
+enum class actor_nature {
     good, evil
 };
 
@@ -99,7 +102,7 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
     hero_data->dir = direction::none;
     hero_data->next_direction = direction::none;
     hero_data->inc = 0.1f;
-    hero_data->nature = good;
+    hero_data->nature = actor_nature::good;
     hero_builder_2d hero_builder;
     auto hero = hero_builder.build();
     auto hero_node = std::make_shared<geometry_node<float>>(geometry_node<float>(hero));
@@ -117,7 +120,7 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
         bad_guy_data->dir = direction::none;
         bad_guy_data->next_direction = direction::none;
         bad_guy_data->inc = 0.01f;
-        bad_guy_data->nature = evil;
+        bad_guy_data->nature = actor_nature::evil;
         bad_guy_builder_2d bad_guy_builder;
         auto bad_guy = bad_guy_builder.build();
         auto bad_guy_node = std::make_shared<geometry_node<float>>(geometry_node<float>(bad_guy));
@@ -197,37 +200,60 @@ int handle_events(sf::RenderWindow& window, std::shared_ptr<game_data> game) {
     return 0;
 }
 
-int shortest_distance(pos src, pos dest, direction dir, game_data& g, int dist, int& best_dist) {
-    dist++;
+distance get_shortest_distance(pos src, pos dest, direction dir, game_data& g, distance d, distance best, std::vector<pos>& visited) {
+    d++;
     switch (dir) {
     case direction::up:
         src.y += 1;
+        break;
     case direction::down:
         src.y -= 1;
+        break;
     case direction::right:
         src.x += 1;
+        break;
     case direction::left:
         src.x -= 1;
+        break;
     }
     if (g.model.is_like_wall(src.x, src.y)) return std::numeric_limits<int>::max();
-    if (dist > best_dist) return dist;
-    if (g.model.get_cell(src.x, src.y).hero) return dist;
-    int dup = shortest_distance(src, dest, direction::up, g, dist, best_dist);
-    if (dup < best_dist) best_dist = dup;
-    int ddown = shortest_distance(src, dest, direction::down, g, dist, best_dist);
-    if (ddown < best_dist) best_dist = ddown;
-    int dright = shortest_distance(src, dest, direction::right, g, dist, best_dist);
-    if (dright < best_dist) best_dist = dright;
-    int dleft = shortest_distance(src, dest, direction::left, g, dist, best_dist);
-    if (dleft < best_dist) best_dist = dleft;
-    return 0;
+    if (d > best) return std::numeric_limits<int>::max();
+    if (g.hero_data->pos_x == src.x && g.hero_data->pos_y == src.y) return d;
+    if (std::find(visited.begin(), visited.end(), src) != visited.end()) return std::numeric_limits<int>::max();
+    visited.push_back(src);
+    int dup = get_shortest_distance(src, dest, direction::up, g, d, best, visited);
+    if (dup < best) best = dup;
+    int ddown = get_shortest_distance(src, dest, direction::down, g, d, best, visited);
+    if (ddown < best) best = ddown;
+    int dright = get_shortest_distance(src, dest, direction::right, g, d, best, visited);
+    if (dright < best) best = dright;
+    int dleft = get_shortest_distance(src, dest, direction::left, g, d, best, visited);
+    if (dleft < best) best = dleft;
+    visited.pop_back();
+    return best;
+}
+
+direction get_best_direction(actor_data& bad_guy, actor_data& hero, game_data& game) {
+    pos src { bad_guy.pos_x, bad_guy.pos_y };
+    pos dest { hero.pos_x, hero.pos_y };
+    std::vector<pos> visited;
+    distance best_d = std::numeric_limits<int>::max();
+    if (src == dest) best_d = 0;
+    direction best_dir = direction::none;
+    for (auto dir : { direction::up, direction::down, direction::left, direction::right }) {
+        int d = get_shortest_distance(src, dest, dir, game, 0, best_d, visited);
+        if (d < best_d) {
+            best_d = d;
+            best_dir = dir;
+        }
+    }
+    return best_dir;
 }
 
 void update_directions(game_data& game, rendering_context& ctx) {
     for (auto& bad_guy_data : game.bad_guys_data) {
-        cell c = game.model.get_cell(bad_guy_data->pos_x, bad_guy_data->pos_y);
         int best = std::numeric_limits<int>::max();
-        bad_guy_data->next_direction = direction::left;
+        bad_guy_data->next_direction = get_best_direction(*bad_guy_data, *game.hero_data, game);
     }
 }
 
