@@ -4,7 +4,7 @@
 #include <chrono>
 #include <SFML/Graphics.hpp>
 #include <stdlib.h>
-#include <tuple>
+#include <map>
 
 #include "amazing.hpp"
 #include "timer.hpp"
@@ -21,6 +21,18 @@ enum class direction {
 
 enum class actor_nature {
     good, evil
+};
+
+struct movement {
+    int dx;
+    int dy;
+};
+
+std::map<direction, movement> move = {
+    { direction::up, { 0, 1 } },
+    { direction::down, { 0, -1 } },
+    { direction::right, { 1, 0 } },
+    { direction::left, { -1, 0 } }
 };
 
 struct actor_data {
@@ -199,20 +211,9 @@ int handle_events(sf::RenderWindow& window, std::shared_ptr<game_data> game) {
 
 distance get_shortest_distance(pos src, pos dest, direction dir, game_data& g, distance d, distance best, std::vector<pos>& visited) {
     d++;
-    switch (dir) {
-    case direction::up:
-        src.y += 1;
-        break;
-    case direction::down:
-        src.y -= 1;
-        break;
-    case direction::right:
-        src.x += 1;
-        break;
-    case direction::left:
-        src.x -= 1;
-        break;
-    }
+    auto& movement = move[dir];
+    src.x += movement.dx;
+    src.y += movement.dy;
     if (g.model.is_like_wall(src.x, src.y)) return std::numeric_limits<int>::max();
     if (d > best) return std::numeric_limits<int>::max();
     if (g.hero_data->pos_x == src.x && g.hero_data->pos_y == src.y) return d;
