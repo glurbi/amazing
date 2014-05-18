@@ -26,8 +26,6 @@ maze_model::maze_model(int width_, int height_) :
 			get_cell(i,j).x = i;
 			get_cell(i,j).y = j;
 			get_cell(i,j).wall = true;
-            get_cell(i,j).bad_guy = false;
-            get_cell(i,j).hero = false;
 		}
 	}
 }

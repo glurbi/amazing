@@ -14,8 +14,6 @@ struct cell {
     int x;
     int y;
     bool wall;
-    bool bad_guy;
-    bool hero;
     struct comp	{
         bool operator() (const cell& c1, const cell& c2) const;
     };
@@ -38,7 +36,7 @@ public:
     inline bool is_wall(int x, int y) { return (x < 0) || (x >= width) || (y < 0) || (y >= height) || get_cell(x, y).wall; }
     inline bool is_wall(float x, float y) { return is_wall((int)floor(x), (int)floor(y)); }
     inline std::vector<cell>& get_cells() { return cells; }
-    inline bool is_like_wall(int x, int y) { return (x < 0) || (x >= width) || (y < 0) || (y >= height) || get_cell(x, y).wall || get_cell(x, y).bad_guy; }
+    inline bool is_like_wall(int x, int y) { return (x < 0) || (x >= width) || (y < 0) || (y >= height) || get_cell(x, y).wall; }
     inline bool contains(cell& c, std::set<cell, cell::comp>& visited) { return visited.find(c) != visited.end(); }
     pos find_empty_cell(int col);
 private:
