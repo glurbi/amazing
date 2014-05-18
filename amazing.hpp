@@ -91,10 +91,10 @@ enum class menu_choice {
     exit
 };
 
-void menu(sf::RenderWindow& window, sf::Font& font, sf::Text& text);
+void menu(sf::RenderWindow& window, sf::Font& font);
 
-void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& font, sf::Text& text);
+void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& font);
 
-void ending(sf::RenderWindow& window, sf::Font& font, sf::Text& text, std::shared_ptr<texture> tex);
+void ending(sf::RenderWindow& window, sf::Font& font, std::string text, std::shared_ptr<texture> tex);
 
 #endif

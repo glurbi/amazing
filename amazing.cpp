@@ -24,13 +24,7 @@ int main() {
     if (!font.loadFromFile("anonymous.ttf")) {
         return -1;
     }
-    sf::Text text;
-    text.setFont(font);
-    text.setString("You win!");
-    text.setCharacterSize(138);
-    text.setColor(sf::Color::White);
-    text.setStyle(sf::Text::Bold);
     glewInit();
     glViewport(0, 0, window.getSize().x, window.getSize().y);
-    menu(window, font, text);
+    menu(window, font);
 }

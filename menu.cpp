@@ -68,7 +68,7 @@ static std::shared_ptr<camera> create_camera(maze_model& model, sf::RenderWindow
 }
 
 menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arrow_enabled,
-    bool right_arrow_enabled, const color& col, sf::Font& font, sf::Text& text) {
+    bool right_arrow_enabled, const color& col, sf::Font& font) {
 
     timer timer_absolute;
     timer timer_frame;
@@ -145,7 +145,7 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
                     window.setVerticalSyncEnabled(true);
                     break;
                 case sf::Keyboard::Return:
-                    play(model, window, color(col), font, text);
+                    play(model, window, color(col), font);
                     camera = create_camera(model, window);
                     int width = window.getSize().x;
                     int height = window.getSize().y;
@@ -177,7 +177,7 @@ menu_choice show_maze(sf::RenderWindow& window, maze_model& model, bool left_arr
     return choice;
 }
 
-void menu(sf::RenderWindow& window, sf::Font& font, sf::Text& text) {
+void menu(sf::RenderWindow& window, sf::Font& font) {
     int index = 0;
     const int len = 10;
     const int sizes[] = { 11, 17, 25, 31, 41, 51, 65, 87, 101, 123, 181 };
@@ -202,7 +202,7 @@ void menu(sf::RenderWindow& window, sf::Font& font, sf::Text& text) {
         maze_geometry_builder_3d builder3d(model);
         std::shared_ptr<geometry<float>> mazeGeom3d = builder3d.build();
         std::shared_ptr<geometry_node<float>> mazeNode = std::make_shared<geometry_node<float>>(geometry_node<float>(mazeGeom3d));
-        choice = show_maze(window, model, index > 0, index < len - 1, colors[index], font, text);
+        choice = show_maze(window, model, index > 0, index < len - 1, colors[index], font);
         switch (choice) {
         case menu_choice::next_maze:
             if (index < len - 1) index++;

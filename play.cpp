@@ -274,22 +274,22 @@ void update_bad_guys_directions(game_data& game, rendering_context& ctx) {
 }
 
 bool is_ending(maze_model& model, game_data* game, sf::RenderWindow& window, color color,
-    sf::Font& font, sf::Text& text, std::shared_ptr<texture> hero_texture, std::shared_ptr<texture> bad_guy_texture)
+    sf::Font& font, std::shared_ptr<texture> hero_texture, std::shared_ptr<texture> bad_guy_texture)
 {
     if (game->hero_data->pos_x == model.get_width() - 1 && game->hero_data->pos_y == model.get_height() - 2) {
-        ending(window, font, text, hero_texture);
+        ending(window, font, "You win!", hero_texture);
         return true;
     }
     for (auto& bad_guy_data : game->bad_guys_data) {
         if (game->hero_data->pos_x == bad_guy_data->pos_x && game->hero_data->pos_y == bad_guy_data->pos_y) {
-            ending(window, font, text, bad_guy_texture);
+            ending(window, font, "You lose!", bad_guy_texture);
             return true;
         }
     }
     return false;
 }
 
-void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& font, sf::Text& text) {
+void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& font) {
 
     timer timer_absolute;
     timer timer_frame;
@@ -339,7 +339,7 @@ void play(maze_model& model, sf::RenderWindow& window, color color, sf::Font& fo
         window.display();
 
         ctx->frame_count++;
-        if (is_ending(model, game.get(), window, color, font, text, hero_texture, bad_guy_texture)) break;
+        if (is_ending(model, game.get(), window, color, font, hero_texture, bad_guy_texture)) break;
     }
 }
 

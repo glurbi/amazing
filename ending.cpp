@@ -25,7 +25,7 @@ static std::shared_ptr<camera> create_camera(sf::RenderWindow& window) {
     return std::make_shared<parallel_camera>(parallel_camera(cv));
 }
 
-void ending(sf::RenderWindow& window, sf::Font& font, sf::Text& text, std::shared_ptr<texture> tex) {
+void ending(sf::RenderWindow& window, sf::Font& font, std::string text, std::shared_ptr<texture> tex) {
 
     timer timer_absolute;
     timer timer_frame;
@@ -44,13 +44,8 @@ void ending(sf::RenderWindow& window, sf::Font& font, sf::Text& text, std::share
     std::shared_ptr<geometry_node<float>> node = std::make_shared<geometry_node<float>>(geometry_node<float>(multi_hero));
 
     auto camera = create_camera(window);
-    sf::FloatRect textRect = text.getLocalBounds();
-    text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-    text.setPosition(sf::Vector2f(window.getSize().x / 2.0f, window.getSize().y / 2.0f));
-
     auto root = std::make_shared<group>(group());
     root->add(node);
-
     rendering_context ctx;
     std::shared_ptr<texture_program> textureProgram = texture_program::create();
     textureProgram->set_texture(tex);
@@ -58,14 +53,14 @@ void ending(sf::RenderWindow& window, sf::Font& font, sf::Text& text, std::share
 
     sf::Text text1;
     text1.setFont(font);
-    text1.setString("You win!");
+    text1.setString(text);
     text1.setCharacterSize(142);
     text1.setColor(sf::Color::White);
     text1.setStyle(sf::Text::Regular);
 
     sf::Text text2;
     text2.setFont(font);
-    text2.setString("You win!");
+    text2.setString(text);
     text2.setCharacterSize(138);
     text2.setColor(sf::Color::Black);
     text2.setStyle(sf::Text::Bold);
