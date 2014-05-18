@@ -256,7 +256,7 @@ direction get_best_direction(actor_data& bad_guy, actor_data& hero, game_data& g
     mat m{ game.model.get_width(), game.model.get_height() };
     m.elem(src.x, src.y) = 0;
     for (auto dir : { direction::up, direction::down, direction::left, direction::right }) {
-        int best = std::numeric_limits<int>::max();
+        int best = 100;
         int d = get_shortest_distance(src, dest, dir, game, 0, m, best);
         if (d < best_d) {
             best_d = d;
