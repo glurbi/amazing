@@ -249,17 +249,16 @@ distance get_shortest_distance(pos src, pos dest, direction dir, game_data& g, d
 direction get_best_direction(actor_data& bad_guy, actor_data& hero, game_data& game) {
     pos src { int(bad_guy.pos_fx+0.5), int(bad_guy.pos_fy+0.5) };
     pos dest { hero.pos_x, hero.pos_y };
-    std::vector<pos> visited;
-    distance best_d = std::numeric_limits<int>::max();
+    distance shortest = std::numeric_limits<int>::max();
     direction best_dir = direction::none;
     if (src == dest) return best_dir;
     mat m{ game.model.get_width(), game.model.get_height() };
     m.elem(src.x, src.y) = 0;
+    int best = 100;
     for (auto dir : { direction::up, direction::down, direction::left, direction::right }) {
-        int best = 100;
         int d = get_shortest_distance(src, dest, dir, game, 0, m, best);
-        if (d < best_d) {
-            best_d = d;
+        if (d < shortest) {
+            shortest = d;
             best_dir = dir;
         }
     }
