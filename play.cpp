@@ -122,7 +122,7 @@ std::shared_ptr<game_data> make_game_data(maze_model& model, sf::RenderWindow& w
     game->hero_data = hero_data;
     for (int i = 0; i < model.get_height() / 10; i++) {
         std::shared_ptr<actor_data> bad_guy_data = std::make_shared<actor_data>(actor_data());
-        pos p = model.find_empty_cell(model.get_width()-2 - i);
+        pos p = model.find_empty_cell(model.get_height() - 2 - i * 10, model.get_width() - 2 - i * 10);
         bad_guy_data->pos_x = p.x;
         bad_guy_data->pos_y = p.y;
         bad_guy_data->pos_fx = (float) p.x;
@@ -238,18 +238,19 @@ distance get_shortest_distance(pos src, pos dest, direction dir, game_data& g, d
     best_m = d;
     if (g.hero_data->pos_x == src.x && g.hero_data->pos_y == src.y) {
         best = d;
+        return d;
     } else {
         for (auto dir : { direction::up, direction::down, direction::left, direction::right }) {
             get_shortest_distance(src, dest, dir, g, d, m, best);
         }
+        return best;
     }
-    return best;
 }
 
 direction get_best_direction(pos& src, pos& dest, game_data& game, int best) {
     distance shortest = std::numeric_limits<int>::max();
     direction best_dir = direction::none;
-    if (src == dest) return best_dir;
+    if (src == dest) return direction::none;
     mat m{ game.model.get_width(), game.model.get_height() };
     m.elem(src.x, src.y) = 0;
     for (auto dir : { direction::up, direction::down, direction::left, direction::right }) {
@@ -269,6 +270,9 @@ void update_bad_guys_directions(game_data& game, rendering_context& ctx) {
         pos dest{ game.hero_data->pos_x, game.hero_data->pos_y };
         if (abs(src.x - dest.x) + abs(src.y - dest.y) < best) {
             bad_guy_data->next_direction = get_best_direction(src, dest, game, best);
+        } else {
+            std::vector<direction> dirs = { direction::up, direction::down, direction::left, direction::right };
+            bad_guy_data->next_direction = dirs[std::rand()%4];
         }
     }
 }

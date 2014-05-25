@@ -46,10 +46,12 @@ int maze_model::get_height() {
     return height;
 }
 
-pos maze_model::find_empty_cell(int col) {
-    for (int y = get_height()-1; y >= 0; y--) {
-        if (!get_cell(col, y).wall) {
-            return pos { col, y };
+pos maze_model::find_empty_cell(int line, int col) {
+    for (int y = line - 1; y <= line + 1; y++) {
+        for (int x = col - 1; x <= col + 1; x++) {
+            if (!get_cell(col, y).wall) {
+                return pos{ col, y };
+            }
         }
     }
     throw std::exception();

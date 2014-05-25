@@ -38,7 +38,7 @@ public:
     inline std::vector<cell>& get_cells() { return cells; }
     inline bool is_like_wall(int x, int y) { return (x < 0) || (x >= width) || (y < 0) || (y >= height) || get_cell(x, y).wall; }
     inline bool contains(cell& c, std::set<cell, cell::comp>& visited) { return visited.find(c) != visited.end(); }
-    pos find_empty_cell(int col);
+    pos find_empty_cell(int line, int col);
 private:
     void visit(cell& c, std::set<cell, cell::comp>& visited, int& count);
     int width;
