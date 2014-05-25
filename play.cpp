@@ -253,12 +253,16 @@ direction get_best_direction(pos& src, pos& dest, game_data& game, int best) {
     if (src == dest) return direction::none;
     mat m{ game.model.get_width(), game.model.get_height() };
     m.elem(src.x, src.y) = 0;
+    int best_found = best;
     for (auto dir : { direction::up, direction::down, direction::left, direction::right }) {
-        int d = get_shortest_distance(src, dest, dir, game, 0, m, best);
+        int d = get_shortest_distance(src, dest, dir, game, 0, m, best_found);
         if (d < shortest) {
             shortest = d;
             best_dir = dir;
         }
+    }
+    if (best == best_found) {
+        best_dir = direction::none;
     }
     return best_dir;
 }
@@ -270,9 +274,10 @@ void update_bad_guys_directions(game_data& game, rendering_context& ctx) {
         pos dest{ game.hero_data->pos_x, game.hero_data->pos_y };
         if (abs(src.x - dest.x) + abs(src.y - dest.y) < best) {
             bad_guy_data->next_direction = get_best_direction(src, dest, game, best);
-        } else {
+        }
+        if (bad_guy_data->next_direction == direction::none) {
             std::vector<direction> dirs = { direction::up, direction::down, direction::left, direction::right };
-            bad_guy_data->next_direction = dirs[std::rand()%4];
+            bad_guy_data->next_direction = dirs[std::rand() % 4];
         }
     }
 }
