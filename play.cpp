@@ -246,15 +246,12 @@ distance get_shortest_distance(pos src, pos dest, direction dir, game_data& g, d
     return best;
 }
 
-direction get_best_direction(actor_data& bad_guy, actor_data& hero, game_data& game) {
-    pos src { int(bad_guy.pos_fx+0.5), int(bad_guy.pos_fy+0.5) };
-    pos dest { hero.pos_x, hero.pos_y };
+direction get_best_direction(pos& src, pos& dest, game_data& game, int best) {
     distance shortest = std::numeric_limits<int>::max();
     direction best_dir = direction::none;
     if (src == dest) return best_dir;
     mat m{ game.model.get_width(), game.model.get_height() };
     m.elem(src.x, src.y) = 0;
-    int best = 100;
     for (auto dir : { direction::up, direction::down, direction::left, direction::right }) {
         int d = get_shortest_distance(src, dest, dir, game, 0, m, best);
         if (d < shortest) {
@@ -267,8 +264,12 @@ direction get_best_direction(actor_data& bad_guy, actor_data& hero, game_data& g
 
 void update_bad_guys_directions(game_data& game, rendering_context& ctx) {
     for (auto& bad_guy_data : game.bad_guys_data) {
-        int best = std::numeric_limits<int>::max();
-        bad_guy_data->next_direction = get_best_direction(*bad_guy_data, *game.hero_data, game);
+        int best = 50;
+        pos src{ int(bad_guy_data->pos_fx + 0.5), int(bad_guy_data->pos_fy + 0.5) };
+        pos dest{ game.hero_data->pos_x, game.hero_data->pos_y };
+        if (abs(src.x - dest.x) + abs(src.y - dest.y) < best) {
+            bad_guy_data->next_direction = get_best_direction(src, dest, game, best);
+        }
     }
 }
 
